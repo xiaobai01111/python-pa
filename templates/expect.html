@@ -1,7 +1,130 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-    <body>
+    <body style="background-color: #0f172a;">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        body { font-family: 'Inter', sans-serif; color: #e2e8f0; }
+        
+        html, body { height: 100%; }
+        
+        .layui-fluid { 
+            padding: 30px; 
+            min-height: calc(100vh - 110px);
+            box-sizing: border-box;
+        }
+        
+        .layui-row { height: 100%; }
+        .layui-col-md12 { height: 100%; }
+        
+        /* 卡片容器 - 深色磨砂 */
+        .layui-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            height: 100%;
+        }
+        
+        .layui-card-header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 20px 30px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+            display: flex;
+            align-items: center;
+        }
+        
+        .layui-card-header::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 18px;
+            background: #f59e0b;
+            border-radius: 2px;
+            margin-right: 12px;
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+        }
+        
+        .layui-card-body { padding: 40px; }
+        
+        /* 表单元素重构 */
+        .layui-form-label {
+            color: #94a3b8;
+            width: 100px;
+            padding: 12px 15px;
+            font-size: 14px;
+        }
+        
+        .layui-input-block { margin-left: 130px; max-width: 600px; }
+        
+        .layui-input, .layui-select {
+            background-color: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-radius: 8px;
+            height: 44px;
+            line-height: 44px;
+            transition: all 0.3s;
+        }
+        
+        .layui-input:focus, .layui-select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        
+        /* 下拉菜单深色适配 */
+        .layui-form-select dl {
+            background-color: #1e293b;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            padding: 5px 0;
+        }
+        
+        .layui-form-select dl dd {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .layui-form-select dl dd:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .layui-form-select dl dd.layui-this {
+            background-color: #3b82f6;
+            color: #fff;
+        }
+        
+        .layui-form-select .layui-edge {
+            border-top-color: rgba(255, 255, 255, 0.5);
+        }
+        
+        /* 按钮样式 */
+        .layui-btn {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+            border: none;
+            height: 44px;
+            line-height: 44px;
+            padding: 0 40px;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .layui-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+            opacity: 0.95;
+        }
+        
+        .layui-form-item { margin-bottom: 28px; }
+    </style>
+
     <div class="layui-fluid">
         <div class="layui-row layui-col-space15">
             <div class="layui-col-md12">
@@ -43,7 +166,8 @@
                             </div>
                             <div class="layui-form-item">
                                 <div class="layui-input-block">
-                                    <button class="layui-btn" lay-submit lay-filter="expect" id="expect">确认选择
+                                    <button class="layui-btn" lay-submit lay-filter="expect" id="expect">
+                                        <i class="layui-icon layui-icon-ok-circle"></i> 确认保存
                                     </button>
                                 </div>
                             </div>
@@ -71,11 +195,11 @@
                 var post_data = data.field;
                 console.log(post_data)
                 if (post_data.key_word == "") {
-                    layer.msg("期望职位不能为空！")
+                    layer.msg("期望职位不能为空！", {icon: 5, anim: 6})
                     return false
                 }
                 if (post_data.city == "") {
-                    layer.msg("城市不能为空！")
+                    layer.msg("城市不能为空！", {icon: 5, anim: 6})
                     return false
                 }
 
@@ -84,10 +208,10 @@
                     url: '/job_expect/',
                     data: post_data,
                     success: function (res) {
-                        layer.msg(res.msg);
+                        layer.msg(res.msg, {icon: 1, time: 2000});
                     },
                     error: function (response) {
-                        layer.msg(response.msg);
+                        layer.msg(response.msg, {icon: 2});
                     }
                 })
 

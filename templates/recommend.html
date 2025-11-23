@@ -1,30 +1,159 @@
-
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-<body>
+<body style="background-color: #0f172a;">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    
+    body { font-family: 'Inter', sans-serif; color: #e2e8f0; }
+    
+    .layui-fluid { padding: 30px; }
+    
+    /* 提示语样式 */
+    .layui-elem-quote {
+        background-color: rgba(59, 130, 246, 0.1) !important;
+        border-left: 5px solid #3b82f6;
+        color: #cbd5e1;
+        border-radius: 4px;
+        margin-bottom: 30px;
+        border-color: #3b82f6;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* 职位卡片容器 */
+    .layadmin-contact-box {
+        background-color: rgba(30, 41, 59, 0.7) !important; /* 强制深色背景 */
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        padding: 24px;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+        height: 100%;
+        min-height: 220px; /* 增加最小高度 */
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        box-sizing: border-box; /* 确保 padding 不撑大容器 */
+    }
+    
+    .layadmin-contact-box:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        background-color: rgba(30, 41, 59, 0.9) !important;
+        border-color: rgba(59, 130, 246, 0.3) !important;
+    }
+    
+    .layadmin-text {
+        color: #94a3b8;
+    }
+    
+    .layadmin-title {
+        margin-bottom: 12px;
+        font-size: 14px;
+        line-height: 1.6;
+        color: #cbd5e1;
+    }
+    
+    .layadmin-title strong {
+        font-size: 18px;
+        color: #fff;
+        display: block;
+        margin-bottom: 10px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .layui-icon-location {
+        color: #f59e0b;
+        margin-right: 5px;
+    }
+    
+    /* 投递按钮 */
+    .layui-btn {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        border: none;
+        width: 100%;
+        margin-top: 15px;
+        transition: all 0.3s;
+    }
+    
+    .layui-btn:hover {
+        opacity: 0.9;
+        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+    }
+    
+    /* 布局调整 */
+    .layui-col-md9, .layui-col-md2 {
+        width: 100%;
+        padding: 0 !important;
+    }
+    
+    /* 强制覆盖 Layer 弹窗样式为深色 */
+    .layui-layer-dialog .layui-layer-content {
+        background-color: #1e293b !important;
+        color: #e2e8f0 !important;
+    }
+    .layui-layer-title {
+        background-color: #0f172a !important;
+        color: #fff !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+    .layui-layer {
+        background-color: #1e293b !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+    }
+    .layui-layer-btn {
+        background-color: #1e293b !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+    }
+    .layui-layer-btn a {
+        background: transparent !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        color: #cbd5e1 !important;
+    }
+    .layui-layer-btn .layui-layer-btn0 {
+        background: #3b82f6 !important;
+        border-color: #3b82f6 !important;
+        color: #fff !important;
+    }
+  </style>
+
 <div class="layui-fluid layadmin-maillist-fluid">
-  <div class="layui-row layui-col-space15">
+  <div class="layui-row layui-col-space30">
       <div class="layui-col-md12">
-            <blockquote class="layui-elem-quote" style="background-color: white">用户越多，投递的简历越多,推荐的越准确</blockquote>
+            <blockquote class="layui-elem-quote">
+                <i class="layui-icon layui-icon-speaker" style="margin-right: 8px;"></i>
+                用户越多，投递的简历越多, 推荐的越准确
+            </blockquote>
       </div>
       {% for job in recommend_list %}
         <div class="layui-col-md4 layui-col-sm6">
       <div class="layadmin-contact-box" >
           <div class="layui-col-md9 layui-col-sm6">
-            <a href="javascript:;">
+            <a href="javascript:;" style="text-decoration: none;">
               <div class="layadmin-text">
-                <h3 class="layadmin-title"><strong>职位名称：{{ job.name | truncatechars:16 }}</strong></h3>
-                <h3 class="layadmin-title">薪资待遇：{{ job.salary }}</h3>
-                <h3 class="layadmin-title">学历要求：{{ job.education }}</h3>
-                <h3 class="layadmin-title">经验要求：{{ job.experience }}</h3>
-                <h3 class="layadmin-title">工作地点：<i class="layui-icon layui-icon-location"></i>{{ job.place }}</h3>
-                <h3 class="layadmin-title">公司名称：{{ job.company | truncatechars:16 }}</h3>
+                <h3 class="layadmin-title"><strong>{{ job.name | truncatechars:16 }}</strong></h3>
+                <h3 class="layadmin-title" style="color: #f43f5e; font-weight: 600;">{{ job.salary }}</h3>
+                <h3 class="layadmin-title">
+                    <span class="layui-badge layui-bg-blue" style="background: rgba(59,130,246,0.2) !important; color: #60a5fa !important;">{{ job.education }}</span>
+                    <span class="layui-badge layui-bg-cyan" style="background: rgba(16,185,129,0.2) !important; color: #34d399 !important; margin-left: 5px;">{{ job.experience }}</span>
+                </h3>
+                <h3 class="layadmin-title"><i class="layui-icon layui-icon-location"></i>{{ job.place }}</h3>
+                <h3 class="layadmin-title" style="color: #94a3b8; font-size: 13px;">{{ job.company | truncatechars:16 }}</h3>
               </div>
             </a>
           </div>
           <div class="layui-col-md2 layui-col-sm6">
-             <button class="layui-btn" onclick="send({{ job.job_id }},'{{ job.name }}')">投递职位</button>
+             <button class="layui-btn" onclick="send({{ job.job_id }}, '{{ job.name|escapejs }}')">
+                 <i class="layui-icon layui-icon-release"></i> 立即投递
+             </button>
           </div>
       </div>
     </div>
@@ -49,16 +178,21 @@
 	    element = layui.element;
 
           console.log(job_id)
-        layer.confirm("确定投递职位"+job_name +"吗？", function(t) {
+        layer.confirm("确定投递职位 "+job_name +" 吗？", {
+            title: '投递确认',
+            skin: 'layui-layer-molv', // 墨绿皮肤，可自定义深色皮肤
+            btn: ['确定', '取消']
+        }, function(t) {
 			$.ajax({
 				   type: 'POST',
 				   data:{"job_id":job_id, "send_key":0},
 				   url: '/send_job/',
 				   success: function (res) {
-					   layer.msg(res.msg);location.reload()
+					   layer.msg(res.msg, {icon: 1});
+                       setTimeout(function(){ location.reload() }, 1000);
 				   },
 				   error:function(response){
-					   layer.msg(response.msg);
+					   layer.msg(response.msg, {icon: 2});
 				   }
 			   }),
 				layer.close(t)

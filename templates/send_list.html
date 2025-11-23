@@ -2,7 +2,115 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-<body>
+<body style="background-color: #0f172a;">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    
+    body { font-family: 'Inter', sans-serif; color: #e2e8f0; }
+    
+    html, body { height: 100%; }
+    
+    .layui-fluid { 
+        padding: 30px; 
+        min-height: calc(100vh - 110px);
+        box-sizing: border-box;
+    }
+    
+    /* 卡片容器 - 深色磨砂 */
+    .layui-card {
+        background: rgba(30, 41, 59, 0.7);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        height: 100%;
+    }
+    
+    .layui-card-body { padding: 20px; height: 100%; box-sizing: border-box; }
+    
+    /* 表格样式覆盖 */
+    .layui-table-view {
+        border: none !important;
+        background-color: transparent !important;
+    }
+    
+    .layui-table {
+        background-color: transparent !important;
+        color: #e2e8f0;
+    }
+    
+    /* 修复表头背景 */
+    .layui-table-header {
+        background-color: #1e293b !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+    
+    .layui-table th {
+        background-color: #1e293b !important;
+        color: #94a3b8 !important;
+        font-weight: 600;
+        border-color: rgba(255, 255, 255, 0.05) !important;
+    }
+    
+    .layui-table td {
+        border-color: rgba(255, 255, 255, 0.05);
+        color: #cbd5e1;
+    }
+    
+    /* 斑马纹和悬停 */
+    .layui-table-hover, .layui-table-click, .layui-table-hover td {
+        background-color: rgba(59, 130, 246, 0.1) !important;
+    }
+    
+    /* 分页样式修复 */
+    .layui-laypage a, .layui-laypage span {
+        background-color: transparent !important;
+        color: #94a3b8 !important;
+        border-color: rgba(255, 255, 255, 0.1) !important;
+    }
+    
+    .layui-laypage .layui-laypage-curr .layui-laypage-em {
+        background-color: #3b82f6 !important;
+    }
+    
+    .layui-laypage .layui-laypage-curr em {
+        color: #fff !important;
+    }
+
+    /* 分页输入框和下拉框深色适配 */
+    .layui-laypage input, .layui-laypage select {
+        background-color: #1e293b !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: #fff !important;
+    }
+    
+    .layui-laypage button {
+        background-color: #1e293b !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: #94a3b8 !important;
+    }
+    
+    /* 修复表格 Loading 和空数据样式 */
+    .layui-table-init, .layui-none {
+        background-color: transparent !important;
+        color: #94a3b8 !important;
+    }
+    
+    /* 按钮样式 */
+    .layui-btn-normal {
+        background: rgba(239, 68, 68, 0.15) !important;
+        color: #f87171 !important;
+        border: 1px solid rgba(239, 68, 68, 0.3) !important;
+        padding: 0 10px; /* 增加内边距 */
+        min-width: 80px; /* 确保最小宽度 */
+    }
+    
+    .layui-btn-normal:hover {
+        background: rgba(239, 68, 68, 0.25) !important;
+        color: #fff !important;
+    }
+  </style>
 
   <div class="layui-fluid">
     <div class="layui-card">
@@ -13,7 +121,7 @@
                {{#  if(d.send_key == 0){ }}
               <a class="layui-btn layui-btn-sm layui-btn-sm" lay-event="send"><i class="layui-icon layui-icon-add-circle-fine"></i>投递</a>
                {{#  } else { }}
-              <a class="layui-btn layui-btn-sm layui-btn-normal" lay-event="send_1">取消投递</a>
+              <a class="layui-btn layui-btn-sm layui-btn-normal" lay-event="send_1"><i class="layui-icon layui-icon-close"></i> 取消投递</a>
                {{#  } }}
             </script>
           {% endverbatim %}
@@ -38,7 +146,7 @@
           //执行重载
           table.reload('LAY-app-forum-list', {
               page:{curr:1},
-              where: field
+              where: {}
           });
   });
 

@@ -1,7 +1,112 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-<body>
+<body style="background-color: #0f172a;">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    
+    body { font-family: 'Inter', sans-serif; color: #e2e8f0; }
+    
+    html, body { height: 100%; }
+    
+    .layui-fluid { 
+        padding: 30px; 
+        min-height: calc(100vh - 110px);
+        box-sizing: border-box;
+    }
+    
+    .layui-row { height: 100%; }
+    .layui-col-md12 { height: 100%; }
+    
+    /* 卡片容器 - 深色磨砂 */
+    .layui-card {
+        background: rgba(30, 41, 59, 0.7);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        height: 100%;
+    }
+    
+    .layui-card-header {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 20px 30px;
+        font-size: 18px;
+        font-weight: 600;
+        color: #fff;
+        display: flex;
+        align-items: center;
+    }
+    
+    .layui-card-header::before {
+        content: '';
+        display: inline-block;
+        width: 4px;
+        height: 18px;
+        background: #ef4444;
+        border-radius: 2px;
+        margin-right: 12px;
+        box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+    }
+    
+    .layui-card-body { padding: 40px; }
+    
+    /* 表单元素重构 */
+    .layui-form-label {
+        color: #94a3b8;
+        width: 100px;
+        padding: 12px 15px;
+        font-size: 14px;
+    }
+    
+    .layui-input-block { margin-left: 130px; max-width: 600px; }
+    
+    .layui-input {
+        background-color: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #fff;
+        border-radius: 8px;
+        height: 44px;
+        line-height: 44px;
+        transition: all 0.3s;
+    }
+    
+    .layui-input:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+    
+    .layui-input:disabled {
+        background-color: rgba(15, 23, 42, 0.3);
+        color: #64748b;
+        cursor: not-allowed;
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+    
+    /* 按钮样式 */
+    .layui-btn {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        border: none;
+        height: 44px;
+        line-height: 44px;
+        padding: 0 40px;
+        font-size: 15px;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+    
+    .layui-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+        opacity: 0.95;
+    }
+    
+    .layui-form-item { margin-bottom: 28px; }
+  </style>
+
   <div class="layui-fluid">
     <div class="layui-row layui-col-space15">
       <div class="layui-col-md12">
@@ -18,32 +123,34 @@
               <div class="layui-form-item">
                 <label class="layui-form-label">名称</label>
                 <div class="layui-input-block">
-                  <input type="text" name="user_name" class="layui-input" value="{{ user_obj.user_name }}">
+                  <input type="text" name="user_name" class="layui-input" value="{{ user_obj.user_name }}" placeholder="请输入您的名称">
                 </div>
               </div>
               <div class="layui-form-item">
                 <label class="layui-form-label">原密码</label>
                 <div class="layui-input-block">
-                  <input type="password" name="old_pass" class="layui-input">
+                  <input type="password" name="old_pass" class="layui-input" placeholder="请输入原密码">
                 </div>
               </div>
               <div class="layui-form-item">
                 <label class="layui-form-label">新密码</label>
                 <div class="layui-input-block">
-                  <input type="password" name="pass_word" class="layui-input">
+                  <input type="password" name="pass_word" class="layui-input" placeholder="请输入新密码">
                 </div>
               </div>
 
               <div class="layui-form-item">
                 <label class="layui-form-label">确认密码</label>
                 <div class="layui-input-block">
-                  <input type="password" name="pass_word_1" class="layui-input">
+                  <input type="password" name="pass_word_1" class="layui-input" placeholder="请再次输入新密码">
                 </div>
               </div>
 
               <div class="layui-form-item">
                 <div class="layui-input-block">
-                     <button class="layui-btn" lay-submit lay-filter="up_pass" id="up_pass">确认修改</button>
+                     <button class="layui-btn" lay-submit lay-filter="up_pass" id="up_pass">
+                         <i class="layui-icon layui-icon-release"></i> 确认修改
+                     </button>
                 </div>
               </div>
             </div>
@@ -70,19 +177,19 @@
           var field = data.field;
           console.log(field)
           if(field.user_name == ""){
-              layer.msg("名称不能为空！")
+              layer.msg("名称不能为空！", {icon: 5, anim: 6})
               return false
           }
           if(field.old_pass == ""){
-              layer.msg("原密码不能为空！")
+              layer.msg("原密码不能为空！", {icon: 5, anim: 6})
               return false
           }
           if(field.pass_word == ""){
-              layer.msg("新密码不能为空！")
+              layer.msg("新密码不能为空！", {icon: 5, anim: 6})
               return false
           }
           if(field.pass_word != field.pass_word_1){
-              layer.msg("两次密码输入不一致")
+              layer.msg("两次密码输入不一致", {icon: 5, anim: 6})
               return false
           }
 

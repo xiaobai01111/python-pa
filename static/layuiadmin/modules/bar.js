@@ -24,58 +24,111 @@ layui.define(function(e) {
 			l = [],
 			t = [{
 				title: {
-					text: "职位关键字-柱形图",
-					subtext: "职位数量"
+					text: "职位关键字分布概览",
+					subtext: "热门技术栈统计",
+					left: "center",
+					top: 10,
+					textStyle: {
+						color: '#fff',
+						fontSize: 18,
+						fontFamily: 'Inter, sans-serif'
+					},
+					subtextStyle: {
+						color: '#94a3b8'
+					}
 				},
 				tooltip: {
-					trigger: "axis"
+					trigger: "axis",
+					backgroundColor: 'rgba(255, 255, 255, 0.95)',
+					borderColor: '#f1f5f9',
+					borderWidth: 1,
+					textStyle: { color: '#0f172a' },
+					axisPointer: {
+						type: 'shadow'
+					}
 				},
-				legend: {
-					data: ["职位数量"]
+				grid: {
+					left: '3%',
+					right: '4%',
+					bottom: '10%',
+					top: '20%',
+					containLabel: true
 				},
 				xAxis: [{
 					type: "category",
-					data: ['物联网', 'python', '后端', 'java', '前端', 'web', 'c', 'android', 'c语言', '测试', '大数据']
+					data: ['物联网', 'python', '后端', 'java', '前端', 'web', 'c', 'android', 'c语言', '测试', '大数据'],
+					axisLine: {
+						lineStyle: { color: '#94a3b8' }
+					},
+					axisLabel: {
+						textStyle: {
+							color: '#e2e8f0',
+							fontSize: 14
+						},
+						interval: 0,
+						rotate: 30
+					},
+					axisTick: { show: false },
+					splitLine: { show: false } // 去除X轴网格线，避免看起来像表格
 				}],
 				yAxis: [{
-					type: "value"
+					type: "value",
+					axisLine: { show: false },
+					axisLabel: { 
+						textStyle: {
+							color: '#e2e8f0',
+							fontSize: 14
+						}
+					},
+					splitLine: {
+						lineStyle: {
+							color: 'rgba(255, 255, 255, 0.08)',
+							type: 'dashed'
+						}
+					}
 				}],
 				series: [{
 					name: "职位数量",
 					type: "bar",
-					barWidth:50,
+					barWidth: 40, // 改为固定像素值，防止老版本不支持百分比
 					data: [1453, 1547, 1363, 1520, 1440, 1049, 40, 1355, 1470, 1472, 1429],
 					itemStyle: {
-						  normal: {
+						normal: {
+							color: '#3b82f6',
 							label: {
-							  show: true, //开启显示
-							  position: 'top', //在上方显示
-							  textStyle: {
-								//数值样式
-								color: 'black',
-								fontSize: 12,
-							  },
-							},
-						  },
-						},
+								show: true,
+								position: 'top',
+								textStyle: {
+									color: '#fff',
+									fontSize: 12
+								}
+							}
+						}
+					}
 				}]
 			}],
 			i = e("#LAY-index-dataview").children("div"),
 			n = function(e) {
 				l[e] = a.init(i[e], layui.echartsTheme), l[e].setOption(t[e]), window.onresize = l[e].resize
 			};
+			// 渲染初始图表
+			i[0] && n(0);
+			
+			// 尝试获取动态数据，如果失败或数据为空，保持初始图表显示
 			$.ajax({
 				   type: 'GET',
 				   url: '/bar/',
 				   success: function (res) {
-					   t[0].xAxis[0].data = res.bar_x;
-					   t[0].series[0].data = res.bar_y;
-					   l[0].setOption(t[0]); // 重新渲染图表
+					   if (res && res.bar_x && res.bar_x.length > 0) {
+						   t[0].xAxis[0].data = res.bar_x;
+						   t[0].series[0].data = res.bar_y;
+						   l[0].setOption(t[0]);
+					   }
 				   },
 				   error:function(response){
-					   layer.msg(response.msg);
+					   // 不弹窗报错，以免影响体验，保持静态数据展示
+					   console.error("Failed to fetch chart data:", response);
 				   }
-			   }),
-			i[0] && n(0);
+			   });
 	}), e("console", {})
 });
