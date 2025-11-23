@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+    <body>
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">爬虫设置</div>
+                    <div class="layui-card-body">
+                        <div class="layui-form" lay-filter="">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">关键字</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="key_word" class="layui-input"
+                                           placeholder="输入需要爬取的职位信息如：java工程师">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">城市选择</label>
+                                <div class="layui-input-block">
+                                    <select name="city" lay-verify="">
+                                        <option value="">请选择一个城市</option>
+                                        <option value="北京">北京</option>
+                                        <option value="上海">上海</option>
+                                        <option value="天津">天津</option>
+                                        <option value="重庆">重庆</option>
+                                        <option value="广州">广州</option>
+                                        <option value="深圳">深圳</option>
+                                        <option value="苏州">苏州</option>
+                                        <option value="南京">南京</option>
+                                        <option value="杭州">杭州</option>
+                                        <option value="大连">大连</option>
+                                        <option value="成都">成都</option>
+                                        <option value="武汉">武汉</option>
+                                        <option value="西安">西安</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">网站选择</label>
+                                <div class="layui-input-block">
+                                    <input type="radio" name="role" value="猎聘网" title="猎聘网" checked>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">页数选择</label>
+                                <div class="layui-input-block">
+                                    <select name="page" lay-verify="">
+                                        <option value="">请选择需要爬取页数数量</option>
+                                        <option value="1">1页</option>
+                                        <option value="2">2页</option>
+                                        <option value="3">3页</option>
+                                        <option value="4">4页</option>
+                                        <option value="5">5页</option>
+                                        <option value="6">6页</option>
+                                        <option value="7">7页</option>
+                                        <option value="8">8页</option>
+                                        <option value="9">9页</option>
+                                        <option value="10">10页</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    {% if spider_code_1 == 0 %}
+                                        <button class="layui-btn" lay-submit lay-filter="start_spider"
+                                                id="start_spider">开始爬取
+                                        </button>
+                                    {% else %}
+                                        <span class="layui-btn">正在爬取,请稍后...</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </body>
+{% endblock %}
+
+{% block js %}
+    <script>
+        layui.config({
+            base: '{% static "layuiadmin/" %}' //静态资源所在路径
+        }).extend({
+            index: 'lib/index' //主入口模块
+        }).use(['index', 'form'], function () {
+            var $ = layui.$,
+                layer = layui.layer
+                , form = layui.form;
+
+            form.on('submit(start_spider)', function (data) {
+                var field = data.field;
+                console.log(field)
+                if (field.key_word == "") {
+                    layer.msg("关键字不能为空！")
+                    return false
+                }
+                if (field.page == "") {
+                    layer.msg("页数不能为空！")
+                    return false
+                }
+                if (field.city == "") {
+                    layer.msg("城市不能为空！")
+                    return false
+                }
+
+                document.getElementById("start_spider").innerHTML = '正在爬取请稍后...';
+                document.getElementById("start_spider").removeAttribute('lay-filter');
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/start_spider/',
+                    data: field,
+                    success: function (res) {
+                        layer.msg(res.msg);
+                        document.getElementById("start_spider").innerHTML = '开始爬取';
+                        document.getElementById("start_spider").setAttribute("lay-filter", "start_spider")
+                    },
+                    error: function (response) {
+                        layer.msg(response.msg);
+                    }
+                })
+
+            });
+        });
+    </script>
+{% endblock %}

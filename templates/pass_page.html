@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<body>
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-header">用户设置</div>
+          <div class="layui-card-body">
+            <div class="layui-form" lay-filter="">
+              <div class="layui-form-item">
+                <label class="layui-form-label">用户名</label>
+                <div class="layui-input-block">
+                  <input type="text" name="user_account" class="layui-input" value="{{ user_obj.user_account }}" disabled>
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <label class="layui-form-label">名称</label>
+                <div class="layui-input-block">
+                  <input type="text" name="user_name" class="layui-input" value="{{ user_obj.user_name }}">
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <label class="layui-form-label">原密码</label>
+                <div class="layui-input-block">
+                  <input type="password" name="old_pass" class="layui-input">
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <label class="layui-form-label">新密码</label>
+                <div class="layui-input-block">
+                  <input type="password" name="pass_word" class="layui-input">
+                </div>
+              </div>
+
+              <div class="layui-form-item">
+                <label class="layui-form-label">确认密码</label>
+                <div class="layui-input-block">
+                  <input type="password" name="pass_word_1" class="layui-input">
+                </div>
+              </div>
+
+              <div class="layui-form-item">
+                <div class="layui-input-block">
+                     <button class="layui-btn" lay-submit lay-filter="up_pass" id="up_pass">确认修改</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+{% endblock %}
+
+{% block js %}
+  <script>
+  layui.config({
+    base: '{% static "layuiadmin/" %}' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'form'], function() {
+      var $ = layui.$,
+          layer= layui.layer
+          , form = layui.form;
+
+      form.on('submit(up_pass)', function (data) {
+          var field = data.field;
+          console.log(field)
+          if(field.user_name == ""){
+              layer.msg("名称不能为空！")
+              return false
+          }
+          if(field.old_pass == ""){
+              layer.msg("原密码不能为空！")
+              return false
+          }
+          if(field.pass_word == ""){
+              layer.msg("新密码不能为空！")
+              return false
+          }
+          if(field.pass_word != field.pass_word_1){
+              layer.msg("两次密码输入不一致")
+              return false
+          }
+
+
+          $.ajax({
+               type: 'POST',
+               url: '/up_info/',
+               data:{
+                   "user_name": field.user_name, 
+                   "old_password": field.old_pass, 
+                   "new_password": field.pass_word,
+                   "re_password": field.pass_word_1
+               },
+               success: function (res) {
+                   if(res.code === 0) {
+                       layer.msg(res.msg, {icon: 1});
+                   } else {
+                       layer.msg(res.msg, {icon: 2});
+                   }
+               },
+               error:function(response){
+                   layer.msg('请求失败，请重试', {icon: 2});
+               }
+           })
+
+        });
+  });
+  </script>
+{% endblock %}

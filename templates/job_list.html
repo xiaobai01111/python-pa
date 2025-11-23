@@ -1,0 +1,140 @@
+
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<body>
+  <div class="layui-fluid">
+    <div class="layui-card">
+      <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+          <input type="hidden" id="keyword" autocomplete="off" class="layui-input" value="">
+          <input type="hidden" id="price_min" autocomplete="off" class="layui-input" value="">
+          <input type="hidden" id="price_max" autocomplete="off" class="layui-input" value="">
+          <input type="hidden" id="edu" autocomplete="off" class="layui-input" value="">
+          <input type="hidden" id="city" autocomplete="off" class="layui-input" value="">
+        <div class="layui-form-item">
+          <div class="layui-inline">
+            <label class="layui-form-label">岗位名称</label>
+            <div class="layui-input-inline">
+              <input type="text" name="keyword" id="keyword_1" placeholder="输入职位关键字" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-inline">
+            <label class="layui-form-label">薪资区间(K)</label>
+            <div class="layui-input-inline" style="width: 100px;">
+                <input type="text" name="price_min" id="price_min_1" placeholder="￥" autocomplete="off" class="layui-input" value="">
+          </div>
+          <div class="layui-form-mid">-</div>
+          <div class="layui-input-inline" style="width: 100px;">
+            <input type="text" name="price_max" id="price_max_1" placeholder="￥" autocomplete="off" class="layui-input" value="">
+          </div>
+          </div>
+          <div class="layui-inline">
+            <label class="layui-form-label">学历要求</label>
+            <div class="layui-input-inline">
+              <select name="edu" id="edu_1">
+                <option value="">请选择学历</option>
+                <option value="博士">博士</option>
+                <option value="硕士">硕士</option>
+                <option value="本科">本科</option>
+                <option value="大专">大专</option>
+                <option value="不限">经验不限</option>
+              </select>
+            </div>
+          </div>
+          <div class="layui-inline">
+            <label class="layui-form-label">工作地点</label>
+            <div class="layui-input-inline">
+              <select name="city" id="city_1">
+                <option value="">请选择城市</option>
+                <option value="北京">北京</option>
+                <option value="上海">上海</option>
+                <option value="天津">天津</option>
+                <option value="重庆">重庆</option>
+                <option value="广州">广州</option>
+                <option value="深圳">深圳</option>
+                <option value="苏州">苏州</option>
+                <option value="南京">南京</option>
+                <option value="杭州">杭州</option>
+                <option value="大连">大连</option>
+                <option value="成都">成都</option>
+                <option value="武汉">武汉</option>
+                <option value="西安">西安</option>
+              </select>
+            </div>
+          </div>
+          <div class="layui-inline">
+            <button class="layui-btn layuiadmin-btn-list" lay-submit lay-filter="LAY-app-forumlist-search">
+              <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="layui-card-body">
+          <table id="LAY-app-forum-list" lay-filter="LAY-app-forum-list"></table>
+          {% verbatim %}
+            <script type="text/html" id="table-forum-list">
+               {{#  if(d.send_key == 0){ }}
+              <a class="layui-btn layui-btn-sm layui-btn-sm" lay-event="send"><i class="layui-icon layui-icon-add-circle-fine"></i>投递</a>
+               {{#  } else { }}
+              <a class="layui-btn layui-btn-sm layui-btn-normal" lay-event="send_1">已 投 递</a>
+               {{#  } }}
+            </script>
+          {% endverbatim %}
+      </div>
+    </div>
+  </div>
+  </body>
+{% endblock %}
+
+{% block js %}
+  <script>
+  layui.config({
+    base: '{% static "layuiadmin/" %}' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'forum', 'table'], function() {
+      var $ = layui.$
+          , form = layui.form
+          , table = layui.table;
+
+      //监听搜索
+      form.on('submit(LAY-app-forumlist-search)', function (data) {
+          var field = data.field;
+          console.log(notNumber(field.price_min))
+          console.log(field.price_min == "")
+          if(field.price_min != ""){
+              if(notNumber(field.price_min)){
+                  console.log(field.price_min)
+              layer.msg("薪资区间应为数字！");
+              return false
+              }
+          }
+          if(field.price_max != ""){
+              if(notNumber(field.price_max)){
+                  console.log(field.price_max)
+              layer.msg("薪资区间应为数字！");
+              return false
+              }
+          }
+
+
+          //执行重载
+          table.reload('LAY-app-forum-list', {
+              page:{curr:1},
+              where: field
+          });
+      });
+  });
+
+  function notNumber(val) {
+    var regPos = /^\d+(\.\d+)?$/; //非负浮点数
+    var regNeg = /^(-(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*)))$/; //负浮点数
+    if(regPos.test(val) || regNeg.test(val)) {
+        return false;
+        } else {
+        return true;
+        }
+    }
+  </script>
+{% endblock %}

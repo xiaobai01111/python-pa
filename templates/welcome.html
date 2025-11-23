@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+    <body>
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-sm6 layui-col-md3">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        信息量
+                    </div>
+                    <div class="layui-card-body layuiadmin-card-list">
+                        <p class="layuiadmin-big-font">{{ all_job }}条</p>
+                        <p>总计职位信息数量</p>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-sm6 layui-col-md3">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        最高薪资
+                    </div>
+                    <div class="layui-card-body layuiadmin-card-list">
+                        <p class="layuiadmin-big-font">{{ job_data_1.salary }}</p>
+                        <p>{{ job_data_1.name | truncatechars:26 }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-sm6 layui-col-md3">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        平均薪资
+                    </div>
+                    <div class="layui-card-body layuiadmin-card-list">
+                        <p class="layuiadmin-big-font">{{ mean_salary }}k</p>
+                        <p>所有薪资的平均薪资</p>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-sm6 layui-col-md3">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        爬取次数
+                    </div>
+                    <div class="layui-card-body layuiadmin-card-list">
+                        <p class="layuiadmin-big-font">{{ spider_info.count }}次</p>
+                        <p>
+                            总计爬取{{ spider_info.count }}次,共{{ spider_info.page }}页
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md8">
+                <div class="layui-row layui-col-space15">
+                    <div class="layui-col-md12">
+                        <div class="layui-card">
+                            <div class="layui-card-header">数据概览</div>
+                            <div class="layui-card-body">
+                                <div class="layui-carousel layadmin-carousel layadmin-dataview" data-anim="fade"
+                                     lay-filter="LAY-index-dataview">
+                                    <div carousel-item id="LAY-index-dataview">
+                                        <div><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md4">
+                <div class="layui-card">
+                    <div class="layui-card-header">系统监控</div>
+                    <div class="layui-card-body">
+                        <div class="layui-carousel layadmin-carousel layadmin-dataview" data-anim="fade"
+                             lay-filter="LAY-index-control">
+                            <div carousel-item id="LAY-index-control">
+                                <div><i class="layui-icon layui-icon-loading1 layadmin-loading"></i>正在加载...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">薪资排行TOP10</div>
+                    <div class="layui-card-body">
+                        <table class="layui-table">
+                            <thead>
+                            <tr>
+                                <th>职位编号</th>
+                                <th>职位名称</th>
+                                <th>薪资待遇</th>
+                                <th>学历要求</th>
+                                <th>经验要求</th>
+                                <th>工作地点</th>
+                                <th>公司名称</th>
+                                <th>所属行业</th>
+                                <th>公司规模</th>
+                            </thead>
+                            <tbody>
+                            {% for job in job_data_10 %}
+                                <tr>
+                                    <td>{{ job.job_id }}</td>
+                                    <td>{{ job.name | truncatechars:16 }}</td>
+                                    <td>{{ job.salary }}</td>
+                                    <td>{{ job.education }}</td>
+                                    <td>{{ job.experience }}</td>
+                                    <td>{{ job.place }}</td>
+                                    <td>{{ job.company | truncatechars:16 }}</td>
+                                    <td>{{ job.label }}</td>
+                                    <td>{{ job.scale }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <div style="text-align: center;">
+                            <div id="test-laypage-demo0"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </body>
+{% endblock %}
+{% block js %}
+    <script>
+        layui.config({
+            base: '{% static "layuiadmin/" %}' //静态资源所在路径
+        }).extend({
+            index: 'lib/index' //主入口模块
+        }).use(['index', 'console']);
+    </script>
+{% endblock %}

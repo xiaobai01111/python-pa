@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+    <body>
+
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-sm12">
+                <div class="layui-card">
+                    <div class="layui-card-header">职位关键字-柱形图</div>
+                    <div class="layui-card-body">
+                        <div id="LAY-index-dataview" style="width: 100%; height: 400px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </body>
+{% endblock content %}
+{% block js %}
+    <script>
+        // 添加时间戳防止缓存
+        var timestamp = new Date().getTime();
+        layui.config({
+            base: '{% static "layuiadmin/" %}',
+            version: timestamp
+        }).extend({
+            index: 'lib/index'
+        }).use(['index', 'bar']);
+    </script>
+{% endblock js %}

@@ -1,0 +1,112 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>注册-职位推荐系统</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="{% static "layuiadmin/layui/css/layui.css" %}" media="all">
+    <link rel="stylesheet" href="{% static "layuiadmin/style/admin.css" %}" media="all">
+    <link rel="stylesheet" href="{% static "layuiadmin/style/login.css" %}" media="all">
+</head>
+<body>
+
+
+<div class="layadmin-user-login layadmin-user-display-show" id="LAY-user-login"
+     style="display: none; background-image: url('{% static "login.png" %}'); background-size: cover;">
+    <div class="layadmin-user-login-main">
+        <div class="layadmin-user-login-box layadmin-user-login-header">
+            <h2 style="color: #fff">注册</h2>
+            <p>职位信息可视化推荐系统</p>
+        </div>
+        <div class="layadmin-user-login-box layadmin-user-login-body layui-form">
+            <div class="layui-form-item">
+                <label class="layadmin-user-login-icon layui-icon layui-icon-cellphone"></label>
+                <input type="text" name="user" placeholder="账号" class="layui-input">
+            </div>
+            <div class="layui-form-item">
+                <label class="layadmin-user-login-icon layui-icon layui-icon-password" for=></label>
+                <input type="password" name="password" placeholder="密码" class="layui-input">
+            </div>
+            <div class="layui-form-item">
+                <label class="layadmin-user-login-icon layui-icon layui-icon-password"></label>
+                <input type="password" name="repass" placeholder="确认密码" class="layui-input">
+            </div>
+            <div class="layui-form-item">
+                <label class="layadmin-user-login-icon layui-icon layui-icon-username"></label>
+                <input type="text" name="user_name" placeholder="昵称" class="layui-input">
+            </div>
+            <div class="layui-form-item" style="margin-bottom: 20px;">
+                <a href="{% url "login" %}" class="layadmin-user-jump-change layadmin-link" style="margin-top: 7px;">已有账号？</a>
+            </div>
+            <div class="layui-form-item">
+                <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="LAY-user-reg-submit">注 册</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="{% static "layuiadmin/layui/layui.js" %}"></script>
+<script>
+    layui.config({
+        base: '{% static "layuiadmin/" %}' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['form', 'jquery'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            layer = layui.layer;
+
+        //提交
+        form.on('submit(LAY-user-reg-submit)', function (obj) {
+            obj = obj.field;
+
+            if (obj.user == '') {
+                layer.msg('账号不能为空');
+                return false;
+            }
+            if (obj.password == '') {
+                layer.msg('密码不能为空');
+                return false;
+            }
+            if (obj.repass == '') {
+                layer.msg('确认密码不能为空');
+                return false;
+            }
+            if (obj.user_name == '') {
+                layer.msg('昵称不能为空');
+                return false;
+            }
+            if (obj.password != obj.repass) {
+                layer.msg('两次输入的密码不一致');
+                return false;
+            }
+
+            //请求登入接口
+            $.ajax({
+                type: 'POST',
+                url: '/register/',
+                data: obj,
+                success: function (res) {
+                    // 弹窗内容， 样式
+                    if (res.code == 0) {
+                        layer.msg(res.msg, {icon: 1, time: 1000});
+                        setTimeout(function () {
+                            location.href = "http://127.0.0.1:8000/index/";
+                        }, 1000) // 延迟重定向
+                    } else {
+                        layer.msg(res.msg);
+                        return false;
+                    }
+                },
+                error: function (response) {
+                    layer.msg(response.msg);
+                }
+            })
+        });
+    });
+</script>
+</body>
+</html>

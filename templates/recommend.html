@@ -1,0 +1,69 @@
+
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<body>
+<div class="layui-fluid layadmin-maillist-fluid">
+  <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+            <blockquote class="layui-elem-quote" style="background-color: white">用户越多，投递的简历越多,推荐的越准确</blockquote>
+      </div>
+      {% for job in recommend_list %}
+        <div class="layui-col-md4 layui-col-sm6">
+      <div class="layadmin-contact-box" >
+          <div class="layui-col-md9 layui-col-sm6">
+            <a href="javascript:;">
+              <div class="layadmin-text">
+                <h3 class="layadmin-title"><strong>职位名称：{{ job.name | truncatechars:16 }}</strong></h3>
+                <h3 class="layadmin-title">薪资待遇：{{ job.salary }}</h3>
+                <h3 class="layadmin-title">学历要求：{{ job.education }}</h3>
+                <h3 class="layadmin-title">经验要求：{{ job.experience }}</h3>
+                <h3 class="layadmin-title">工作地点：<i class="layui-icon layui-icon-location"></i>{{ job.place }}</h3>
+                <h3 class="layadmin-title">公司名称：{{ job.company | truncatechars:16 }}</h3>
+              </div>
+            </a>
+          </div>
+          <div class="layui-col-md2 layui-col-sm6">
+             <button class="layui-btn" onclick="send({{ job.job_id }},'{{ job.name }}')">投递职位</button>
+          </div>
+      </div>
+    </div>
+      {% endfor %}
+  </div>
+</div>
+
+
+</body>
+{% endblock %}
+{% block js %}
+  <script>
+  layui.config({
+    base: '{% static "layuiadmin/" %}' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'jquery','layer','element']);
+
+  function send(job_id, job_name) {
+      var $ = layui.$,
+	    layer = layui.layer,
+	    element = layui.element;
+
+          console.log(job_id)
+        layer.confirm("确定投递职位"+job_name +"吗？", function(t) {
+			$.ajax({
+				   type: 'POST',
+				   data:{"job_id":job_id, "send_key":0},
+				   url: '/send_job/',
+				   success: function (res) {
+					   layer.msg(res.msg);location.reload()
+				   },
+				   error:function(response){
+					   layer.msg(response.msg);
+				   }
+			   }),
+				layer.close(t)
+		})
+      }
+
+  </script>
+{% endblock js %}
