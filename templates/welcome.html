@@ -1,69 +1,267 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-    <body>
+    <body style="background-color: #0f172a;"> 
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            color: #e2e8f0;
+            background: radial-gradient(circle at 10% 20%, rgb(40, 50, 180) 0%, rgb(20, 10, 60) 90%);
+            background-attachment: fixed; 
+            min-height: 100vh;
+        }
+        
+        .layui-fluid { padding: 30px; } 
+        
+        .layui-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 10px; 
+        }
+        
+        .layui-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .layui-card-header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 20px 30px;
+            height: auto;
+            line-height: 1.5;
+            font-weight: 600;
+            font-size: 16px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            background: transparent;
+        }
+        
+        .layui-card-header::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 18px;
+            background: #00ff88; 
+            border-radius: 2px;
+            margin-right: 12px;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+
+        .layui-card-body {
+            padding: 30px;
+        }
+
+        .stat-card .layui-card-body {
+            padding: 25px 30px;
+        }
+        
+        .stat-card .layui-card-header { 
+            border: none; 
+            padding-bottom: 0; 
+            font-size: 14px; 
+            color: #94a3b8; 
+        }
+        .stat-card .layui-card-header::before { display: none; }
+        
+        .stat-number {
+            font-size: 42px;
+            font-weight: 700;
+            color: #fff;
+            margin-top: 12px;
+            margin-bottom: 8px;
+            letter-spacing: -1px;
+            text-shadow: 0 0 20px rgba(255,255,255,0.1);
+        }
+        
+        .stat-desc {
+            font-size: 13px;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+        }
+        
+        .bg-icon {
+            position: absolute;
+            right: 15px;
+            bottom: 15px;
+            font-size: 80px;
+            opacity: 0.05;
+            color: #fff;
+            transform: rotate(-15deg);
+        }
+
+        .card-blue { background: linear-gradient(180deg, rgba(59,130,246,0.1) 0%, rgba(30,41,59,0.7) 100%); border-top: 2px solid #3b82f6; }
+        .card-blue .stat-number { color: #60a5fa; text-shadow: 0 0 15px rgba(59,130,246,0.4); }
+        
+        .card-purple { background: linear-gradient(180deg, rgba(139,92,246,0.1) 0%, rgba(30,41,59,0.7) 100%); border-top: 2px solid #8b5cf6; }
+        .card-purple .stat-number { color: #a78bfa; text-shadow: 0 0 15px rgba(139,92,246,0.4); }
+        
+        .card-green { background: linear-gradient(180deg, rgba(16,185,129,0.1) 0%, rgba(30,41,59,0.7) 100%); border-top: 2px solid #10b981; }
+        .card-green .stat-number { color: #34d399; text-shadow: 0 0 15px rgba(16,185,129,0.4); }
+        
+        .card-pink { background: linear-gradient(180deg, rgba(236,72,153,0.1) 0%, rgba(30,41,59,0.7) 100%); border-top: 2px solid #ec4899; }
+        .card-pink .stat-number { color: #f472b6; text-shadow: 0 0 15px rgba(236,72,153,0.4); }
+
+        .layui-table {
+            width: 100%;
+            background-color: transparent;
+            color: #e2e8f0;
+            border-collapse: separate;
+            border-spacing: 0 12px; 
+        }
+        
+        .layui-table thead tr {
+            background-color: transparent;
+        }
+        
+        .layui-table th {
+            font-weight: 600;
+            color: #94a3b8;
+            border: none;
+            padding: 15px 20px;
+            text-align: left;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .layui-table tbody tr {
+            background-color: rgba(255, 255, 255, 0.03);
+            transition: all 0.3s;
+        }
+        
+        .layui-table tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.08);
+            transform: scale(1.01);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        
+        .layui-table td {
+            border: none;
+            padding: 20px;
+            font-size: 14px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .layui-table td:first-child {
+            border-left: 1px solid rgba(255,255,255,0.05);
+            border-top-left-radius: 12px;
+            border-bottom-left-radius: 12px;
+        }
+        
+        .layui-table td:last-child {
+            border-right: 1px solid rgba(255,255,255,0.05);
+            border-top-right-radius: 12px;
+            border-bottom-right-radius: 12px;
+        }
+
+        .badge {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .badge-salary { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .badge-edu { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .badge-exp { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-scale { background: rgba(148, 163, 184, 0.15); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.3); }
+
+        .layadmin-dataview { 
+            height: 380px !important; 
+            background: transparent !important;
+        }
+        
+        .layui-col-space24 > * { padding: 12px; }
+        .layui-row { margin: -12px; }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+    </style>
+
     <div class="layui-fluid">
-        <div class="layui-row layui-col-space15">
+        <div class="layui-row layui-col-space30"> 
             <div class="layui-col-sm6 layui-col-md3">
-                <div class="layui-card">
-                    <div class="layui-card-header">
-                        信息量
-                    </div>
-                    <div class="layui-card-body layuiadmin-card-list">
-                        <p class="layuiadmin-big-font">{{ all_job }}条</p>
-                        <p>总计职位信息数量</p>
+                <div class="layui-card stat-card card-blue">
+                    <div class="layui-card-header">职位信息总量</div>
+                    <div class="layui-card-body">
+                        <div class="stat-number">{{ all_job }}</div>
+                        <div class="stat-desc">
+                            <i class="layui-icon layui-icon-list" style="margin-right: 5px;"></i>
+                            当前数据库收录总数
+                        </div>
+                        <i class="layui-icon layui-icon-form bg-icon"></i>
                     </div>
                 </div>
             </div>
             <div class="layui-col-sm6 layui-col-md3">
-                <div class="layui-card">
-                    <div class="layui-card-header">
-                        最高薪资
-                    </div>
-                    <div class="layui-card-body layuiadmin-card-list">
-                        <p class="layuiadmin-big-font">{{ job_data_1.salary }}</p>
-                        <p>{{ job_data_1.name | truncatechars:26 }}</p>
-                    </div>
-                </div>
-            </div>
-            <div class="layui-col-sm6 layui-col-md3">
-                <div class="layui-card">
-                    <div class="layui-card-header">
-                        平均薪资
-                    </div>
-                    <div class="layui-card-body layuiadmin-card-list">
-                        <p class="layuiadmin-big-font">{{ mean_salary }}k</p>
-                        <p>所有薪资的平均薪资</p>
+                <div class="layui-card stat-card card-purple">
+                    <div class="layui-card-header">全网最高薪资</div>
+                    <div class="layui-card-body">
+                        <div class="stat-number">{{ job_data_1.salary_1 }}k</div>
+                        <div class="stat-desc">
+                            <span class="layui-badge-dot layui-bg-orange"></span>
+                            &nbsp;{{ job_data_1.name | truncatechars:15 }}
+                        </div>
+                        <i class="layui-icon layui-icon-diamond bg-icon"></i>
                     </div>
                 </div>
             </div>
             <div class="layui-col-sm6 layui-col-md3">
-                <div class="layui-card">
-                    <div class="layui-card-header">
-                        爬取次数
+                <div class="layui-card stat-card card-green">
+                    <div class="layui-card-header">行业平均薪资</div>
+                    <div class="layui-card-body">
+                        <div class="stat-number">{{ mean_salary }}k</div>
+                        <div class="stat-desc">
+                            <i class="layui-icon layui-icon-chart-screen" style="margin-right: 5px;"></i>
+                            综合统计分析结果
+                        </div>
+                        <i class="layui-icon layui-icon-dollar bg-icon"></i>
                     </div>
-                    <div class="layui-card-body layuiadmin-card-list">
-                        <p class="layuiadmin-big-font">{{ spider_info.count }}次</p>
-                        <p>
-                            总计爬取{{ spider_info.count }}次,共{{ spider_info.page }}页
-                        </p>
+                </div>
+            </div>
+            <div class="layui-col-sm6 layui-col-md3">
+                <div class="layui-card stat-card card-pink">
+                    <div class="layui-card-header">数据爬取监控</div>
+                    <div class="layui-card-body">
+                        <div class="stat-number">{{ spider_info.count }}</div>
+                        <div class="stat-desc">
+                            共采集 {{ spider_info.page }} 页数据
+                        </div>
+                        <i class="layui-icon layui-icon-engine bg-icon"></i>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="layui-row layui-col-space15">
+
+        <div style="height: 30px;"></div> 
+
+        <div class="layui-row layui-col-space30">
             <div class="layui-col-md8">
-                <div class="layui-row layui-col-space15">
-                    <div class="layui-col-md12">
-                        <div class="layui-card">
-                            <div class="layui-card-header">数据概览</div>
-                            <div class="layui-card-body">
-                                <div class="layui-carousel layadmin-carousel layadmin-dataview" data-anim="fade"
-                                     lay-filter="LAY-index-dataview">
-                                    <div carousel-item id="LAY-index-dataview">
-                                        <div><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
-                                    </div>
-                                </div>
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <span>数据概览与分析</span>
+                        <span class="layui-badge layui-bg-blue" style="margin-left: 10px; border-radius: 4px; opacity: 0.8;">Live</span>
+                    </div>
+                    <div class="layui-card-body">
+                        <div class="layui-carousel layadmin-carousel layadmin-dataview" data-anim="fade"
+                             lay-filter="LAY-index-dataview" style="background: transparent;">
+                            <div carousel-item id="LAY-index-dataview" style="background: transparent;">
+                                <div><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
                             </div>
                         </div>
                     </div>
@@ -71,11 +269,11 @@
             </div>
             <div class="layui-col-md4">
                 <div class="layui-card">
-                    <div class="layui-card-header">系统监控</div>
+                    <div class="layui-card-header">实时系统监控</div>
                     <div class="layui-card-body">
                         <div class="layui-carousel layadmin-carousel layadmin-dataview" data-anim="fade"
-                             lay-filter="LAY-index-control">
-                            <div carousel-item id="LAY-index-control">
+                             lay-filter="LAY-index-control" style="background: transparent;">
+                            <div carousel-item id="LAY-index-control" style="background: transparent;">
                                 <div><i class="layui-icon layui-icon-loading1 layadmin-loading"></i>正在加载...</div>
                             </div>
                         </div>
@@ -83,10 +281,16 @@
                 </div>
             </div>
         </div>
-        <div class="layui-row layui-col-space15">
+
+        <div style="height: 30px;"></div>
+
+        <div class="layui-row layui-col-space30">
             <div class="layui-col-md12">
                 <div class="layui-card">
-                    <div class="layui-card-header">薪资排行TOP10</div>
+                    <div class="layui-card-header">
+                        <span>薪资排行 TOP 10</span>
+                        <a href="{% url 'job_list' %}" style="float: right; font-size: 12px; color: #3b82f6; font-weight: normal;">查看全部 ></a>
+                    </div>
                     <div class="layui-card-body">
                         <table class="layui-table">
                             <thead>
@@ -104,20 +308,20 @@
                             <tbody>
                             {% for job in job_data_10 %}
                                 <tr>
-                                    <td>{{ job.job_id }}</td>
-                                    <td>{{ job.name | truncatechars:16 }}</td>
-                                    <td>{{ job.salary }}</td>
-                                    <td>{{ job.education }}</td>
-                                    <td>{{ job.experience }}</td>
+                                    <td style="font-family: monospace; color: #64748b;">#{{ job.job_id }}</td>
+                                    <td style="font-weight: 600; color: #fff;">{{ job.name | truncatechars:16 }}</td>
+                                    <td><span class="badge badge-salary">{{ job.salary }}</span></td>
+                                    <td><span class="badge badge-edu">{{ job.education }}</span></td>
+                                    <td><span class="badge badge-exp">{{ job.experience }}</span></td>
                                     <td>{{ job.place }}</td>
                                     <td>{{ job.company | truncatechars:16 }}</td>
                                     <td>{{ job.label }}</td>
-                                    <td>{{ job.scale }}</td>
+                                    <td><span class="badge badge-scale">{{ job.scale }}</span></td>
                                 </tr>
                             {% endfor %}
                             </tbody>
                         </table>
-                        <div style="text-align: center;">
+                        <div style="text-align: center; margin-top: 20px;">
                             <div id="test-laypage-demo0"></div>
                         </div>
                     </div>
@@ -131,9 +335,9 @@
 {% block js %}
     <script>
         layui.config({
-            base: '{% static "layuiadmin/" %}' //静态资源所在路径
+            base: '{% static "layuiadmin/" %}' 
         }).extend({
-            index: 'lib/index' //主入口模块
+            index: 'lib/index' 
         }).use(['index', 'console']);
     </script>
 {% endblock %}

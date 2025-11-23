@@ -10,7 +10,8 @@
         /* 侧边栏样式重构 - 深色渐变风格 */
         .layui-side-menu {
             background: linear-gradient(180deg, #1a1c2c 0%, #2c1a3d 100%) !important;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+            z-index: 1001;
         }
         
         .layui-layout-admin .layui-logo {
@@ -19,8 +20,11 @@
             font-weight: 700;
             font-size: 18px;
             letter-spacing: 0.5px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
             box-shadow: none !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .layui-side-menu .layui-nav {
@@ -29,83 +33,228 @@
         }
         
         .layui-side-menu .layui-nav-item > a {
-            color: rgba(255,255,255,0.7) !important;
-            transition: all 0.3s;
+            color: rgba(255,255,255,0.65) !important;
+            transition: all 0.3s ease;
             padding-left: 25px;
+            border-left: 3px solid transparent;
         }
         
         .layui-side-menu .layui-nav-item > a:hover {
             color: #fff !important;
             background-color: rgba(255,255,255,0.05);
+            border-left-color: #00c6ff;
+            /* padding-left: 30px; 移除此行以修复图标重叠问题 */
         }
         
-        /* 侧边栏选中状态 - 亮青色高亮 */
-        .layui-side-menu .layui-nav-itemed > .layui-nav-child {
-            background-color: rgba(0,0,0,0.2) !important;
+        /* 侧边栏滚动区域修复 */
+        .layui-side-menu .layui-side-scroll {
+            height: calc(100% - 50px) !important;
+            margin-top: 50px;
+        }
+        
+        /* Logo 区域样式微调 */
+        .layui-layout-admin .layui-logo {
+            height: 50px;
+            line-height: 50px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1002; /* 确保在菜单之上 */
+            width: 220px;
+        }
+
+        /* 用户下拉菜单对齐微调 */
+        .layui-layout-right .layui-nav-child {
+            top: 55px !important; /* 微调高度 */
+            right: 10px !important; /* 增加右侧间距 */
+            min-width: 120px;
+            padding: 5px 0;
         }
         
         .layui-nav-tree .layui-this, 
         .layui-nav-tree .layui-this > a, 
         .layui-nav-tree .layui-nav-child dd.layui-this, 
         .layui-nav-tree .layui-nav-child dd.layui-this a {
-            background-color: #00c6ff !important; /* 亮蓝色高亮 */
+            background-color: #00c6ff !important;
             background: linear-gradient(90deg, #00c6ff 0%, #0072ff 100%) !important;
             color: #fff !important;
-            box-shadow: 0 4px 15px rgba(0, 114, 255, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 114, 255, 0.4);
+            border-radius: 0 20px 20px 0; /* 半圆角设计 */
         }
         
-        /* 顶部栏样式重构 - 纯白极简 */
+        /* 顶部栏样式重构 - 深色磨砂玻璃 */
         .layui-header {
-            background-color: #fff !important;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            border-bottom: none !important;
+            background-color: rgba(30, 41, 59, 0.95) !important; /* 深色背景 */
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.2); /* 加深阴影 */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+            z-index: 1000;
         }
         
+        .layui-header .layui-nav .layui-nav-item {
+            line-height: 50px; 
+        }
+
         .layui-header .layui-nav .layui-nav-item a {
-            color: #333 !important;
+            color: rgba(255, 255, 255, 0.7) !important; /* 文字改白 */
             font-weight: 500;
+            transition: color 0.3s;
         }
         
         .layui-header .layui-nav .layui-nav-item a:hover {
-            color: #0072ff !important;
+            color: #00c6ff !important; /* 悬停亮蓝 */
+        }
+
+        /* 图标颜色 */
+        .layui-nav-item a i {
+            color: rgba(255, 255, 255, 0.7) !important;
+        }
+        .layui-nav-item a:hover i {
+            color: #00c6ff !important;
+        }
+
+        /* 修复用户下拉菜单 - 深色模式 */
+        .layui-layout-right {
+            padding-right: 20px;
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+
+        .layui-layout-right .layui-nav-item {
+            display: flex;
+            align-items: center;
+            position: relative; 
+        }
+
+        .layui-layout-right .layui-nav-child {
+            top: 100% !important; 
+            left: 50% !important; 
+            right: auto !important;
+            transform: translateX(-50%); 
+            margin-top: 10px; 
+            min-width: 120px;
+            border: 1px solid rgba(255, 255, 255, 0.1); /* 微边框 */
+            background-color: #1e293b; /* 深色菜单背景 */
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            border-radius: 8px;
+            padding: 8px 0;
+            animation: slideDown 0.2s ease;
+            text-align: center; 
         }
         
-        /* 标签页样式重构 */
+        /* 下拉菜单箭头 - 深色 */
+        .layui-layout-right .layui-nav-child:before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            margin-left: -6px;
+            border-width: 0 6px 6px;
+            border-style: solid;
+            border-color: transparent transparent #1e293b; /* 适配背景色 */
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translate(-50%, -10px); }
+            to { opacity: 1; transform: translate(-50%, 0); }
+        }
+
+        .layui-layout-right .layui-nav-child dd a {
+            line-height: 36px;
+            padding: 0 20px;
+            color: rgba(255, 255, 255, 0.8) !important; /* 菜单项文字白 */
+        }
+        
+        .layui-layout-right .layui-nav-child dd a:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: #00c6ff !important;
+        }
+        
+        /* 标签页样式重构 - 深色模式 */
         .layadmin-pagetabs {
-            background-color: #f9f9f9 !important;
-            box-shadow: none !important;
-            border-bottom: 1px solid #eee;
+            background-color: #0f172a !important; /* 深色背景 */
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            height: 44px;
         }
         
         .layadmin-pagetabs .layui-tab-title {
             background-color: transparent !important;
             border: none !important;
+            height: 44px;
         }
         
         .layadmin-pagetabs .layui-tab-title li {
-            background-color: #fff !important;
-            border-right: 1px solid #f0f0f0;
-            color: #666;
+            line-height: 44px;
+            background-color: transparent !important;
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.5);
             font-size: 13px;
+            position: relative;
+            transition: all 0.3s;
         }
         
         .layadmin-pagetabs .layui-tab-title li:hover {
-            background-color: #f0f8ff !important;
+            color: #fff;
+            background-color: rgba(255, 255, 255, 0.05) !important;
         }
         
         .layadmin-pagetabs .layui-tab-title li.layui-this {
-            background-color: #fff !important;
-            color: #0072ff !important;
+            color: #fff !important;
             font-weight: 600;
-            border-top: 2px solid #0072ff; /* 顶部高亮条 */
+            background-color: rgba(0, 198, 255, 0.15) !important; /* 选中项微蓝背景 */
         }
         
-        .layadmin-pagetabs .layui-tab-title li:after {
-            display: none !important; /* 移除默认的边框线 */
+        /* 标签底部流光条 */
+        .layadmin-pagetabs .layui-tab-title li.layui-this:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, #00c6ff 0%, #0072ff 100%);
+            display: block !important;
+            border: none !important;
+        }
+
+        /* 标签控制按钮 - 深色适配 */
+        .layadmin-tabs-control {
+            height: 44px;
+            line-height: 44px;
+            border-left: 1px solid rgba(255, 255, 255, 0.05);
+            background-color: #0f172a;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .layadmin-tabs-control:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+        
+        /* 下拉菜单(标签栏右侧) */
+        .layadmin-tabs-select .layui-nav-child {
+            background-color: #1e293b;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .layadmin-tabs-select .layui-nav-child dd a {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        .layadmin-tabs-select .layui-nav-child dd a:hover {
+            background-color: rgba(255, 255, 255, 0.05);
         }
 
         /* 图标微调 */
         .layui-icon { font-size: 16px; }
+        
+        /* 全局滚动条美化 - 深色 */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        
+        /* 主体背景色 */
+        #LAY_app_body { background-color: #0f172a; }
     </style>
 
     <div id="LAY_app">
