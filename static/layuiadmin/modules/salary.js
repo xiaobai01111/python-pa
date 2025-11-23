@@ -24,21 +24,45 @@ layui.define(function(e) {
 			l = [],
 			t = [{
 				title: {
-					text: "薪资分布",
-					x: "left",
+					text: "薪资分布概览",
+					left: "center",
+					top: 20,
 					textStyle: {
-						fontSize: 14
+						color: '#e2e8f0',
+						fontSize: 18,
+						fontFamily: 'Inter, sans-serif'
 					}
 				},
 				tooltip: {
 					trigger: "item",
-					formatter: "{a} <br/>{b} : {c} ({d}%)"
+					backgroundColor: 'rgba(255, 255, 255, 0.95)',
+					borderColor: '#f1f5f9',
+					borderWidth: 1,
+					textStyle: { color: '#334155' },
+					formatter: "{b} : {c} ({d}%)"
 				},
+				color: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#6366f1'],
 				series: [{
 					name: "薪资待遇",
 					type: "pie",
-					radius: "80%",
-					center: ["50%", "50%"],
+					radius: ["40%", "70%"],
+					center: ["50%", "55%"],
+					itemStyle: {
+						borderRadius: 8,
+						borderColor: 'rgba(30, 41, 59, 0.7)',
+						borderWidth: 2
+					},
+					label: {
+						show: true,
+						color: '#94a3b8',
+						formatter: '{b}\n{d}%',
+						fontSize: 14
+					},
+					labelLine: {
+						lineStyle: {
+							color: '#475569'
+						}
+					},
 					data: [{name: '5K及以下', value: 48},
 						{name: '5-10K', value: 372},
 						{name: '10K-15K', value: 1691},
