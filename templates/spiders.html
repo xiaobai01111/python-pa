@@ -1,7 +1,152 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-    <body>
+    <body style="background-color: #0f172a;">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        body { font-family: 'Inter', sans-serif; color: #e2e8f0; }
+        
+        .layui-fluid { padding: 30px; }
+        
+        /* 卡片容器 - 深色磨砂 */
+        .layui-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .layui-card-header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 20px 30px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+            display: flex;
+            align-items: center;
+        }
+        
+        .layui-card-header::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 18px;
+            background: #00ff88;
+            border-radius: 2px;
+            margin-right: 12px;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+        
+        .layui-card-body { padding: 30px; }
+        
+        /* 表单元素重构 */
+        .layui-form-label {
+            color: #94a3b8;
+            width: 100px;
+            padding: 12px 15px;
+            font-size: 14px;
+        }
+        
+        .layui-input-block { margin-left: 130px; }
+        
+        .layui-input, .layui-select {
+            background-color: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-radius: 8px;
+            height: 44px;
+            line-height: 44px;
+            transition: all 0.3s;
+        }
+        
+        .layui-input:focus, .layui-select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        
+        .layui-input::-webkit-input-placeholder { color: rgba(255, 255, 255, 0.3); }
+        
+        /* Layui 下拉选择框三角颜色 */
+        .layui-form-select .layui-edge {
+            border-top-color: rgba(255, 255, 255, 0.5);
+        }
+        
+        /* 单选框样式适配 */
+        .layui-form-radio > i {
+            color: #3b82f6;
+        }
+        .layui-form-radio * {
+            color: #e2e8f0;
+            font-size: 14px;
+        }
+        
+        /* 按钮样式 */
+        .layui-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+            border: none;
+            height: 44px;
+            line-height: 44px;
+            padding: 0 30px;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .layui-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+            opacity: 0.95;
+        }
+        
+        /* 正在爬取状态 */
+        span.layui-btn {
+            background: rgba(148, 163, 184, 0.2) !important;
+            color: #94a3b8 !important;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+        
+        /* 间距微调 */
+        .layui-form-item { margin-bottom: 24px; }
+
+        /* 修复底部空白 */
+        html, body { height: 100%; }
+        .layui-row { height: 100%; }
+        .layui-col-md12 { height: 100%; }
+
+        /* 下拉菜单深色适配 */
+        .layui-form-select dl {
+            background-color: #1e293b;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            padding: 5px 0;
+        }
+        
+        .layui-form-select dl dd {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .layui-form-select dl dd:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .layui-form-select dl dd.layui-this {
+            background-color: #3b82f6;
+            color: #fff;
+        }
+        
+        /* 下拉框输入区域样式 */
+        .layui-form-select .layui-input {
+            color: #fff;
+        }
+    </style>
+
     <div class="layui-fluid">
         <div class="layui-row layui-col-space15">
             <div class="layui-col-md12">
@@ -96,15 +241,15 @@
                 var field = data.field;
                 console.log(field)
                 if (field.key_word == "") {
-                    layer.msg("关键字不能为空！")
+                    layer.msg("关键字不能为空！", {icon: 5, anim: 6})
                     return false
                 }
                 if (field.page == "") {
-                    layer.msg("页数不能为空！")
+                    layer.msg("页数不能为空！", {icon: 5, anim: 6})
                     return false
                 }
                 if (field.city == "") {
-                    layer.msg("城市不能为空！")
+                    layer.msg("城市不能为空！", {icon: 5, anim: 6})
                     return false
                 }
 
@@ -116,12 +261,12 @@
                     url: '/start_spider/',
                     data: field,
                     success: function (res) {
-                        layer.msg(res.msg);
+                        layer.msg(res.msg, {icon: 1, time: 2000});
                         document.getElementById("start_spider").innerHTML = '开始爬取';
                         document.getElementById("start_spider").setAttribute("lay-filter", "start_spider")
                     },
                     error: function (response) {
-                        layer.msg(response.msg);
+                        layer.msg(response.msg || "服务器错误", {icon: 2});
                     }
                 })
 

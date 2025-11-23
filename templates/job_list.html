@@ -71,15 +71,22 @@
         color: #e2e8f0;
     }
     
+    /* 修复表头背景 */
     .layui-table-header {
-        background-color: rgba(15, 23, 42, 0.8) !important;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        background-color: #1e293b !important; /* 深色背景 */
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
     }
     
     .layui-table th {
-        color: #94a3b8;
+        background-color: #1e293b !important; /* 强制表头单元格背景 */
+        color: #94a3b8 !important; /* 浅灰文字 */
         font-weight: 600;
-        border-color: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 255, 255, 0.05) !important;
+    }
+    
+    .layui-table th span {
+        background-color: transparent !important;
+        color: #94a3b8 !important;
     }
     
     .layui-table td {
@@ -92,7 +99,7 @@
         background-color: rgba(59, 130, 246, 0.1) !important;
     }
     
-    /* 分页样式 */
+    /* 分页样式修复 */
     .layui-laypage a, .layui-laypage span {
         background-color: transparent !important;
         color: #94a3b8 !important;
@@ -106,7 +113,30 @@
     .layui-laypage .layui-laypage-curr em {
         color: #fff !important;
     }
+
+    /* 分页输入框和下拉框深色适配 */
+    .layui-laypage input, .layui-laypage select {
+        background-color: #1e293b !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: #fff !important;
+    }
     
+    .layui-laypage button {
+        background-color: #1e293b !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: #94a3b8 !important;
+    }
+
+    /* 修复底部空白 */
+    html, body { height: 100%; }
+    .layui-fluid { 
+        padding: 24px; 
+        min-height: calc(100vh - 110px); 
+        box-sizing: border-box;
+    }
+    .layui-card { height: 100%; margin-bottom: 0; }
+    .layui-card-body { height: calc(100% - 100px); overflow: auto; }
+
     /* 投递按钮特殊样式 */
     .layui-btn-sm {
         height: 26px;
@@ -127,6 +157,37 @@
         background: rgba(148, 163, 184, 0.15) !important;
         color: #94a3b8 !important;
         border: 1px solid rgba(148, 163, 184, 0.3) !important;
+    }
+
+    /* 修复下拉菜单样式 */
+    .layui-form-select dl {
+        background-color: #1e293b;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        padding: 5px 0;
+    }
+    
+    .layui-form-select dl dd {
+        color: rgba(255, 255, 255, 0.8);
+    }
+    
+    .layui-form-select dl dd:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+    
+    .layui-form-select dl dd.layui-this {
+        background-color: #3b82f6;
+        color: #fff;
+    }
+
+    /* 修复表格 Loading 和空数据样式 */
+    .layui-table-init, .layui-none {
+        background-color: transparent !important;
+        color: #94a3b8 !important;
+    }
+    
+    .layui-table-body {
+        overflow-x: auto;
     }
   </style>
 

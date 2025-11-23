@@ -3,15 +3,72 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-<body>
+<body style="background-color: #0f172a;">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    
+    body { font-family: 'Inter', sans-serif; color: #e2e8f0; }
+    
+    html, body { height: 100%; }
+    
+    .layui-fluid { 
+        padding: 30px; 
+        min-height: 100%;
+        box-sizing: border-box;
+    }
+    
+    .layui-row, .layui-col-sm12 { height: 100%; }
+
+    /* 卡片容器 - 深色磨砂 */
+    .layui-card {
+        background: rgba(30, 41, 59, 0.7);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        height: calc(100vh - 60px); /* 自适应高度 */
+    }
+    
+    .layui-card-header {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 20px 30px;
+        font-size: 18px;
+        font-weight: 600;
+        color: #fff;
+        display: flex;
+        align-items: center;
+    }
+    
+    .layui-card-header::before {
+        content: '';
+        display: inline-block;
+        width: 4px;
+        height: 18px;
+        background: #3b82f6;
+        border-radius: 2px;
+        margin-right: 12px;
+        box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+    }
+    
+    .layui-card-body {
+        padding: 30px;
+        height: calc(100% - 80px);
+        box-sizing: border-box;
+    }
+    
+    .layui-carousel {
+        background-color: transparent !important;
+    }
+  </style>
 
   <div class="layui-fluid">
     <div class="layui-row layui-col-space15">
       <div class="layui-col-sm12">
         <div class="layui-card">
-          <div class="layui-card-header">薪资待遇分布-饼图</div>
+          <div class="layui-card-header">薪资待遇分布</div>
           <div class="layui-card-body">
-            <div class="layui-carousel layadmin-carousel layadmin-dataview" data-anim="fade" lay-filter="LAY-index-dataview">
+            <div class="layui-carousel layadmin-carousel layadmin-dataview" data-anim="fade" lay-filter="LAY-index-dataview" style="width: 100%; height: 100%;">
               <div carousel-item id="LAY-index-dataview">
                 <div><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
               </div>
