@@ -2,6 +2,112 @@
 {% load static %}
 {% block content %}
     <body class="layui-layout-body">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        
+        body { font-family: 'Inter', sans-serif; }
+
+        /* 侧边栏样式重构 - 深色渐变风格 */
+        .layui-side-menu {
+            background: linear-gradient(180deg, #1a1c2c 0%, #2c1a3d 100%) !important;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .layui-layout-admin .layui-logo {
+            background-color: transparent !important;
+            color: #fff !important;
+            font-weight: 700;
+            font-size: 18px;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            box-shadow: none !important;
+        }
+        
+        .layui-side-menu .layui-nav {
+            background-color: transparent !important;
+            margin-top: 10px;
+        }
+        
+        .layui-side-menu .layui-nav-item > a {
+            color: rgba(255,255,255,0.7) !important;
+            transition: all 0.3s;
+            padding-left: 25px;
+        }
+        
+        .layui-side-menu .layui-nav-item > a:hover {
+            color: #fff !important;
+            background-color: rgba(255,255,255,0.05);
+        }
+        
+        /* 侧边栏选中状态 - 亮青色高亮 */
+        .layui-side-menu .layui-nav-itemed > .layui-nav-child {
+            background-color: rgba(0,0,0,0.2) !important;
+        }
+        
+        .layui-nav-tree .layui-this, 
+        .layui-nav-tree .layui-this > a, 
+        .layui-nav-tree .layui-nav-child dd.layui-this, 
+        .layui-nav-tree .layui-nav-child dd.layui-this a {
+            background-color: #00c6ff !important; /* 亮蓝色高亮 */
+            background: linear-gradient(90deg, #00c6ff 0%, #0072ff 100%) !important;
+            color: #fff !important;
+            box-shadow: 0 4px 15px rgba(0, 114, 255, 0.3);
+        }
+        
+        /* 顶部栏样式重构 - 纯白极简 */
+        .layui-header {
+            background-color: #fff !important;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-bottom: none !important;
+        }
+        
+        .layui-header .layui-nav .layui-nav-item a {
+            color: #333 !important;
+            font-weight: 500;
+        }
+        
+        .layui-header .layui-nav .layui-nav-item a:hover {
+            color: #0072ff !important;
+        }
+        
+        /* 标签页样式重构 */
+        .layadmin-pagetabs {
+            background-color: #f9f9f9 !important;
+            box-shadow: none !important;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .layadmin-pagetabs .layui-tab-title {
+            background-color: transparent !important;
+            border: none !important;
+        }
+        
+        .layadmin-pagetabs .layui-tab-title li {
+            background-color: #fff !important;
+            border-right: 1px solid #f0f0f0;
+            color: #666;
+            font-size: 13px;
+        }
+        
+        .layadmin-pagetabs .layui-tab-title li:hover {
+            background-color: #f0f8ff !important;
+        }
+        
+        .layadmin-pagetabs .layui-tab-title li.layui-this {
+            background-color: #fff !important;
+            color: #0072ff !important;
+            font-weight: 600;
+            border-top: 2px solid #0072ff; /* 顶部高亮条 */
+        }
+        
+        .layadmin-pagetabs .layui-tab-title li:after {
+            display: none !important; /* 移除默认的边框线 */
+        }
+
+        /* 图标微调 */
+        .layui-icon { font-size: 16px; }
+    </style>
+
     <div id="LAY_app">
         <div class="layui-layout layui-layout-admin">
             <div class="layui-header">
@@ -41,7 +147,7 @@
             <div class="layui-side layui-side-menu">
                 <div class="layui-side-scroll">
                     <div class="layui-logo">
-                        <span>职位信息可视化推荐系统</span>
+                        <span>职位推荐系统</span>
                     </div>
                     <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu"
                         lay-filter="layadmin-system-side-menu">
