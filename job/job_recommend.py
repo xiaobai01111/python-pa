@@ -56,30 +56,47 @@ def recommend_by_item_id(user_id, top_n=9):
     # 找出最多的3个投递简历的key_word
     user_prefer = [item['key_word'] for item in keyword_stats]
     
-    # 如果当前用户没有投递过简历,则看是否选择过意向职位，选过的话，就从意向中找，没选过就随机推荐
+    # 获取用户求职意向
+    user_expect = models.UserExpect.objects.filter(user_id=user_id).first()
+    
+    # 将求职意向的关键词加入偏好列表（优先级最高）
+    if user_expect and user_expect.key_word:
+        if user_expect.key_word not in user_prefer:
+            user_prefer.insert(0, user_expect.key_word)
+    
+    # 如果当前用户没有投递过简历也没有求职意向
     if not user_prefer:
         # 从用户设置的意向中选
-        user_expect = models.UserExpect.objects.filter(user_id=user_id).first()
-        if user_expect and user_expect.key_word:
-            # 或者其他适当的处理方式
-            job_list = list(models.JobData.objects.filter(key_word=user_expect.key_word).values())
+        if user_expect and (user_expect.key_word or user_expect.place):
+            # 根据求职意向筛选
+            job_query = models.JobData.objects.all()
+            if user_expect.key_word:
+                job_query = job_query.filter(key_word=user_expect.key_word)
+            if user_expect.place:
+                job_query = job_query.filter(place__contains=user_expect.place)
+            job_list = list(job_query.values())
             random.shuffle(job_list)
             return job_list[:top_n]
         else:
             # 从全部的职位中选
-            # 或者其他适当的处理方式
             job_list = list(models.JobData.objects.all().values())
             random.shuffle(job_list)
             return job_list[:top_n]
     
     # 选用户投递简历最多的职位的标签，再随机选择30个没有投递过的简历的职位，计算距离最近
-    # 没有投过的简历
-    un_send = models.JobData.objects.exclude(job_id__in=jobs_id).values_list('job_id', flat=True)
-    un_send = list(un_send)
+    # 没有投过的简历，结合求职意向筛选
+    un_send_query = models.JobData.objects.exclude(job_id__in=jobs_id)
     
-    # 如果未投递的职位太多，随机选择30个进行计算（提高性能）
-    if len(un_send) > 30:
-        un_send = random.sample(un_send, 30)
+    # 如果有求职意向，优先筛选符合意向的职位
+    if user_expect and user_expect.place:
+        un_send_query = un_send_query.filter(place__contains=user_expect.place)
+    
+    un_send = list(un_send_query.values_list('job_id', flat=True))
+    
+    # 随机打乱未投递职位，增加推荐多样性
+    random.shuffle(un_send)
+    # 取前50个进行计算（提高性能）
+    un_send = un_send[:50]
     
     # 找出用户投递的职位关键字对应的职位
     send_jobs_with_prefer = models.JobData.objects.filter(
@@ -112,17 +129,25 @@ def recommend_by_item_id(user_id, top_n=9):
     
     # 如果得不到有效数量的推荐 按照未投递的简历中的职位进行填充
     if len(recommend_list) < top_n:
-        # 从用户偏好的关键词中随机选择职位填充
-        additional_jobs = models.JobData.objects.filter(
+        # 从用户偏好的关键词中随机选择职位填充，同时考虑城市意向
+        additional_query = models.JobData.objects.filter(
             key_word__in=user_prefer
         ).exclude(
             job_id__in=jobs_id
         ).exclude(
             job_id__in=[job['job_id'] for job in recommend_list]
-        ).values()[:top_n - len(recommend_list)]
+        )
         
-        recommend_list.extend(list(additional_jobs))
+        # 如果有城市意向，优先筛选
+        if user_expect and user_expect.place:
+            additional_query = additional_query.filter(place__contains=user_expect.place)
+        
+        additional_jobs = list(additional_query.values())
+        random.shuffle(additional_jobs)
+        recommend_list.extend(additional_jobs[:top_n - len(recommend_list)])
     
+    # 最终结果随机打乱，增加多样性
+    random.shuffle(recommend_list)
     return recommend_list
 
 

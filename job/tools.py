@@ -282,7 +282,7 @@ def get_mysql():
     # 从Django配置中读取数据库连接信息
     # 这里直接使用配置信息，实际项目中应该从settings.py导入
     conn = pymysql.connect(
-        host='154.37.219.217',  # 数据库主机地址
+        host='127.0.0.1',  # 数据库主机地址
         port=3306,  # 数据库端口
         user='root',  # 数据库用户名
         password='20040226Bx/',  # 数据库密码

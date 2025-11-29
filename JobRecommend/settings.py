@@ -94,7 +94,7 @@ DATABASES = {
         'NAME': 'recommend_job',
         'USER': 'root',
         'PASSWORD': '20040226Bx/',
-        'HOST': '154.37.219.217',
+        'HOST': '127.0.0.1',
         'PORT': '3306',
     }
 }
