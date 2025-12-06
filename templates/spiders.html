@@ -162,8 +162,13 @@
                             <div class="layui-form-item">
                                 <label class="layui-form-label">关键字</label>
                                 <div class="layui-input-block">
-                                    <input type="text" name="key_word" class="layui-input"
-                                           placeholder="输入需要爬取的职位信息如：java工程师">
+                                    <div class="flex items-center gap-2 bg-[rgba(15,23,42,0.6)] border border-white/10 rounded-lg px-3 py-2 w-full max-w-xl focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20">
+                                        <svg class="h-5 w-5 opacity-50 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                            <circle cx="11" cy="11" r="8" stroke-width="2.5"></circle>
+                                            <path d="m21 21-4.3-4.3" stroke-width="2.5" stroke-linecap="round"></path>
+                                        </svg>
+                                        <input type="text" name="key_word" class="bg-transparent border-none outline-none text-white flex-1 placeholder:text-white/30" placeholder="输入需要爬取的职位信息如：java工程师">
+                                    </div>
                                 </div>
                             </div>
                             <div class="layui-form-item">
@@ -228,11 +233,19 @@
                             <div class="layui-form-item">
                                 <div class="layui-input-block">
                                     {% if spider_code_1 == 0 %}
-                                        <button class="layui-btn" lay-submit lay-filter="start_spider"
-                                                id="start_spider">开始爬取
+                                        <button class="btn btn-success btn-wide sm:btn-md md:btn-lg" lay-submit lay-filter="start_spider"
+                                                id="start_spider">
+                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                            开始爬取
                                         </button>
                                     {% else %}
-                                        <span class="layui-btn">正在爬取,请稍后...</span>
+                                        <button class="btn btn-disabled btn-wide sm:btn-md md:btn-lg" disabled>
+                                            <span class="loading loading-spinner"></span>
+                                            正在爬取,请稍后...
+                                        </button>
                                     {% endif %}
                                 </div>
                             </div>
