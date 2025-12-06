@@ -103,8 +103,15 @@
         background: oklch(var(--er) / 0.15) !important;
         color: oklch(var(--er)) !important;
         border: 1px solid oklch(var(--er) / 0.3) !important;
-        padding: 0 10px; /* 增加内边距 */
-        min-width: 80px; /* 确保最小宽度 */
+        padding: 6px 12px !important;
+        min-width: 80px;
+        height: auto !important;
+        line-height: 1.5 !important;
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        white-space: nowrap;
     }
     
     .layui-btn-normal:hover {
@@ -115,6 +122,31 @@
     .layui-btn-sm {
         background-color: oklch(var(--su));
         color: oklch(var(--suc));
+        height: auto !important;
+        line-height: 1.5 !important;
+        padding: 6px 12px !important;
+        display: inline-flex !important;
+        align-items: center;
+        gap: 4px;
+    }
+    
+    /* 防止操作列按钮被裁剪 */
+    .layui-table-cell .layui-btn {
+        vertical-align: middle;
+    }
+    
+    /* 增加表格行高 */
+    .layui-table tbody tr {
+        height: 50px !important;
+    }
+    
+    .layui-table td {
+        padding: 12px 10px !important;
+    }
+    
+    .layui-table-cell {
+        height: 40px !important;
+        line-height: 40px !important;
     }
   </style>
 
@@ -125,9 +157,9 @@
           {% verbatim %}
             <script type="text/html" id="table-forum-list">
                {{#  if(d.send_key == 0){ }}
-              <a class="layui-btn layui-btn-sm layui-btn-sm" lay-event="send"><i class="layui-icon layui-icon-add-circle-fine"></i>投递</a>
+              <a class="layui-btn layui-btn-xs" lay-event="send"><i class="layui-icon layui-icon-add-circle-fine"></i> 投递</a>
                {{#  } else { }}
-              <a class="layui-btn layui-btn-sm layui-btn-normal" lay-event="send_1"><i class="layui-icon layui-icon-close"></i> 取消投递</a>
+              <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="send_1"><i class="layui-icon layui-icon-close"></i> 取消</a>
                {{#  } }}
             </script>
           {% endverbatim %}

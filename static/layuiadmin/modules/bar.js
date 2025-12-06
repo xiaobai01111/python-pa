@@ -89,21 +89,35 @@ layui.define(function(e) {
 				}],
 				series: [{
 					name: "职位数量",
-					type: "bar",
-					barWidth: 40, // 改为固定像素值，防止老版本不支持百分比
+					type: "line",
+					smooth: true,
+					symbol: 'circle',
+					symbolSize: 8,
 					data: [1453, 1547, 1363, 1520, 1440, 1049, 40, 1355, 1470, 1472, 1429],
+					lineStyle: {
+						width: 3,
+						color: '#3b82f6'
+					},
 					itemStyle: {
-						normal: {
-							color: '#3b82f6',
-							label: {
-								show: true,
-								position: 'top',
-								textStyle: {
-									color: '#fff',
-									fontSize: 12
-								}
-							}
+						color: '#3b82f6',
+						borderColor: '#fff',
+						borderWidth: 2
+					},
+					areaStyle: {
+						color: {
+							type: 'linear',
+							x: 0, y: 0, x2: 0, y2: 1,
+							colorStops: [
+								{ offset: 0, color: 'rgba(59, 130, 246, 0.4)' },
+								{ offset: 1, color: 'rgba(59, 130, 246, 0.05)' }
+							]
 						}
+					},
+					label: {
+						show: true,
+						position: 'top',
+						color: '#fff',
+						fontSize: 11
 					}
 				}]
 			}],

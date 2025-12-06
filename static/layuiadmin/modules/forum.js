@@ -43,11 +43,11 @@ layui.define(["table", "form"], function(e) {
 			},{
 				field: "scale",
 				title: "公司规模",
-				width: 150,
+				width: 120,
 				align: "left"
 			},{
 				title: "操作",
-				width: 130,
+				width: 100,
 				align: "center",
 				fixed: "right",
 				toolbar: "#table-forum-list"
