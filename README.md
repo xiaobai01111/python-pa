@@ -220,7 +220,7 @@ python manage.py runserver2       # 启动 HTTP/2 服务器
 
 **证书命令示例：**
 ```bash
-python manage.py cert --help           # 查看证书命令帮助
+python manage.py cert                  # 生成自签名证书
 python manage.py cert --generate       # 生成证书（有效期365天）
 python manage.py cert -g --days 730    # 生成证书（有效期730天）
 python manage.py cert --info           # 查看证书有效期
@@ -233,6 +233,7 @@ python manage.py runserver2 --help     # 查看服务器命令帮助
 python manage.py runserver2            # 默认 https://127.0.0.1:8000
 python manage.py runserver2 8080       # 指定端口
 python manage.py runserver2 --http1    # HTTP/1.1 模式（无需证书）
+python manage.py runserver             # HTTP/1.1 模式（无需证书）
 ```
 
 8. **访问系统**
