@@ -53,6 +53,7 @@ def lieSpider(key_word, city, all_page):
 
     print("爬虫是否执行完毕：是")
     print("学生详情：  姓名：白鑫   学号：243303029")
+    return 0  # 返回0表示爬虫完成，重置状态
 
 def get_urls(key_word, all_page, city_code):
     """

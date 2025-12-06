@@ -113,72 +113,69 @@
         .card-pink { background: linear-gradient(180deg, rgba(236,72,153,0.1) 0%, rgba(30,41,59,0.7) 100%); border-top: 2px solid #ec4899; }
         .card-pink .stat-number { color: #f472b6; text-shadow: 0 0 15px rgba(236,72,153,0.4); }
 
+        /* daisyUI 风格表格 */
         .layui-table {
             width: 100%;
             background-color: transparent;
             color: #e2e8f0;
-            border-collapse: separate;
-            border-spacing: 0 12px; 
+            border-collapse: collapse;
         }
         
         .layui-table thead tr {
             background-color: transparent;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .layui-table th {
             font-weight: 600;
             color: #94a3b8;
             border: none;
-            padding: 15px 20px;
+            padding: 12px 16px;
             text-align: left;
-            font-size: 13px;
+            font-size: 12px;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
         }
         
         .layui-table tbody tr {
-            background-color: rgba(255, 255, 255, 0.03);
-            transition: all 0.3s;
+            background-color: transparent;
+            transition: background-color 0.15s ease;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
         
+        /* daisyUI 风格悬停高亮 - hover:bg-base-300 */
         .layui-table tbody tr:hover {
-            background-color: rgba(255, 255, 255, 0.08);
-            transform: scale(1.01);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            background-color: rgba(51, 65, 85, 0.6) !important;
         }
         
         .layui-table td {
             border: none;
-            padding: 20px;
-            font-size: 14px;
-            border-top: 1px solid rgba(255,255,255,0.05);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-        
-        .layui-table td:first-child {
-            border-left: 1px solid rgba(255,255,255,0.05);
-            border-top-left-radius: 12px;
-            border-bottom-left-radius: 12px;
-        }
-        
-        .layui-table td:last-child {
-            border-right: 1px solid rgba(255,255,255,0.05);
-            border-top-right-radius: 12px;
-            border-bottom-right-radius: 12px;
+            padding: 14px 16px;
+            font-size: 13px;
+            white-space: nowrap;
+            overflow: visible;
         }
 
+        /* daisyUI 轮廓样式徽章 (badge-outline) */
         .badge {
-            padding: 6px 12px;
-            border-radius: 8px;
+            padding: 2px 10px;
+            border-radius: 9999px;
             font-size: 12px;
-            font-weight: 600;
-            display: inline-block;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: 1.5px solid;
+            white-space: nowrap;
+            line-height: 1.5;
+            height: auto;
+            min-height: 22px;
         }
-        .badge-salary { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
-        .badge-edu { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
-        .badge-exp { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
-        .badge-scale { background: rgba(148, 163, 184, 0.15); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.3); }
+        .badge-salary { border-color: #f87171; color: #f87171; }
+        .badge-edu { border-color: #60a5fa; color: #60a5fa; }
+        .badge-exp { border-color: #34d399; color: #34d399; }
+        .badge-scale { border-color: #94a3b8; color: #94a3b8; }
 
         .layadmin-dataview { 
             height: 380px !important; 
@@ -302,7 +299,6 @@
                 <div class="layui-card">
                     <div class="layui-card-header">
                         <span>薪资排行 TOP 10</span>
-                        <a href="{% url 'job_list' %}" style="float: right; font-size: 12px; color: #3b82f6; font-weight: normal;">查看全部 ></a>
                     </div>
                     <div class="layui-card-body">
                         <table class="layui-table">

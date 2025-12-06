@@ -14,17 +14,42 @@
             z-index: 1001;
         }
         
+        /* ========================================
+           daisyUI 风格 Navbar - 仅包含标题
+           ======================================== */
         .layui-layout-admin .layui-logo {
-            background-color: transparent !important;
-            color: #fff !important;
-            font-weight: 700;
-            font-size: 18px;
-            letter-spacing: 0.5px;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            box-shadow: none !important;
+            height: 64px;
+            line-height: 64px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1002;
+            width: 220px;
+            background-color: #1e293b !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3) !important;
             display: flex;
             align-items: center;
             justify-content: center;
+            border-bottom: none;
+        }
+        
+        /* daisyUI btn-ghost 风格标题 */
+        .layui-layout-admin .layui-logo span {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 16px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff !important;
+            letter-spacing: 0.5px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .layui-layout-admin .layui-logo span:hover {
+            background-color: rgba(255, 255, 255, 0.1);
         }
         
         .layui-side-menu .layui-nav {
@@ -43,24 +68,12 @@
             color: #fff !important;
             background-color: rgba(255,255,255,0.05);
             border-left-color: #00c6ff;
-            /* padding-left: 30px; 移除此行以修复图标重叠问题 */
         }
         
         /* 侧边栏滚动区域修复 */
         .layui-side-menu .layui-side-scroll {
-            height: calc(100% - 50px) !important;
-            margin-top: 50px;
-        }
-        
-        /* Logo 区域样式微调 */
-        .layui-layout-admin .layui-logo {
-            height: 50px;
-            line-height: 50px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1002; /* 确保在菜单之上 */
-            width: 220px;
+            height: calc(100% - 64px) !important;
+            margin-top: 64px;
         }
 
         /* 用户下拉菜单对齐微调 */
@@ -171,78 +184,118 @@
             color: #00c6ff !important;
         }
         
-        /* 标签页样式重构 - 深色模式 */
+        /* ========================================
+           标签页样式 - 保守修改，保留 Layui 原有布局
+           ======================================== */
+        
+        /* 标签页容器背景色 */
         .layadmin-pagetabs {
-            background-color: #0f172a !important; /* 深色背景 */
-            box-shadow: 0 1px 2px rgba(0,0,0,0.2) !important;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            height: 44px;
+            background-color: #1e293b !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
         
-        .layadmin-pagetabs .layui-tab-title {
-            background-color: transparent !important;
-            border: none !important;
-            height: 44px;
-        }
-        
-        .layadmin-pagetabs .layui-tab-title li {
-            line-height: 44px;
-            background-color: transparent !important;
-            border-right: 1px solid rgba(255, 255, 255, 0.05);
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 13px;
-            position: relative;
-            transition: all 0.3s;
-        }
-        
-        .layadmin-pagetabs .layui-tab-title li:hover {
-            color: #fff;
-            background-color: rgba(255, 255, 255, 0.05) !important;
-        }
-        
-        .layadmin-pagetabs .layui-tab-title li.layui-this {
-            color: #fff !important;
-            font-weight: 600;
-            background-color: rgba(0, 198, 255, 0.15) !important; /* 选中项微蓝背景 */
-        }
-        
-        /* 标签底部流光条 */
-        .layadmin-pagetabs .layui-tab-title li.layui-this:after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, #00c6ff 0%, #0072ff 100%);
-            display: block !important;
-            border: none !important;
-        }
-
-        /* 标签控制按钮 - 深色适配 */
+        /* 左右控制按钮颜色 */
         .layadmin-tabs-control {
-            height: 44px;
-            line-height: 44px;
-            border-left: 1px solid rgba(255, 255, 255, 0.05);
-            background-color: #0f172a;
-            color: rgba(255, 255, 255, 0.6);
+            background-color: #1e293b !important;
+            color: rgba(255, 255, 255, 0.6) !important;
         }
         
         .layadmin-tabs-control:hover {
-            background-color: rgba(255, 255, 255, 0.05);
-            color: #fff;
+            background-color: rgba(255, 255, 255, 0.1) !important;
+            color: #fff !important;
         }
         
-        /* 下拉菜单(标签栏右侧) */
+        /* 标签容器背景 */
+        .layadmin-pagetabs .layui-tab-title {
+            background-color: transparent !important;
+            border: none !important;
+        }
+        
+        /* 标签项样式 - 只改颜色，不改布局 */
+        .layadmin-pagetabs .layui-tab-title li {
+            background-color: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-bottom: none !important;
+            border-radius: 6px 6px 0 0;
+            color: rgba(255, 255, 255, 0.6) !important;
+            margin-right: 2px;
+            padding-right: 28px; /* 为关闭按钮留出空间 */
+        }
+        
+        .layadmin-pagetabs .layui-tab-title li:hover {
+            color: #fff !important;
+            background-color: rgba(255, 255, 255, 0.1) !important;
+        }
+        
+        /* 选中的标签 */
+        .layadmin-pagetabs .layui-tab-title li.layui-this {
+            color: #fff !important;
+            font-weight: 600;
+            background-color: #0f172a !important;
+            border-color: rgba(255, 255, 255, 0.2) !important;
+        }
+        
+        /* 选中标签顶部高亮条 */
+        .layadmin-pagetabs .layui-tab-title li.layui-this:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #00c6ff 0%, #0072ff 100%);
+            border-radius: 6px 6px 0 0;
+        }
+        
+        /* 关闭按钮样式 - 保留原有定位 */
+        .layadmin-pagetabs .layui-tab-title li .layui-tab-close {
+            color: rgba(255, 255, 255, 0.4) !important;
+            right: 8px !important;
+        }
+        
+        .layadmin-pagetabs .layui-tab-title li .layui-tab-close:hover {
+            background-color: rgba(239, 68, 68, 0.8) !important;
+            color: #fff !important;
+            border-radius: 50%;
+        }
+        
+        /* ========================================
+           下拉菜单样式 - 保留 Layui 原有定位逻辑
+           ======================================== */
+        
+        /* 下拉菜单容器 */
+        .layadmin-tabs-select {
+            background: transparent !important;
+        }
+        
+        .layadmin-tabs-select .layui-nav-item > a {
+            background: transparent !important;
+        }
+        
+        /* 下拉菜单内容 */
         .layadmin-tabs-select .layui-nav-child {
-            background-color: #1e293b;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: #1e293b !important;
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+            border-radius: 8px !important;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4) !important;
+            padding: 6px !important;
+            min-width: 150px !important;
         }
+        
+        .layadmin-tabs-select .layui-nav-child dd {
+            margin: 2px 0;
+        }
+        
         .layadmin-tabs-select .layui-nav-child dd a {
-            color: rgba(255, 255, 255, 0.8);
+            color: rgba(255, 255, 255, 0.8) !important;
+            padding: 10px 14px !important;
+            border-radius: 6px;
+            font-size: 13px;
         }
+        
         .layadmin-tabs-select .layui-nav-child dd a:hover {
-            background-color: rgba(255, 255, 255, 0.05);
+            background-color: rgba(59, 130, 246, 0.2) !important;
+            color: #60a5fa !important;
         }
 
         /* 图标微调 */

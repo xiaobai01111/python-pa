@@ -94,9 +94,32 @@
         color: #cbd5e1;
     }
     
-    /* 斑马纹和悬停 */
-    .layui-table-hover, .layui-table-click, .layui-table-hover td {
-        background-color: rgba(59, 130, 246, 0.1) !important;
+    /* ========================================
+       daisyUI 风格表格悬停高亮
+       ======================================== */
+    
+    /* 表格行基础样式 */
+    .layui-table tbody tr {
+        transition: all 0.15s ease;
+    }
+    
+    /* 悬停高亮效果 - daisyUI hover:bg-base-300 风格 */
+    .layui-table-hover,
+    .layui-table tbody tr:hover,
+    .layui-table-body tr:hover {
+        background-color: rgba(51, 65, 85, 0.8) !important; /* base-300 深色 */
+    }
+    
+    .layui-table-hover td,
+    .layui-table tbody tr:hover td,
+    .layui-table-body tr:hover td {
+        background-color: transparent !important;
+    }
+    
+    /* 点击选中状态 */
+    .layui-table-click,
+    .layui-table-click td {
+        background-color: rgba(59, 130, 246, 0.15) !important;
     }
     
     /* 分页样式修复 */

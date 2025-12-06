@@ -298,8 +298,11 @@
                     return false
                 }
 
-                document.getElementById("start_spider").innerHTML = '正在爬取请稍后...';
-                document.getElementById("start_spider").removeAttribute('lay-filter');
+                var btn = document.getElementById("start_spider");
+                btn.innerHTML = '<span class="loading loading-spinner"></span>正在爬取,请稍后...';
+                btn.classList.remove('btn-success');
+                btn.classList.add('btn-disabled');
+                btn.removeAttribute('lay-filter');
 
                 $.ajax({
                     type: 'POST',
@@ -307,11 +310,17 @@
                     data: field,
                     success: function (res) {
                         layer.msg(res.msg, {icon: 1, time: 2000});
-                        document.getElementById("start_spider").innerHTML = '开始爬取';
-                        document.getElementById("start_spider").setAttribute("lay-filter", "start_spider")
+                        btn.innerHTML = '<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>开始爬取';
+                        btn.classList.remove('btn-disabled');
+                        btn.classList.add('btn-success');
+                        btn.setAttribute("lay-filter", "start_spider");
                     },
                     error: function (response) {
                         layer.msg(response.msg || "服务器错误", {icon: 2});
+                        btn.innerHTML = '<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>开始爬取';
+                        btn.classList.remove('btn-disabled');
+                        btn.classList.add('btn-success');
+                        btn.setAttribute("lay-filter", "start_spider");
                     }
                 })
 
