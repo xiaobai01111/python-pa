@@ -14,85 +14,7 @@
         background-color: oklch(var(--b2)) !important;
         border-left: 5px solid oklch(var(--p));
         color: oklch(var(--bc));
-        border-radius: 4px;
-        margin-bottom: 30px;
-        border-color: oklch(var(--p));
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-    
-    /* 职位卡片容器 */
-    .layadmin-contact-box {
-        background-color: oklch(var(--b2) / 0.8) !important;
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border-radius: 16px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        border: 1px solid oklch(var(--bc) / 0.1) !important;
-        padding: 24px;
         margin-bottom: 15px;
-        transition: all 0.3s ease;
-        height: 100%;
-        min-height: 220px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        box-sizing: border-box;
-    }
-    
-    .layadmin-contact-box:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
-        background-color: oklch(var(--b2)) !important;
-        border-color: oklch(var(--p) / 0.3) !important;
-    }
-    
-    .layadmin-text {
-        color: oklch(var(--bc) / 0.7);
-    }
-    
-    .layadmin-title {
-        margin-bottom: 12px;
-        font-size: 14px;
-        line-height: 1.6;
-        color: oklch(var(--bc) / 0.8);
-    }
-    
-    .layadmin-title strong {
-        font-size: 18px;
-        color: oklch(var(--bc));
-        display: block;
-        margin-bottom: 10px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-    
-    .layui-icon-location {
-        color: oklch(var(--wa));
-        margin-right: 5px;
-    }
-    
-    /* 投递按钮 */
-    .layui-btn {
-        background: linear-gradient(135deg, oklch(var(--su)), oklch(var(--su) / 0.8));
-        color: oklch(var(--suc));
-        border-radius: 8px;
-        box-shadow: 0 4px 15px oklch(var(--su) / 0.3);
-        border: none;
-        width: 100%;
-        margin-top: 15px;
-        transition: all 0.3s;
-    }
-    
-    .layui-btn:hover {
-        opacity: 0.9;
-        box-shadow: 0 6px 20px oklch(var(--su) / 0.4);
-    }
-    
-    /* 布局调整 */
-    .layui-col-md9, .layui-col-md2 {
-        width: 100%;
-        padding: 0 !important;
     }
     
     /* 强制覆盖 Layer 弹窗样式为主题色 */
@@ -136,28 +58,25 @@
       </div>
       {% for job in recommend_list %}
         <div class="layui-col-md4 layui-col-sm6">
-      <div class="layadmin-contact-box" >
-          <div class="layui-col-md9 layui-col-sm6">
-            <a href="javascript:;" style="text-decoration: none;">
-              <div class="layadmin-text">
-                <h3 class="layadmin-title"><strong>{{ job.name | truncatechars:16 }}</strong></h3>
-                <h3 class="layadmin-title" style="color: #f43f5e; font-weight: 600;">{{ job.salary }}</h3>
-                <h3 class="layadmin-title">
-                    <span class="layui-badge layui-bg-blue" style="background: rgba(59,130,246,0.2) !important; color: #60a5fa !important;">{{ job.education }}</span>
-                    <span class="layui-badge layui-bg-cyan" style="background: rgba(16,185,129,0.2) !important; color: #34d399 !important; margin-left: 5px;">{{ job.experience }}</span>
-                </h3>
-                <h3 class="layadmin-title"><i class="layui-icon layui-icon-location"></i>{{ job.place }}</h3>
-                <h3 class="layadmin-title" style="color: #94a3b8; font-size: 13px;">{{ job.company | truncatechars:16 }}</h3>
+          <div class="card bg-base-100 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <div class="card-body">
+              <h2 class="card-title text-base-content">{{ job.name | truncatechars:20 }}</h2>
+              <p class="text-error font-bold text-lg">{{ job.salary }}</p>
+              <div class="flex gap-2 my-2">
+                <span class="badge badge-info badge-outline">{{ job.education }}</span>
+                <span class="badge badge-success badge-outline">{{ job.experience }}</span>
               </div>
-            </a>
+              <p class="text-base-content/60 text-sm flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                {{ job.place }}
+              </p>
+              <p class="text-base-content/50 text-sm">{{ job.company | truncatechars:20 }}</p>
+              <div class="card-actions justify-end mt-4">
+                <button class="btn btn-success btn-sm" onclick="send({{ job.job_id }}, '{{ job.name|escapejs }}')">立即投递</button>
+              </div>
+            </div>
           </div>
-          <div class="layui-col-md2 layui-col-sm6">
-             <button class="layui-btn" onclick="send({{ job.job_id }}, '{{ job.name|escapejs }}')">
-                 <i class="layui-icon layui-icon-release"></i> 立即投递
-             </button>
-          </div>
-      </div>
-    </div>
+        </div>
       {% endfor %}
   </div>
 </div>

@@ -30,38 +30,55 @@
     
     .layui-card-body { padding: 20px; height: 100%; box-sizing: border-box; }
     
-    /* 表格样式覆盖 */
+    /* daisyUI Table 样式 - 无竖线 */
     .layui-table-view {
         border: none !important;
         background-color: transparent !important;
     }
     
     .layui-table {
+        width: 100% !important;
+        border-collapse: collapse;
         background-color: transparent !important;
         color: oklch(var(--bc));
+        font-size: 14px;
     }
     
-    /* 修复表头背景 */
     .layui-table-header {
-        background-color: oklch(var(--b3)) !important;
-        border-bottom: 1px solid oklch(var(--bc) / 0.1) !important;
+        background-color: oklch(var(--b2)) !important;
     }
     
     .layui-table th {
-        background-color: oklch(var(--b3)) !important;
-        color: oklch(var(--bc) / 0.8) !important;
+        background-color: oklch(var(--b2)) !important;
+        color: oklch(var(--bc) / 0.6) !important;
         font-weight: 600;
-        border-color: oklch(var(--bc) / 0.05) !important;
+        font-size: 12px;
+        padding: 12px 16px !important;
+        border-bottom: 1px solid oklch(var(--bc) / 0.1) !important;
+        border-right: none !important;
+        border-left: none !important;
+    }
+    
+    .layui-table th .layui-table-cell {
+        padding: 0 !important;
+        height: auto !important;
+        line-height: 1.5 !important;
     }
     
     .layui-table td {
-        border-color: oklch(var(--bc) / 0.05);
-        color: oklch(var(--bc));
+        padding: 12px 16px !important;
+        border-bottom: 1px solid oklch(var(--bc) / 0.05) !important;
+        border-right: none !important;
+        border-left: none !important;
+        background-color: transparent !important;
     }
     
-    /* 斑马纹和悬停 */
-    .layui-table-hover, .layui-table-click, .layui-table-hover td {
-        background-color: oklch(var(--b2)) !important;
+    .layui-table tbody tr:hover td {
+        background-color: oklch(var(--b3)) !important;
+    }
+    
+    .layui-table-click td {
+        background-color: oklch(var(--p) / 0.1) !important;
     }
     
     /* 分页样式修复 */
@@ -135,7 +152,7 @@
         display: none !important;
     }
     
-    /* 修复表格对齐 */
+    /* 表格对齐 */
     .layui-table-view .layui-table {
         width: 100% !important;
     }
@@ -219,7 +236,7 @@
           elem: '#LAY-app-forum-list',
           url: '/send_list/',
           cols: [[
-              {field: 'job_id', title: '#', width: 50, align: 'center'},
+              {field: 'job_id', title: '#', width: 65, align: 'left'},
               {field: 'name', title: '职位名称',width: 180},
               {field: 'salary', title: '薪资', width: 90},
               {field: 'education', title: '学历', width: 100},
