@@ -37,6 +37,7 @@ def lieSpider(key_word, city, all_page):
     :param city: 城市名称
     :param all_page: 需要爬取的页数
     """
+    print("开始爬虫")
     city_dict = {'全国': '410', '北京': '010', '上海': '020', '天津': '030', '重庆': '040', '广州': '050020',
                  '深圳': '050090',
                  '苏州': '060080', '南京': '060020', '杭州': '070020', '大连': '210040', '成都': '280020',
@@ -50,7 +51,7 @@ def lieSpider(key_word, city, all_page):
     pool.close()  # 关闭线程池，不再接受新任务
     pool.join()  # 等待所有线程完成
 
-    print("爬虫执行完成")
+    print("爬虫是否执行完毕：是")
     print("学生详情：  姓名：白鑫   学号：243303029")
 
 def get_urls(key_word, all_page, city_code):
@@ -66,7 +67,10 @@ def get_urls(key_word, all_page, city_code):
     for page in range(int(all_page)):
         url = f'https://www.liepin.com/zhaopin/?city={city_code}&dqs={city_code}&key={key_word}&curPage={page}'
         urls_list.append(url)
-    print(f'生成了{len(urls_list)}个URL')
+    print(f'生成的链接数：{len(urls_list)}')
+    print('生成的链接：')
+    for url in urls_list:
+        print(f'  {url}')
     return urls_list
 
 
@@ -206,7 +210,13 @@ def get_pages(url):
         href_list = req_html.xpath('//a[@data-nick="job-detail-job-info"]/@href')
         
         # 调试信息：打印提取到的数据数量
-        print(f'提取到的数据: name={len(name)}, salary={len(salary)}, company={len(com_name)}, href={len(href_list)}')
+        print(f'爬取的数据：name={len(name)}, salary={len(salary)}, company={len(com_name)}, href={len(href_list)}')
+        
+        # 是否成功爬取
+        if len(name) == 0:
+            print('是否成功爬取：否（爬取的数据为0）')
+        else:
+            print(f'是否成功爬取：是（获取{len(name)}条数据）')
 
         # 处理标签信息，将每个职位的标签提取出来并分离label和scale
         labels = []  # 存储行业/融资阶段等标签
@@ -258,11 +268,11 @@ def get_pages(url):
         
         # 提交事务
         conn.commit()
-        print(f'成功爬取并存储{min_length}条职位信息')
+        print(f'是否成功存入数据库：是（存入{min_length}条数据）')
         
         
     except Exception as e:
-        print(f'爬取页面失败: {url}, 错误: {e}')
+        print(f'是否成功存入数据库：否（错误: {e}）')
         conn.rollback()  # 回滚事务
     finally:
         # 关闭资源
