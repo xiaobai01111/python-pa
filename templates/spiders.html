@@ -368,11 +368,18 @@
                     url: '/start_spider/',
                     data: field,
                     success: function (res) {
-                        showToast(res.msg, "success");
-                        btn.innerHTML = '<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>开始爬取';
-                        btn.classList.remove('btn-disabled');
-                        btn.classList.add('btn-success');
-                        btn.setAttribute("lay-filter", "start_spider");
+                        if (res.code === 0) {
+                            showToast(res.msg, "success");
+                        } else {
+                            showToast(res.msg, "warning");
+                            // 如果启动失败，恢复按钮状态
+                            btn.innerHTML = '<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>开始爬取';
+                            btn.classList.remove('btn-disabled');
+                            btn.classList.add('btn-success');
+                            btn.setAttribute("lay-filter", "start_spider");
+                            stopLogPolling();
+                        }
+                        // 按钮状态由轮询检测爬虫完成后恢复
                     },
                     error: function (response) {
                         showToast("服务器错误", "error");
@@ -507,6 +514,14 @@
             if (logInterval) {
                 clearInterval(logInterval);
                 logInterval = null;
+                // 恢复按钮状态
+                var btn = document.getElementById("start_spider");
+                if (btn) {
+                    btn.innerHTML = '<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>开始爬取';
+                    btn.classList.remove('btn-disabled');
+                    btn.classList.add('btn-success');
+                    btn.setAttribute("lay-filter", "start_spider");
+                }
             }
         }
         

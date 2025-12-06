@@ -153,10 +153,16 @@ Thumbs.db
 media/
 
 # Static files (if you don't want to track them)
-# static/
+staticfiles/
 
 # Secrets and configurations
 .env.local
 .env.prod
 config.py
 secrets.json
+
+# SSL Certificates
+certs/
+*.pem
+*.key
+*.crt

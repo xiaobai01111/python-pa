@@ -128,9 +128,25 @@ def spiders(request):
     return render(request, "spiders.html", {'spider_code_1': spider_code_1})
 
 
+def _run_spider_task(key_word, city, page, role):
+    """后台线程运行爬虫任务"""
+    global spider_code
+    try:
+        if role == '猎聘网':
+            spider_code = tools.lieSpider(key_word=key_word, city=city, all_page=page)
+    except Exception as e:
+        spider_logger.error(f"爬虫异常: {str(e)}")
+        spider_logger.set_running(False)
+        spider_code = 0
+
+
 def start_spider(request):
     global spider_code
     if request.method == "POST":
+        # 检查是否已有爬虫在运行
+        if spider_logger.is_running:
+            return JsonResponse({"code": 1, "msg": "已有爬虫正在运行，请稍后再试"})
+        
         # 立即生成新的 session_id，确保前端能获取到最新的
         spider_logger.new_session()
         
@@ -144,9 +160,17 @@ def start_spider(request):
             spider_model.count += 1  # 给次数+1
             spider_model.page += int(page)  # 给爬取页数加上选择的页数
             spider_model.save()
-        if role == '猎聘网':
-            spider_code = tools.lieSpider(key_word=key_word, city=city, all_page=page)
-        return JsonResponse({"code": 0, "msg": "爬取完毕!", "session_id": spider_logger.get_session_id()})
+        
+        # 使用线程在后台运行爬虫，让视图立即返回（支持 ASGI 模式）
+        import threading
+        spider_thread = threading.Thread(
+            target=_run_spider_task,
+            args=(key_word, city, page, role),
+            daemon=True
+        )
+        spider_thread.start()
+        
+        return JsonResponse({"code": 0, "msg": "爬虫任务已启动!", "session_id": spider_logger.get_session_id()})
     else:
         return JsonResponse({"code": 1, "msg": "请使用POST请求"})
 
