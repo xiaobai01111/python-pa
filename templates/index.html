@@ -7,11 +7,22 @@
         
         body { font-family: 'Inter', sans-serif; }
 
-        /* 侧边栏样式重构 - 深色渐变风格 */
+        /* 侧边栏样式重构 - 使用 daisyUI 主题变量 */
         .layui-side-menu {
-            background: linear-gradient(180deg, #1a1c2c 0%, #2c1a3d 100%) !important;
+            background-color: oklch(var(--b2)) !important;
             box-shadow: 4px 0 15px rgba(0,0,0,0.1);
             z-index: 1001;
+        }
+        
+        /* 侧边栏文字色 */
+        .layui-side-menu .layui-nav-item a,
+        .layui-side-menu .layui-nav-tree .layui-nav-child a {
+            color: oklch(var(--bc) / 0.7) !important;
+        }
+        .layui-side-menu .layui-nav-item a:hover,
+        .layui-side-menu .layui-nav-tree .layui-nav-child a:hover {
+            color: oklch(var(--bc)) !important;
+            background-color: oklch(var(--bc) / 0.1) !important;
         }
         
         /* ========================================
@@ -25,8 +36,8 @@
             left: 0;
             z-index: 1002;
             width: 220px;
-            background-color: #1e293b !important;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.3) !important;
+            background-color: oklch(var(--b2)) !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -41,7 +52,7 @@
             padding: 8px 16px;
             font-size: 18px;
             font-weight: 700;
-            color: #fff !important;
+            color: oklch(var(--bc)) !important;
             letter-spacing: 0.5px;
             border-radius: 8px;
             transition: all 0.2s ease;
@@ -49,7 +60,7 @@
         }
         
         .layui-layout-admin .layui-logo span:hover {
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: oklch(var(--bc) / 0.1);
         }
         
         .layui-side-menu .layui-nav {
@@ -58,16 +69,16 @@
         }
         
         .layui-side-menu .layui-nav-item > a {
-            color: rgba(255,255,255,0.65) !important;
+            color: oklch(var(--bc) / 0.7) !important;
             transition: all 0.3s ease;
             padding-left: 25px;
             border-left: 3px solid transparent;
         }
         
         .layui-side-menu .layui-nav-item > a:hover {
-            color: #fff !important;
-            background-color: rgba(255,255,255,0.05);
-            border-left-color: #00c6ff;
+            color: oklch(var(--bc)) !important;
+            background-color: oklch(var(--bc) / 0.1);
+            border-left-color: oklch(var(--p));
         }
         
         /* 侧边栏滚动区域修复 */
@@ -88,19 +99,19 @@
         .layui-nav-tree .layui-this > a, 
         .layui-nav-tree .layui-nav-child dd.layui-this, 
         .layui-nav-tree .layui-nav-child dd.layui-this a {
-            background-color: #00c6ff !important;
-            background: linear-gradient(90deg, #00c6ff 0%, #0072ff 100%) !important;
-            color: #fff !important;
-            box-shadow: 0 4px 15px rgba(0, 114, 255, 0.4);
+            background-color: oklch(var(--p)) !important;
+            background: linear-gradient(90deg, oklch(var(--p)) 0%, oklch(var(--p) / 0.8) 100%) !important;
+            color: oklch(var(--pc)) !important;
+            box-shadow: 0 4px 15px oklch(var(--p) / 0.4);
             border-radius: 0 20px 20px 0; /* 半圆角设计 */
         }
         
-        /* 顶部栏样式重构 - 深色磨砂玻璃 */
+        /* 顶部栏样式重构 - 使用 daisyUI 主题变量 */
         .layui-header {
-            background-color: rgba(30, 41, 59, 0.95) !important; /* 深色背景 */
+            background-color: oklch(var(--b1)) !important;
             backdrop-filter: blur(10px);
-            box-shadow: 0 2px 15px rgba(0,0,0,0.2); /* 加深阴影 */
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1); 
+            border-bottom: 1px solid oklch(var(--bc) / 0.1) !important;
             z-index: 1000;
         }
         
@@ -109,21 +120,21 @@
         }
 
         .layui-header .layui-nav .layui-nav-item a {
-            color: rgba(255, 255, 255, 0.7) !important; /* 文字改白 */
+            color: oklch(var(--bc) / 0.7) !important; 
             font-weight: 500;
             transition: color 0.3s;
         }
         
         .layui-header .layui-nav .layui-nav-item a:hover {
-            color: #00c6ff !important; /* 悬停亮蓝 */
+            color: oklch(var(--p)) !important; 
         }
 
         /* 图标颜色 */
         .layui-nav-item a i {
-            color: rgba(255, 255, 255, 0.7) !important;
+            color: oklch(var(--bc) / 0.7) !important;
         }
         .layui-nav-item a:hover i {
-            color: #00c6ff !important;
+            color: oklch(var(--p)) !important;
         }
 
         /* 修复用户下拉菜单 - 深色模式 */
@@ -147,9 +158,9 @@
             transform: translateX(-50%); 
             margin-top: 10px; 
             min-width: 120px;
-            border: 1px solid rgba(255, 255, 255, 0.1); /* 微边框 */
-            background-color: #1e293b; /* 深色菜单背景 */
-            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            border: 1px solid oklch(var(--bc) / 0.1); /* 微边框 */
+            background-color: oklch(var(--b2)); /* 深色菜单背景 */
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
             border-radius: 8px;
             padding: 8px 0;
             animation: slideDown 0.2s ease;
@@ -165,7 +176,7 @@
             margin-left: -6px;
             border-width: 0 6px 6px;
             border-style: solid;
-            border-color: transparent transparent #1e293b; /* 适配背景色 */
+            border-color: transparent transparent oklch(var(--b2)); /* 适配背景色 */
         }
 
         @keyframes slideDown {
@@ -176,12 +187,12 @@
         .layui-layout-right .layui-nav-child dd a {
             line-height: 36px;
             padding: 0 20px;
-            color: rgba(255, 255, 255, 0.8) !important; /* 菜单项文字白 */
+            color: oklch(var(--bc) / 0.8) !important;
         }
         
         .layui-layout-right .layui-nav-child dd a:hover {
-            background-color: rgba(255, 255, 255, 0.05);
-            color: #00c6ff !important;
+            background-color: oklch(var(--bc) / 0.1);
+            color: oklch(var(--p)) !important;
         }
         
         /* ========================================
@@ -190,19 +201,19 @@
         
         /* 标签页容器背景色 */
         .layadmin-pagetabs {
-            background-color: #1e293b !important;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: oklch(var(--b2)) !important;
+            border-bottom: 1px solid oklch(var(--bc) / 0.1);
         }
         
         /* 左右控制按钮颜色 */
         .layadmin-tabs-control {
-            background-color: #1e293b !important;
-            color: rgba(255, 255, 255, 0.6) !important;
+            background-color: oklch(var(--b2)) !important;
+            color: oklch(var(--bc) / 0.6) !important;
         }
         
         .layadmin-tabs-control:hover {
-            background-color: rgba(255, 255, 255, 0.1) !important;
-            color: #fff !important;
+            background-color: oklch(var(--bc) / 0.1) !important;
+            color: oklch(var(--bc)) !important;
         }
         
         /* 标签容器背景 */
@@ -213,26 +224,26 @@
         
         /* 标签项样式 - 只改颜色，不改布局 */
         .layadmin-pagetabs .layui-tab-title li {
-            background-color: rgba(255, 255, 255, 0.05) !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            background-color: oklch(var(--bc) / 0.05) !important;
+            border: 1px solid oklch(var(--bc) / 0.1) !important;
             border-bottom: none !important;
             border-radius: 6px 6px 0 0;
-            color: rgba(255, 255, 255, 0.6) !important;
+            color: oklch(var(--bc) / 0.6) !important;
             margin-right: 2px;
             padding-right: 28px; /* 为关闭按钮留出空间 */
         }
         
         .layadmin-pagetabs .layui-tab-title li:hover {
-            color: #fff !important;
-            background-color: rgba(255, 255, 255, 0.1) !important;
+            color: oklch(var(--bc)) !important;
+            background-color: oklch(var(--bc) / 0.1) !important;
         }
         
         /* 选中的标签 */
         .layadmin-pagetabs .layui-tab-title li.layui-this {
-            color: #fff !important;
+            color: oklch(var(--bc)) !important;
             font-weight: 600;
-            background-color: #0f172a !important;
-            border-color: rgba(255, 255, 255, 0.2) !important;
+            background-color: oklch(var(--b1)) !important;
+            border-color: oklch(var(--bc) / 0.2) !important;
         }
         
         /* 选中标签顶部高亮条 */
@@ -243,19 +254,19 @@
             left: 0;
             right: 0;
             height: 2px;
-            background: linear-gradient(90deg, #00c6ff 0%, #0072ff 100%);
+            background: linear-gradient(90deg, oklch(var(--p)) 0%, oklch(var(--p) / 0.8) 100%);
             border-radius: 6px 6px 0 0;
         }
         
         /* 关闭按钮样式 - 保留原有定位 */
         .layadmin-pagetabs .layui-tab-title li .layui-tab-close {
-            color: rgba(255, 255, 255, 0.4) !important;
+            color: oklch(var(--bc) / 0.4) !important;
             right: 8px !important;
         }
         
         .layadmin-pagetabs .layui-tab-title li .layui-tab-close:hover {
-            background-color: rgba(239, 68, 68, 0.8) !important;
-            color: #fff !important;
+            background-color: oklch(var(--er)) !important;
+            color: oklch(var(--erc)) !important;
             border-radius: 50%;
         }
         
@@ -274,10 +285,10 @@
         
         /* 下拉菜单内容 */
         .layadmin-tabs-select .layui-nav-child {
-            background-color: #1e293b !important;
-            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+            background-color: oklch(var(--b2)) !important;
+            border: 1px solid oklch(var(--bc) / 0.15) !important;
             border-radius: 8px !important;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.4) !important;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2) !important;
             padding: 6px !important;
             min-width: 150px !important;
         }
@@ -287,27 +298,67 @@
         }
         
         .layadmin-tabs-select .layui-nav-child dd a {
-            color: rgba(255, 255, 255, 0.8) !important;
+            color: oklch(var(--bc) / 0.8) !important;
             padding: 10px 14px !important;
             border-radius: 6px;
             font-size: 13px;
         }
         
         .layadmin-tabs-select .layui-nav-child dd a:hover {
-            background-color: rgba(59, 130, 246, 0.2) !important;
-            color: #60a5fa !important;
+            background-color: oklch(var(--p) / 0.2) !important;
+            color: oklch(var(--p)) !important;
         }
 
         /* 图标微调 */
         .layui-icon { font-size: 16px; }
         
+        /* 顶部按钮样式 - 使用主题变量 */
+        .header-btn {
+            display: inline-flex !important;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            color: oklch(var(--bc)) !important;
+            transition: all 0.2s;
+        }
+        .header-btn:hover {
+            background-color: oklch(var(--bc) / 0.1) !important;
+        }
+        .header-btn .layui-icon {
+            color: oklch(var(--bc)) !important;
+            font-size: 18px !important;
+        }
+        
+        /* daisyUI 主题按钮样式 */
+        .layui-header .btn {
+            color: oklch(var(--bc)) !important;
+            background-color: transparent;
+        }
+        .layui-header .btn:hover {
+            color: oklch(var(--bc)) !important;
+            background-color: oklch(var(--bc) / 0.1) !important;
+        }
+        .layui-header .dropdown-content {
+            background-color: oklch(var(--b2)) !important;
+            border: 1px solid oklch(var(--bc) / 0.15) !important;
+        }
+        .layui-header .dropdown-content .btn-ghost {
+            color: oklch(var(--bc)) !important;
+        }
+        .layui-header .dropdown-content .btn-ghost:hover {
+            background-color: oklch(var(--p) / 0.2) !important;
+            color: oklch(var(--p)) !important;
+        }
+        
         /* 全局滚动条美化 - 深色 */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb { background: oklch(var(--bc) / 0.2); border-radius: 3px; }
         ::-webkit-scrollbar-track { background: transparent; }
         
-        /* 主体背景色 */
-        #LAY_app_body { background-color: #0f172a; }
+        /* 主体背景色 - 使用 daisyUI 主题变量 */
+        #LAY_app_body { background-color: oklch(var(--b1)); }
     </style>
 
     <div id="LAY_app">
@@ -315,15 +366,63 @@
             <div class="layui-header">
                 <!-- 头部区域 -->
                 <ul class="layui-nav layui-layout-left">
+                    <!-- 侧边栏缩放按钮 - 保留原 Layui 事件 -->
                     <li class="layui-nav-item layadmin-flexible" lay-unselect>
-                        <a href="javascript:;" layadmin-event="flexible" title="侧边伸缩">
+                        <a href="javascript:;" layadmin-event="flexible" title="侧边伸缩" class="header-btn">
                             <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
                         </a>
                     </li>
+                    <!-- 刷新按钮 -->
                     <li class="layui-nav-item" lay-unselect>
-                        <a href="javascript:;" layadmin-event="refresh" title="刷新">
+                        <a href="javascript:;" layadmin-event="refresh" title="刷新" class="header-btn">
                             <i class="layui-icon layui-icon-refresh-3"></i>
                         </a>
+                    </li>
+                    <!-- daisyUI 主题切换下拉菜单 -->
+                    <li class="layui-nav-item" lay-unselect>
+                        <div class="dropdown dropdown-bottom">
+                            <button tabindex="0" class="btn btn-ghost btn-sm gap-1" title="切换主题">
+                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
+                                </svg>
+                                <span class="hidden sm:inline text-xs">主题</span>
+                                <svg class="h-3 w-3 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                            </button>
+                            <ul tabindex="0" class="dropdown-content z-[9999] menu p-2 shadow-lg bg-base-200 rounded-box w-52 mt-2 max-h-96 overflow-y-auto">
+                                <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Light" value="light"/></li>
+                                <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Dark" value="dark"/></li>
+                                <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Cupcake" value="cupcake"/></li>
+                                <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Bumblebee" value="bumblebee"/></li>
+                                <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Emerald" value="emerald"/></li>
+                                <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Corporate" value="corporate"/></li>
+                                <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Synthwave" value="synthwave"/></li>
+                                <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Retro" value="retro"/></li>
+                                <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Cyberpunk" value="cyberpunk"/></li>
+                                <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Valentine" value="valentine"/></li>
+                                <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Halloween" value="halloween"/></li>
+                                <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Garden" value="garden"/></li>
+                                <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Forest" value="forest"/></li>
+                                <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Aqua" value="aqua"/></li>
+                                <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Lofi" value="lofi"/></li>
+                                <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Pastel" value="pastel"/></li>
+                                <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Fantasy" value="fantasy"/></li>
+                                <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Wireframe" value="wireframe"/></li>
+                                <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Black" value="black"/></li>
+                                <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Luxury" value="luxury"/></li>
+                                <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Dracula" value="dracula"/></li>
+                                <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Cmyk" value="cmyk"/></li>
+                                <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Autumn" value="autumn"/></li>
+                                <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Business" value="business"/></li>
+                                <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Acid" value="acid"/></li>
+                                <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Lemonade" value="lemonade"/></li>
+                                <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Night" value="night"/></li>
+                                <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Coffee" value="coffee"/></li>
+                                <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Winter" value="winter"/></li>
+                                <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Dim" value="dim"/></li>
+                                <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Nord" value="nord"/></li>
+                                <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Sunset" value="sunset"/></li>
+                            </ul>
+                        </div>
                     </li>
                 </ul>
                 <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right">

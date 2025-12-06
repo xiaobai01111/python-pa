@@ -3,11 +3,11 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-<body style="background-color: #0f172a;">
+<body>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
     
-    body { font-family: 'Inter', sans-serif; color: #e2e8f0; }
+    body { font-family: 'Inter', sans-serif; color: oklch(var(--bc)); }
     
     html, body { height: 100%; }
     
@@ -19,23 +19,24 @@
     
     .layui-row, .layui-col-sm12 { height: 100%; }
 
-    /* 卡片容器 - 深色磨砂 */
+    /* 卡片容器 - 适配所有主题 */
     .layui-card {
-        background: rgba(30, 41, 59, 0.7);
+        background-color: oklch(var(--b2) / 0.8);
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
         border-radius: 16px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        border: 1px solid oklch(var(--bc) / 0.1);
         height: calc(100vh - 60px); /* 自适应高度 */
+        color: oklch(var(--bc));
     }
     
     .layui-card-header {
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        border-bottom: 1px solid oklch(var(--bc) / 0.1);
         padding: 20px 30px;
         font-size: 18px;
         font-weight: 600;
-        color: #fff;
+        color: oklch(var(--bc));
         display: flex;
         align-items: center;
     }
@@ -45,10 +46,10 @@
         display: inline-block;
         width: 4px;
         height: 18px;
-        background: #3b82f6;
+        background: oklch(var(--p));
         border-radius: 2px;
         margin-right: 12px;
-        box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+        box-shadow: 0 0 10px oklch(var(--p) / 0.5);
     }
     
     .layui-card-body {

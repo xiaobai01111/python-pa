@@ -1,7 +1,14 @@
 {% load static %}
 <!DOCTYPE html>
-<html>
+<html data-theme="dark">
 <head>
+  <!-- 立即应用保存的主题，防止闪烁 -->
+  <script>
+    (function() {
+      var theme = localStorage.getItem('daisyui-theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
   <meta charset="utf-8">
   <title>职位信息可视化推荐系统</title>
   <meta name="renderer" content="webkit">
@@ -10,6 +17,142 @@
   <!-- daisyUI + Tailwind CSS -->
   <link href="https://cdn.jsdelivr.net/npm/daisyui@4/dist/full.min.css" rel="stylesheet" type="text/css" />
   <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- 全局主题样式 - 覆盖所有页面 -->
+  <style>
+    /* ========================================
+       全局 daisyUI 主题变量映射
+       ======================================== */
+    
+    /* 背景色映射 */
+    body {
+      background-color: oklch(var(--b1)) !important;
+      color: oklch(var(--bc)) !important;
+    }
+    
+    /* 卡片组件 */
+    .layui-card {
+      background-color: oklch(var(--b2) / 0.8) !important;
+      border-color: oklch(var(--bc) / 0.1) !important;
+    }
+    
+    .layui-card-header {
+      color: oklch(var(--bc)) !important;
+      border-color: oklch(var(--bc) / 0.1) !important;
+    }
+    
+    .layui-card-body {
+      color: oklch(var(--bc)) !important;
+    }
+    
+    /* 表单元素 */
+    .layui-input, .layui-textarea, .layui-select {
+      background-color: oklch(var(--b1)) !important;
+      border-color: oklch(var(--bc) / 0.15) !important;
+      color: oklch(var(--bc)) !important;
+    }
+    
+    .layui-input:focus, .layui-textarea:focus {
+      border-color: oklch(var(--p)) !important;
+      box-shadow: 0 0 0 2px oklch(var(--p) / 0.25) !important;
+    }
+    
+    .layui-form-label {
+      color: oklch(var(--bc) / 0.7) !important;
+    }
+    
+    /* 按钮 */
+    .layui-btn {
+      background-color: oklch(var(--p)) !important;
+      color: oklch(var(--pc)) !important;
+    }
+    
+    .layui-btn:hover {
+      background-color: oklch(var(--p) / 0.9) !important;
+    }
+    
+    /* 表格 */
+    .layui-table {
+      color: oklch(var(--bc)) !important;
+    }
+    
+    .layui-table th {
+      background-color: oklch(var(--b2)) !important;
+      color: oklch(var(--bc) / 0.7) !important;
+    }
+    
+    .layui-table td {
+      border-color: oklch(var(--bc) / 0.05) !important;
+    }
+    
+    .layui-table tbody tr:hover,
+    .layui-table-hover {
+      background-color: oklch(var(--b3) / 0.6) !important;
+    }
+    
+    .layui-table-header {
+      background-color: oklch(var(--b2)) !important;
+    }
+    
+    /* 分页 */
+    .layui-laypage a, .layui-laypage span {
+      background-color: transparent !important;
+      color: oklch(var(--bc) / 0.7) !important;
+      border-color: oklch(var(--bc) / 0.15) !important;
+    }
+    
+    .layui-laypage .layui-laypage-curr .layui-laypage-em {
+      background-color: oklch(var(--p)) !important;
+    }
+    
+    /* 下拉菜单 */
+    .layui-form-select dl {
+      background-color: oklch(var(--b2)) !important;
+      border-color: oklch(var(--bc) / 0.15) !important;
+    }
+    
+    .layui-form-select dl dd {
+      color: oklch(var(--bc) / 0.8) !important;
+    }
+    
+    .layui-form-select dl dd:hover {
+      background-color: oklch(var(--p) / 0.15) !important;
+    }
+    
+    .layui-form-select dl dd.layui-this {
+      background-color: oklch(var(--p)) !important;
+      color: oklch(var(--pc)) !important;
+    }
+    
+    /* 导航 */
+    .layui-nav {
+      background-color: transparent !important;
+    }
+    
+    .layui-nav .layui-nav-item a {
+      color: oklch(var(--bc) / 0.7) !important;
+    }
+    
+    .layui-nav .layui-nav-item a:hover {
+      color: oklch(var(--bc)) !important;
+    }
+    
+    .layui-nav-child {
+      background-color: oklch(var(--b2)) !important;
+    }
+    
+    /* 图标颜色 */
+    .layui-icon {
+      color: oklch(var(--bc) / 0.7) !important;
+    }
+    
+    /* 文字颜色辅助类 */
+    .text-base-content { color: oklch(var(--bc)) !important; }
+    .bg-base-100 { background-color: oklch(var(--b1)) !important; }
+    .bg-base-200 { background-color: oklch(var(--b2)) !important; }
+    .bg-base-300 { background-color: oklch(var(--b3)) !important; }
+  </style>
+  
   <!-- Layui -->
   <link rel="stylesheet" href="{% static "layuiadmin/layui/css/layui.css" %}" media="all">
   <link rel="stylesheet" href="{% static "layuiadmin/style/admin.css" %}" media="all">
@@ -19,5 +162,68 @@
 {% endblock content %}
 <script src="{% static "layuiadmin/layui/layui.js" %}"></script>
 <script src="{% static "layuiadmin/config.js" %}"></script>
+
+<!-- 主题持久化和同步脚本 -->
+<script>
+  // 页面加载时恢复保存的主题
+  (function() {
+    const savedTheme = localStorage.getItem('daisyui-theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    
+    // 选中对应的主题单选按钮
+    const themeRadio = document.querySelector('input[name="theme-dropdown"][value="' + savedTheme + '"]');
+    if (themeRadio) themeRadio.checked = true;
+  })();
+  
+  // 同步主题到所有 iframe
+  function syncThemeToIframes(theme) {
+    var iframes = document.querySelectorAll('iframe');
+    iframes.forEach(function(iframe) {
+      try {
+        if (iframe.contentDocument) {
+          iframe.contentDocument.documentElement.setAttribute('data-theme', theme);
+        }
+      } catch(e) {}
+    });
+  }
+  
+  // 监听主题切换
+  document.addEventListener('change', function(e) {
+    if (e.target.classList.contains('theme-controller')) {
+      var theme = e.target.value;
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('daisyui-theme', theme);
+      syncThemeToIframes(theme);
+    }
+  });
+  
+  // 监听 iframe 加载完成后同步主题
+  document.addEventListener('DOMContentLoaded', function() {
+    var savedTheme = localStorage.getItem('daisyui-theme') || 'dark';
+    
+    // 使用 MutationObserver 监听新增的 iframe
+    var observer = new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        mutation.addedNodes.forEach(function(node) {
+          if (node.tagName === 'IFRAME') {
+            node.addEventListener('load', function() {
+              try {
+                if (node.contentDocument) {
+                  node.contentDocument.documentElement.setAttribute('data-theme', savedTheme);
+                }
+              } catch(e) {}
+            });
+          }
+        });
+      });
+    });
+    
+    observer.observe(document.body, { childList: true, subtree: true });
+    
+    // 为已存在的 iframe 添加主题
+    setTimeout(function() { syncThemeToIframes(savedTheme); }, 500);
+  });
+</script>
+
 {% block js %}{% endblock js %}
 </html>

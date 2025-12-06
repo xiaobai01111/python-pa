@@ -2,11 +2,11 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-<body style="background-color: #0f172a;">
+<body>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
     
-    body { font-family: 'Inter', sans-serif; color: #e2e8f0; }
+    body { font-family: 'Inter', sans-serif; color: oklch(var(--bc)); }
     
     html, body { height: 100%; }
     
@@ -16,15 +16,16 @@
         box-sizing: border-box;
     }
     
-    /* 卡片容器 - 深色磨砂 */
+    /* 卡片容器 - 适配所有主题 */
     .layui-card {
-        background: rgba(30, 41, 59, 0.7);
+        background-color: oklch(var(--b2) / 0.8);
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
         border-radius: 16px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        border: 1px solid oklch(var(--bc) / 0.1);
         height: 100%;
+        color: oklch(var(--bc));
     }
     
     .layui-card-body { padding: 20px; height: 100%; box-sizing: border-box; }
@@ -37,78 +38,83 @@
     
     .layui-table {
         background-color: transparent !important;
-        color: #e2e8f0;
+        color: oklch(var(--bc));
     }
     
     /* 修复表头背景 */
     .layui-table-header {
-        background-color: #1e293b !important;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+        background-color: oklch(var(--b3)) !important;
+        border-bottom: 1px solid oklch(var(--bc) / 0.1) !important;
     }
     
     .layui-table th {
-        background-color: #1e293b !important;
-        color: #94a3b8 !important;
+        background-color: oklch(var(--b3)) !important;
+        color: oklch(var(--bc) / 0.8) !important;
         font-weight: 600;
-        border-color: rgba(255, 255, 255, 0.05) !important;
+        border-color: oklch(var(--bc) / 0.05) !important;
     }
     
     .layui-table td {
-        border-color: rgba(255, 255, 255, 0.05);
-        color: #cbd5e1;
+        border-color: oklch(var(--bc) / 0.05);
+        color: oklch(var(--bc));
     }
     
     /* 斑马纹和悬停 */
     .layui-table-hover, .layui-table-click, .layui-table-hover td {
-        background-color: rgba(59, 130, 246, 0.1) !important;
+        background-color: oklch(var(--b2)) !important;
     }
     
     /* 分页样式修复 */
     .layui-laypage a, .layui-laypage span {
         background-color: transparent !important;
-        color: #94a3b8 !important;
-        border-color: rgba(255, 255, 255, 0.1) !important;
+        color: oklch(var(--bc) / 0.7) !important;
+        border-color: oklch(var(--bc) / 0.1) !important;
     }
     
     .layui-laypage .layui-laypage-curr .layui-laypage-em {
-        background-color: #3b82f6 !important;
+        background-color: oklch(var(--p)) !important;
     }
     
     .layui-laypage .layui-laypage-curr em {
-        color: #fff !important;
+        color: oklch(var(--pc)) !important;
     }
 
     /* 分页输入框和下拉框深色适配 */
     .layui-laypage input, .layui-laypage select {
-        background-color: #1e293b !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        color: #fff !important;
+        background-color: oklch(var(--b1)) !important;
+        border: 1px solid oklch(var(--bc) / 0.1) !important;
+        color: oklch(var(--bc)) !important;
     }
     
     .layui-laypage button {
-        background-color: #1e293b !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        color: #94a3b8 !important;
+        background-color: oklch(var(--b1)) !important;
+        border: 1px solid oklch(var(--bc) / 0.1) !important;
+        color: oklch(var(--bc) / 0.7) !important;
     }
     
     /* 修复表格 Loading 和空数据样式 */
     .layui-table-init, .layui-none {
         background-color: transparent !important;
-        color: #94a3b8 !important;
+        color: oklch(var(--bc) / 0.6) !important;
     }
     
     /* 按钮样式 */
     .layui-btn-normal {
-        background: rgba(239, 68, 68, 0.15) !important;
-        color: #f87171 !important;
-        border: 1px solid rgba(239, 68, 68, 0.3) !important;
+        background: oklch(var(--er) / 0.15) !important;
+        color: oklch(var(--er)) !important;
+        border: 1px solid oklch(var(--er) / 0.3) !important;
         padding: 0 10px; /* 增加内边距 */
         min-width: 80px; /* 确保最小宽度 */
     }
     
     .layui-btn-normal:hover {
-        background: rgba(239, 68, 68, 0.25) !important;
-        color: #fff !important;
+        background: oklch(var(--er) / 0.25) !important;
+        color: oklch(var(--bc)) !important;
+    }
+    
+    .layui-btn-sm {
+        background-color: oklch(var(--su));
+        color: oklch(var(--suc));
     }
   </style>
 

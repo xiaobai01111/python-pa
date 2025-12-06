@@ -1,47 +1,47 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-    <body style="background-color: #0f172a;"> 
+    <body> 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
         
         body { 
             font-family: 'Inter', sans-serif; 
-            color: #e2e8f0;
-            background: radial-gradient(circle at 10% 20%, rgb(40, 50, 180) 0%, rgb(20, 10, 60) 90%);
-            background-attachment: fixed; 
             min-height: 100vh;
+            background-color: oklch(var(--b1));
+            color: oklch(var(--bc));
         }
         
         .layui-fluid { padding: 30px; } 
         
         .layui-card {
-            background: rgba(30, 41, 59, 0.7);
+            background-color: oklch(var(--b2) / 0.8) !important;
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid oklch(var(--bc) / 0.1);
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             overflow: hidden;
             position: relative;
             margin-bottom: 10px; 
+            color: oklch(var(--bc));
         }
         
         .layui-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
-            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+            border-color: oklch(var(--bc) / 0.2);
         }
 
         .layui-card-header {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid oklch(var(--bc) / 0.1);
             padding: 20px 30px;
             height: auto;
             line-height: 1.5;
             font-weight: 600;
             font-size: 16px;
-            color: #fff;
+            color: oklch(var(--bc));
             display: flex;
             align-items: center;
             background: transparent;
@@ -52,14 +52,15 @@
             display: inline-block;
             width: 4px;
             height: 18px;
-            background: #00ff88; 
+            background: oklch(var(--p)); 
             border-radius: 2px;
             margin-right: 12px;
-            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+            box-shadow: 0 0 10px oklch(var(--p) / 0.5);
         }
 
         .layui-card-body {
             padding: 30px;
+            color: oklch(var(--bc));
         }
 
         .stat-card .layui-card-body {
@@ -70,23 +71,22 @@
             border: none; 
             padding-bottom: 0; 
             font-size: 14px; 
-            color: #94a3b8; 
+            color: oklch(var(--bc) / 0.6); 
         }
         .stat-card .layui-card-header::before { display: none; }
         
         .stat-number {
             font-size: 42px;
             font-weight: 700;
-            color: #fff;
+            color: oklch(var(--bc));
             margin-top: 12px;
             margin-bottom: 8px;
             letter-spacing: -1px;
-            text-shadow: 0 0 20px rgba(255,255,255,0.1);
         }
         
         .stat-desc {
             font-size: 13px;
-            color: #64748b;
+            color: oklch(var(--bc) / 0.6);
             display: flex;
             align-items: center;
         }
@@ -97,38 +97,39 @@
             bottom: 15px;
             font-size: 80px;
             opacity: 0.05;
-            color: #fff;
+            color: oklch(var(--bc));
             transform: rotate(-15deg);
         }
 
-        .card-blue { background: linear-gradient(180deg, rgba(59,130,246,0.1) 0%, rgba(30,41,59,0.7) 100%); border-top: 2px solid #3b82f6; }
-        .card-blue .stat-number { color: #60a5fa; text-shadow: 0 0 15px rgba(59,130,246,0.4); }
+        /* 使用 theme 变量重构卡片颜色 */
+        .card-blue { background: oklch(var(--b2)); border-top: 2px solid oklch(var(--in)); }
+        .card-blue .stat-number { color: oklch(var(--in)); }
         
-        .card-purple { background: linear-gradient(180deg, rgba(139,92,246,0.1) 0%, rgba(30,41,59,0.7) 100%); border-top: 2px solid #8b5cf6; }
-        .card-purple .stat-number { color: #a78bfa; text-shadow: 0 0 15px rgba(139,92,246,0.4); }
+        .card-purple { background: oklch(var(--b2)); border-top: 2px solid oklch(var(--p)); }
+        .card-purple .stat-number { color: oklch(var(--p)); }
         
-        .card-green { background: linear-gradient(180deg, rgba(16,185,129,0.1) 0%, rgba(30,41,59,0.7) 100%); border-top: 2px solid #10b981; }
-        .card-green .stat-number { color: #34d399; text-shadow: 0 0 15px rgba(16,185,129,0.4); }
+        .card-green { background: oklch(var(--b2)); border-top: 2px solid oklch(var(--su)); }
+        .card-green .stat-number { color: oklch(var(--su)); }
         
-        .card-pink { background: linear-gradient(180deg, rgba(236,72,153,0.1) 0%, rgba(30,41,59,0.7) 100%); border-top: 2px solid #ec4899; }
-        .card-pink .stat-number { color: #f472b6; text-shadow: 0 0 15px rgba(236,72,153,0.4); }
+        .card-pink { background: oklch(var(--b2)); border-top: 2px solid oklch(var(--er)); }
+        .card-pink .stat-number { color: oklch(var(--er)); }
 
         /* daisyUI 风格表格 */
         .layui-table {
             width: 100%;
             background-color: transparent;
-            color: #e2e8f0;
+            color: oklch(var(--bc));
             border-collapse: collapse;
         }
         
         .layui-table thead tr {
             background-color: transparent;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid oklch(var(--bc) / 0.1);
         }
         
         .layui-table th {
             font-weight: 600;
-            color: #94a3b8;
+            color: oklch(var(--bc) / 0.6);
             border: none;
             padding: 12px 16px;
             text-align: left;
@@ -140,12 +141,12 @@
         .layui-table tbody tr {
             background-color: transparent;
             transition: background-color 0.15s ease;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid oklch(var(--bc) / 0.05);
         }
         
-        /* daisyUI 风格悬停高亮 - hover:bg-base-300 */
+        /* daisyUI 风格悬停高亮 */
         .layui-table tbody tr:hover {
-            background-color: rgba(51, 65, 85, 0.6) !important;
+            background-color: oklch(var(--b3) / 0.5) !important;
         }
         
         .layui-table td {
@@ -154,9 +155,10 @@
             font-size: 13px;
             white-space: nowrap;
             overflow: visible;
+            color: oklch(var(--bc));
         }
 
-        /* daisyUI 轮廓样式徽章 (badge-outline) */
+        /* daisyUI 轮廓样式徽章 */
         .badge {
             padding: 2px 10px;
             border-radius: 9999px;
@@ -172,10 +174,10 @@
             height: auto;
             min-height: 22px;
         }
-        .badge-salary { border-color: #f87171; color: #f87171; }
-        .badge-edu { border-color: #60a5fa; color: #60a5fa; }
-        .badge-exp { border-color: #34d399; color: #34d399; }
-        .badge-scale { border-color: #94a3b8; color: #94a3b8; }
+        .badge-salary { border-color: oklch(var(--er)); color: oklch(var(--er)); }
+        .badge-edu { border-color: oklch(var(--in)); color: oklch(var(--in)); }
+        .badge-exp { border-color: oklch(var(--su)); color: oklch(var(--su)); }
+        .badge-scale { border-color: oklch(var(--n)); color: oklch(var(--n)); }
 
         .layadmin-dataview { 
             height: 380px !important; 
@@ -186,74 +188,74 @@
         .layui-row { margin: -12px; }
 
         ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
-        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+        ::-webkit-scrollbar-thumb { background: oklch(var(--bc) / 0.2); border-radius: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
     </style>
 
     <div class="layui-fluid">
         <!-- 3D悬停效果统计卡片 -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <!-- 职位信息总量 -->
-            <div class="card bg-gradient-to-br from-blue-500/20 to-slate-800/80 backdrop-blur-xl border border-blue-500/30 shadow-xl transition-all duration-300 hover:shadow-blue-500/25 hover:shadow-2xl hover:-translate-y-2 hover:rotate-1" style="transform-style: preserve-3d;">
+            <div class="card bg-base-200 border border-info/30 shadow-xl transition-all duration-300 hover:shadow-info/25 hover:shadow-2xl hover:-translate-y-2 hover:rotate-1" style="transform-style: preserve-3d;">
                 <div class="card-body">
                     <div class="flex justify-between items-start">
-                        <h2 class="card-title text-slate-300 text-sm font-medium">职位信息总量</h2>
-                        <div class="p-2 bg-blue-500/20 rounded-lg">
-                            <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <h2 class="card-title text-base-content/70 text-sm font-medium">职位信息总量</h2>
+                        <div class="p-2 bg-info/20 rounded-lg">
+                            <svg class="w-6 h-6 text-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                             </svg>
                         </div>
                     </div>
-                    <p class="text-4xl font-bold text-blue-400 mt-2">{{ all_job }}</p>
-                    <p class="text-slate-500 text-sm mt-1">当前数据库收录总数</p>
+                    <p class="text-4xl font-bold text-info mt-2">{{ all_job }}</p>
+                    <p class="text-base-content/50 text-sm mt-1">当前数据库收录总数</p>
                 </div>
             </div>
             
             <!-- 全网最高薪资 -->
-            <div class="card bg-gradient-to-br from-purple-500/20 to-slate-800/80 backdrop-blur-xl border border-purple-500/30 shadow-xl transition-all duration-300 hover:shadow-purple-500/25 hover:shadow-2xl hover:-translate-y-2 hover:-rotate-1" style="transform-style: preserve-3d;">
+            <div class="card bg-base-200 border border-primary/30 shadow-xl transition-all duration-300 hover:shadow-primary/25 hover:shadow-2xl hover:-translate-y-2 hover:-rotate-1" style="transform-style: preserve-3d;">
                 <div class="card-body">
                     <div class="flex justify-between items-start">
-                        <h2 class="card-title text-slate-300 text-sm font-medium">全网最高薪资</h2>
-                        <div class="p-2 bg-purple-500/20 rounded-lg">
-                            <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <h2 class="card-title text-base-content/70 text-sm font-medium">全网最高薪资</h2>
+                        <div class="p-2 bg-primary/20 rounded-lg">
+                            <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                         </div>
                     </div>
-                    <p class="text-4xl font-bold text-purple-400 mt-2">{{ job_data_1.salary_1 }}k</p>
-                    <p class="text-slate-500 text-sm mt-1">{{ job_data_1.name | truncatechars:15 }}</p>
+                    <p class="text-4xl font-bold text-primary mt-2">{{ job_data_1.salary_1 }}k</p>
+                    <p class="text-base-content/50 text-sm mt-1">{{ job_data_1.name | truncatechars:15 }}</p>
                 </div>
             </div>
             
             <!-- 行业平均薪资 -->
-            <div class="card bg-gradient-to-br from-emerald-500/20 to-slate-800/80 backdrop-blur-xl border border-emerald-500/30 shadow-xl transition-all duration-300 hover:shadow-emerald-500/25 hover:shadow-2xl hover:-translate-y-2 hover:rotate-1" style="transform-style: preserve-3d;">
+            <div class="card bg-base-200 border border-success/30 shadow-xl transition-all duration-300 hover:shadow-success/25 hover:shadow-2xl hover:-translate-y-2 hover:rotate-1" style="transform-style: preserve-3d;">
                 <div class="card-body">
                     <div class="flex justify-between items-start">
-                        <h2 class="card-title text-slate-300 text-sm font-medium">行业平均薪资</h2>
-                        <div class="p-2 bg-emerald-500/20 rounded-lg">
-                            <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <h2 class="card-title text-base-content/70 text-sm font-medium">行业平均薪资</h2>
+                        <div class="p-2 bg-success/20 rounded-lg">
+                            <svg class="w-6 h-6 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                             </svg>
                         </div>
                     </div>
-                    <p class="text-4xl font-bold text-emerald-400 mt-2">{{ mean_salary }}k</p>
-                    <p class="text-slate-500 text-sm mt-1">综合统计分析结果</p>
+                    <p class="text-4xl font-bold text-success mt-2">{{ mean_salary }}k</p>
+                    <p class="text-base-content/50 text-sm mt-1">综合统计分析结果</p>
                 </div>
             </div>
             
             <!-- 数据爬取监控 -->
-            <div class="card bg-gradient-to-br from-pink-500/20 to-slate-800/80 backdrop-blur-xl border border-pink-500/30 shadow-xl transition-all duration-300 hover:shadow-pink-500/25 hover:shadow-2xl hover:-translate-y-2 hover:-rotate-1" style="transform-style: preserve-3d;">
+            <div class="card bg-base-200 border border-error/30 shadow-xl transition-all duration-300 hover:shadow-error/25 hover:shadow-2xl hover:-translate-y-2 hover:-rotate-1" style="transform-style: preserve-3d;">
                 <div class="card-body">
                     <div class="flex justify-between items-start">
-                        <h2 class="card-title text-slate-300 text-sm font-medium">数据爬取监控</h2>
-                        <div class="p-2 bg-pink-500/20 rounded-lg">
-                            <svg class="w-6 h-6 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <h2 class="card-title text-base-content/70 text-sm font-medium">数据爬取监控</h2>
+                        <div class="p-2 bg-error/20 rounded-lg">
+                            <svg class="w-6 h-6 text-error" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/>
                             </svg>
                         </div>
                     </div>
-                    <p class="text-4xl font-bold text-pink-400 mt-2">{{ spider_info.count }}</p>
-                    <p class="text-slate-500 text-sm mt-1">共采集 {{ spider_info.page }} 页数据</p>
+                    <p class="text-4xl font-bold text-error mt-2">{{ spider_info.count }}</p>
+                    <p class="text-base-content/50 text-sm mt-1">共采集 {{ spider_info.page }} 页数据</p>
                 </div>
             </div>
         </div>
@@ -317,8 +319,8 @@
                             <tbody>
                             {% for job in job_data_10 %}
                                 <tr>
-                                    <td style="font-family: monospace; color: #64748b;">#{{ job.job_id }}</td>
-                                    <td style="font-weight: 600; color: #fff;">{{ job.name | truncatechars:16 }}</td>
+                                    <td style="font-family: monospace; color: oklch(var(--bc) / 0.7);">#{{ job.job_id }}</td>
+                                    <td style="font-weight: 600; color: oklch(var(--bc));">{{ job.name | truncatechars:16 }}</td>
                                     <td><span class="badge badge-salary">{{ job.salary }}</span></td>
                                     <td><span class="badge badge-edu">{{ job.education }}</span></td>
                                     <td><span class="badge badge-exp">{{ job.experience }}</span></td>

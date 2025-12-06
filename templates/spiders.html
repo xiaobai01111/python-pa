@@ -1,30 +1,31 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-    <body style="background-color: #0f172a;">
+    <body>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
         
-        body { font-family: 'Inter', sans-serif; color: #e2e8f0; }
+        body { font-family: 'Inter', sans-serif; color: oklch(var(--bc)); }
         
         .layui-fluid { padding: 30px; }
         
-        /* 卡片容器 - 深色磨砂 */
+        /* 卡片容器 - 适配所有主题 */
         .layui-card {
-            background: rgba(30, 41, 59, 0.7);
+            background-color: oklch(var(--b2) / 0.8);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid oklch(var(--bc) / 0.1);
+            color: oklch(var(--bc));
         }
         
         .layui-card-header {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid oklch(var(--bc) / 0.1);
             padding: 20px 30px;
             font-size: 18px;
             font-weight: 600;
-            color: #fff;
+            color: oklch(var(--bc));
             display: flex;
             align-items: center;
         }
@@ -34,17 +35,17 @@
             display: inline-block;
             width: 4px;
             height: 18px;
-            background: #00ff88;
+            background: oklch(var(--su));
             border-radius: 2px;
             margin-right: 12px;
-            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+            box-shadow: 0 0 10px oklch(var(--su) / 0.5);
         }
         
         .layui-card-body { padding: 30px; }
         
         /* 表单元素重构 */
         .layui-form-label {
-            color: #94a3b8;
+            color: oklch(var(--bc) / 0.7);
             width: 100px;
             padding: 12px 15px;
             font-size: 14px;
@@ -53,9 +54,9 @@
         .layui-input-block { margin-left: 130px; }
         
         .layui-input, .layui-select {
-            background-color: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #fff;
+            background-color: oklch(var(--b1));
+            border: 1px solid oklch(var(--bc) / 0.2);
+            color: oklch(var(--bc));
             border-radius: 8px;
             height: 44px;
             line-height: 44px;
@@ -63,31 +64,32 @@
         }
         
         .layui-input:focus, .layui-select:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+            border-color: oklch(var(--p));
+            box-shadow: 0 0 0 3px oklch(var(--p) / 0.2);
         }
         
-        .layui-input::-webkit-input-placeholder { color: rgba(255, 255, 255, 0.3); }
+        .layui-input::-webkit-input-placeholder { color: oklch(var(--bc) / 0.4); }
         
         /* Layui 下拉选择框三角颜色 */
         .layui-form-select .layui-edge {
-            border-top-color: rgba(255, 255, 255, 0.5);
+            border-top-color: oklch(var(--bc) / 0.5);
         }
         
         /* 单选框样式适配 */
         .layui-form-radio > i {
-            color: #3b82f6;
+            color: oklch(var(--p));
         }
         .layui-form-radio * {
-            color: #e2e8f0;
+            color: oklch(var(--bc));
             font-size: 14px;
         }
         
         /* 按钮样式 */
         .layui-btn {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            background-color: oklch(var(--su));
+            color: oklch(var(--suc));
             border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 4px 15px oklch(var(--su) / 0.3);
             border: none;
             height: 44px;
             line-height: 44px;
@@ -99,15 +101,16 @@
         
         .layui-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+            box-shadow: 0 8px 25px oklch(var(--su) / 0.4);
             opacity: 0.95;
+            background-color: oklch(var(--su));
         }
         
         /* 正在爬取状态 */
         span.layui-btn {
-            background: rgba(148, 163, 184, 0.2) !important;
-            color: #94a3b8 !important;
-            border: 1px solid rgba(148, 163, 184, 0.2);
+            background: oklch(var(--n) / 0.2) !important;
+            color: oklch(var(--bc) / 0.5) !important;
+            border: 1px solid oklch(var(--n) / 0.2);
             box-shadow: none;
             cursor: not-allowed;
         }
@@ -118,37 +121,37 @@
         /* 修复底部空白和背景色 */
         html, body { 
             min-height: 100vh; 
-            background-color: #0f172a !important; 
+            background-color: oklch(var(--b1)) !important; 
         }
         .layui-fluid {
             min-height: 100vh;
-            background-color: #0f172a;
+            background-color: oklch(var(--b1));
         }
 
         /* 下拉菜单深色适配 */
         .layui-form-select dl {
-            background-color: #1e293b;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            background-color: oklch(var(--b2));
+            border: 1px solid oklch(var(--bc) / 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
             padding: 5px 0;
         }
         
         .layui-form-select dl dd {
-            color: rgba(255, 255, 255, 0.8);
+            color: oklch(var(--bc) / 0.8);
         }
         
         .layui-form-select dl dd:hover {
-            background-color: rgba(255, 255, 255, 0.05);
+            background-color: oklch(var(--b3));
         }
         
         .layui-form-select dl dd.layui-this {
-            background-color: #3b82f6;
-            color: #fff;
+            background-color: oklch(var(--p));
+            color: oklch(var(--pc));
         }
         
         /* 下拉框输入区域样式 */
         .layui-form-select .layui-input {
-            color: #fff;
+            color: oklch(var(--bc));
         }
     </style>
 
@@ -162,12 +165,12 @@
                             <div class="layui-form-item">
                                 <label class="layui-form-label">关键字</label>
                                 <div class="layui-input-block">
-                                    <div class="flex items-center gap-2 bg-[rgba(15,23,42,0.6)] border border-white/10 rounded-lg px-3 py-2 w-full max-w-xl focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20">
-                                        <svg class="h-5 w-5 opacity-50 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <div class="flex items-center gap-2 bg-base-100 border border-base-content/10 rounded-lg px-3 py-2 w-full max-w-xl focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20">
+                                        <svg class="h-5 w-5 opacity-50 shrink-0 text-base-content" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                             <circle cx="11" cy="11" r="8" stroke-width="2.5"></circle>
                                             <path d="m21 21-4.3-4.3" stroke-width="2.5" stroke-linecap="round"></path>
                                         </svg>
-                                        <input type="text" name="key_word" class="bg-transparent border-none outline-none text-white flex-1 placeholder:text-white/30" placeholder="输入需要爬取的职位信息如：java工程师">
+                                        <input type="text" name="key_word" class="bg-transparent border-none outline-none text-base-content flex-1 placeholder:text-base-content/30" placeholder="输入需要爬取的职位信息如：java工程师">
                                     </div>
                                 </div>
                             </div>
@@ -176,25 +179,25 @@
                                 <div class="layui-input-block">
                                     <input type="hidden" name="city" id="city-input" value="">
                                     <div class="dropdown dropdown-start">
-                                        <div tabindex="0" role="button" class="btn bg-[rgba(15,23,42,0.6)] border border-white/10 text-white hover:bg-slate-700 w-64 justify-start font-normal" id="city-btn">
+                                        <div tabindex="0" role="button" class="btn bg-base-100 border border-base-content/10 text-base-content hover:bg-base-200 w-64 justify-start font-normal" id="city-btn">
                                             <span id="city-text">请选择一个城市</span>
                                             <svg class="ml-auto h-4 w-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                         </div>
-                                        <ul tabindex="0" class="dropdown-content menu bg-slate-800 border border-white/10 rounded-box z-50 w-52 p-2 shadow-lg mt-1">
-                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectCity('')">请选择一个城市</a></li>
-                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectCity('北京')">北京</a></li>
-                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectCity('上海')">上海</a></li>
-                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectCity('天津')">天津</a></li>
-                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectCity('重庆')">重庆</a></li>
-                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectCity('广州')">广州</a></li>
-                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectCity('深圳')">深圳</a></li>
-                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectCity('苏州')">苏州</a></li>
-                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectCity('南京')">南京</a></li>
-                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectCity('杭州')">杭州</a></li>
-                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectCity('大连')">大连</a></li>
-                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectCity('成都')">成都</a></li>
-                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectCity('武汉')">武汉</a></li>
-                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectCity('西安')">西安</a></li>
+                                        <ul tabindex="0" class="dropdown-content menu bg-base-200 border border-base-content/10 rounded-box z-50 w-52 p-2 shadow-lg mt-1 text-base-content">
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('')">请选择一个城市</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('北京')">北京</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('上海')">上海</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('天津')">天津</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('重庆')">重庆</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('广州')">广州</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('深圳')">深圳</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('苏州')">苏州</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('南京')">南京</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('杭州')">杭州</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('大连')">大连</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('成都')">成都</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('武汉')">武汉</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('西安')">西安</a></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -210,22 +213,22 @@
                                 <div class="layui-input-block">
                                     <input type="hidden" name="page" id="page-input" value="">
                                     <div class="dropdown dropdown-start">
-                                        <div tabindex="0" role="button" class="btn bg-[rgba(15,23,42,0.6)] border border-white/10 text-white hover:bg-slate-700 w-64 justify-start font-normal" id="page-btn">
+                                        <div tabindex="0" role="button" class="btn bg-base-100 border border-base-content/10 text-base-content hover:bg-base-200 w-64 justify-start font-normal" id="page-btn">
                                             <span id="page-text">请选择需要爬取页数数量</span>
                                             <svg class="ml-auto h-4 w-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                         </div>
-                                        <ul tabindex="0" class="dropdown-content menu bg-slate-800 border border-white/10 rounded-box z-50 w-52 p-2 shadow-lg mt-1">
-                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectPage('')">请选择需要爬取页数数量</a></li>
-                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectPage('1')">1页</a></li>
-                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectPage('2')">2页</a></li>
-                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectPage('3')">3页</a></li>
-                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectPage('4')">4页</a></li>
-                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectPage('5')">5页</a></li>
-                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectPage('6')">6页</a></li>
-                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectPage('7')">7页</a></li>
-                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectPage('8')">8页</a></li>
-                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectPage('9')">9页</a></li>
-                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectPage('10')">10页</a></li>
+                                        <ul tabindex="0" class="dropdown-content menu bg-base-200 border border-base-content/10 rounded-box z-50 w-52 p-2 shadow-lg mt-1 text-base-content">
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectPage('')">请选择需要爬取页数数量</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectPage('1')">1页</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectPage('2')">2页</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectPage('3')">3页</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectPage('4')">4页</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectPage('5')">5页</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectPage('6')">6页</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectPage('7')">7页</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectPage('8')">8页</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectPage('9')">9页</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectPage('10')">10页</a></li>
                                         </ul>
                                     </div>
                                 </div>

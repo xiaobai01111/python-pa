@@ -1,65 +1,65 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-<body style="background-color: #0f172a;">
+<body>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
     
-    body { font-family: 'Inter', sans-serif; color: #e2e8f0; }
+    body { font-family: 'Inter', sans-serif; color: oklch(var(--bc)); }
     
     .layui-fluid { padding: 30px; }
     
     /* 提示语样式 */
     .layui-elem-quote {
-        background-color: rgba(59, 130, 246, 0.1) !important;
-        border-left: 5px solid #3b82f6;
-        color: #cbd5e1;
+        background-color: oklch(var(--b2)) !important;
+        border-left: 5px solid oklch(var(--p));
+        color: oklch(var(--bc));
         border-radius: 4px;
         margin-bottom: 30px;
-        border-color: #3b82f6;
+        border-color: oklch(var(--p));
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
     
     /* 职位卡片容器 */
     .layadmin-contact-box {
-        background-color: rgba(30, 41, 59, 0.7) !important; /* 强制深色背景 */
+        background-color: oklch(var(--b2) / 0.8) !important;
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
         border-radius: 16px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        border: 1px solid oklch(var(--bc) / 0.1) !important;
         padding: 24px;
         margin-bottom: 15px;
         transition: all 0.3s ease;
         height: 100%;
-        min-height: 220px; /* 增加最小高度 */
+        min-height: 220px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        box-sizing: border-box; /* 确保 padding 不撑大容器 */
+        box-sizing: border-box;
     }
     
     .layadmin-contact-box:hover {
         transform: translateY(-5px);
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-        background-color: rgba(30, 41, 59, 0.9) !important;
-        border-color: rgba(59, 130, 246, 0.3) !important;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+        background-color: oklch(var(--b2)) !important;
+        border-color: oklch(var(--p) / 0.3) !important;
     }
     
     .layadmin-text {
-        color: #94a3b8;
+        color: oklch(var(--bc) / 0.7);
     }
     
     .layadmin-title {
         margin-bottom: 12px;
         font-size: 14px;
         line-height: 1.6;
-        color: #cbd5e1;
+        color: oklch(var(--bc) / 0.8);
     }
     
     .layadmin-title strong {
         font-size: 18px;
-        color: #fff;
+        color: oklch(var(--bc));
         display: block;
         margin-bottom: 10px;
         white-space: nowrap;
@@ -68,15 +68,16 @@
     }
     
     .layui-icon-location {
-        color: #f59e0b;
+        color: oklch(var(--wa));
         margin-right: 5px;
     }
     
     /* 投递按钮 */
     .layui-btn {
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        background: linear-gradient(135deg, oklch(var(--su)), oklch(var(--su) / 0.8));
+        color: oklch(var(--suc));
         border-radius: 8px;
-        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        box-shadow: 0 4px 15px oklch(var(--su) / 0.3);
         border: none;
         width: 100%;
         margin-top: 15px;
@@ -85,7 +86,7 @@
     
     .layui-btn:hover {
         opacity: 0.9;
-        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        box-shadow: 0 6px 20px oklch(var(--su) / 0.4);
     }
     
     /* 布局调整 */
@@ -94,34 +95,34 @@
         padding: 0 !important;
     }
     
-    /* 强制覆盖 Layer 弹窗样式为深色 */
+    /* 强制覆盖 Layer 弹窗样式为主题色 */
     .layui-layer-dialog .layui-layer-content {
-        background-color: #1e293b !important;
-        color: #e2e8f0 !important;
+        background-color: oklch(var(--b2)) !important;
+        color: oklch(var(--bc)) !important;
     }
     .layui-layer-title {
-        background-color: #0f172a !important;
-        color: #fff !important;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+        background-color: oklch(var(--b1)) !important;
+        color: oklch(var(--bc)) !important;
+        border-bottom: 1px solid oklch(var(--bc) / 0.1) !important;
     }
     .layui-layer {
-        background-color: #1e293b !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        background-color: oklch(var(--b2)) !important;
+        border: 1px solid oklch(var(--bc) / 0.1) !important;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
     }
     .layui-layer-btn {
-        background-color: #1e293b !important;
-        border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+        background-color: oklch(var(--b2)) !important;
+        border-top: 1px solid oklch(var(--bc) / 0.05) !important;
     }
     .layui-layer-btn a {
         background: transparent !important;
-        border: 1px solid rgba(255, 255, 255, 0.2) !important;
-        color: #cbd5e1 !important;
+        border: 1px solid oklch(var(--bc) / 0.2) !important;
+        color: oklch(var(--bc)) !important;
     }
     .layui-layer-btn .layui-layer-btn0 {
-        background: #3b82f6 !important;
-        border-color: #3b82f6 !important;
-        color: #fff !important;
+        background: oklch(var(--p)) !important;
+        border-color: oklch(var(--p)) !important;
+        color: oklch(var(--pc)) !important;
     }
   </style>
 

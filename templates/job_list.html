@@ -2,62 +2,102 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-<body style="background-color: #0f172a;">
-  <style>
+<body>
+    <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
     
-    body { font-family: 'Inter', sans-serif; color: #e2e8f0; }
+    body { font-family: 'Inter', sans-serif; color: oklch(var(--bc)); }
     
     .layui-fluid { padding: 24px; }
     
-    /* 卡片容器 - 深色磨砂 */
+    /* 卡片容器 - 适配所有主题 */
     .layui-card {
-        background: rgba(30, 41, 59, 0.7);
+        background-color: oklch(var(--b2) / 0.8);
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
         border-radius: 16px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        border: 1px solid oklch(var(--bc) / 0.1);
+        color: oklch(var(--bc));
     }
     
     .layui-card-header {
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        border-bottom: 1px solid oklch(var(--bc) / 0.1);
         padding: 20px 24px;
+        color: oklch(var(--bc));
     }
     
-    /* 表单元素重构 */
+    /* ========================================
+       daisyUI 风格表单元素
+       ======================================== */
+    
+    /* 表单项布局 - 防止换行 */
+    .layui-form-item {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 16px;
+    }
+    
+    .layui-inline {
+        display: inline-flex;
+        align-items: center;
+        white-space: nowrap;
+    }
+    
+    /* 标签样式 - daisyUI label */
     .layui-form-label {
-        color: #94a3b8;
+        color: oklch(var(--bc) / 0.7);
         font-weight: 500;
+        font-size: 14px;
+        white-space: nowrap;
+        padding: 0 12px 0 0;
+        width: auto;
     }
     
+    /* 输入框 - daisyUI input */
     .layui-input, .layui-select {
-        background-color: rgba(15, 23, 42, 0.6);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        color: #fff;
+        background-color: oklch(var(--b1));
+        border: 1px solid oklch(var(--bc) / 0.2);
+        color: oklch(var(--bc));
         border-radius: 8px;
-        transition: all 0.3s;
+        transition: all 0.2s;
+        height: 40px;
+        padding: 0 12px;
     }
     
     .layui-input:focus, .layui-select:focus {
-        border-color: #3b82f6;
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        border-color: oklch(var(--p));
+        box-shadow: 0 0 0 2px oklch(var(--p) / 0.25);
+        outline: none;
     }
     
-    .layui-input::-webkit-input-placeholder { color: rgba(255, 255, 255, 0.3); }
+    .layui-input::-webkit-input-placeholder { color: oklch(var(--bc) / 0.4); }
     
-    /* 搜索按钮 */
+    /* 下拉框容器 */
+    .layui-input-inline {
+        display: inline-block;
+    }
+    
+    /* 搜索按钮 - daisyUI btn-primary */
     .layui-btn {
-        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        background-color: oklch(var(--p));
+        color: oklch(var(--pc));
         border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
         border: none;
+        height: 40px;
+        min-height: 40px;
+        padding: 0 16px;
+        font-weight: 500;
+        transition: all 0.2s;
     }
     
     .layui-btn:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
-        opacity: 0.9;
+        background-color: oklch(var(--p) / 0.8);
+    }
+    
+    .layui-btn:active {
+        transform: scale(0.98);
     }
     
     /* 表格样式覆盖 */
@@ -68,30 +108,30 @@
     
     .layui-table {
         background-color: transparent !important;
-        color: #e2e8f0;
+        color: oklch(var(--bc));
     }
     
     /* 修复表头背景 */
     .layui-table-header {
-        background-color: #1e293b !important; /* 深色背景 */
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+        background-color: oklch(var(--b3)) !important; /* base-300 */
+        border-bottom: 1px solid oklch(var(--bc) / 0.1) !important;
     }
     
     .layui-table th {
-        background-color: #1e293b !important; /* 强制表头单元格背景 */
-        color: #94a3b8 !important; /* 浅灰文字 */
+        background-color: oklch(var(--b3)) !important;
+        color: oklch(var(--bc) / 0.8) !important;
         font-weight: 600;
-        border-color: rgba(255, 255, 255, 0.05) !important;
+        border-color: oklch(var(--bc) / 0.05) !important;
     }
     
     .layui-table th span {
         background-color: transparent !important;
-        color: #94a3b8 !important;
+        color: oklch(var(--bc) / 0.8) !important;
     }
     
     .layui-table td {
-        border-color: rgba(255, 255, 255, 0.05);
-        color: #cbd5e1;
+        border-color: oklch(var(--bc) / 0.05);
+        color: oklch(var(--bc));
     }
     
     /* ========================================
@@ -107,7 +147,7 @@
     .layui-table-hover,
     .layui-table tbody tr:hover,
     .layui-table-body tr:hover {
-        background-color: rgba(51, 65, 85, 0.8) !important; /* base-300 深色 */
+        background-color: oklch(var(--b2)) !important; 
     }
     
     .layui-table-hover td,
@@ -119,35 +159,35 @@
     /* 点击选中状态 */
     .layui-table-click,
     .layui-table-click td {
-        background-color: rgba(59, 130, 246, 0.15) !important;
+        background-color: oklch(var(--p) / 0.15) !important;
     }
     
     /* 分页样式修复 */
     .layui-laypage a, .layui-laypage span {
         background-color: transparent !important;
-        color: #94a3b8 !important;
-        border-color: rgba(255, 255, 255, 0.1) !important;
+        color: oklch(var(--bc) / 0.7) !important;
+        border-color: oklch(var(--bc) / 0.1) !important;
     }
     
     .layui-laypage .layui-laypage-curr .layui-laypage-em {
-        background-color: #3b82f6 !important;
+        background-color: oklch(var(--p)) !important;
     }
     
     .layui-laypage .layui-laypage-curr em {
-        color: #fff !important;
+        color: oklch(var(--pc)) !important;
     }
 
     /* 分页输入框和下拉框深色适配 */
     .layui-laypage input, .layui-laypage select {
-        background-color: #1e293b !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        color: #fff !important;
+        background-color: oklch(var(--b1)) !important;
+        border: 1px solid oklch(var(--bc) / 0.1) !important;
+        color: oklch(var(--bc)) !important;
     }
     
     .layui-laypage button {
-        background-color: #1e293b !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        color: #94a3b8 !important;
+        background-color: oklch(var(--b1)) !important;
+        border: 1px solid oklch(var(--bc) / 0.1) !important;
+        color: oklch(var(--bc) / 0.7) !important;
     }
 
     /* 修复底部空白 */
@@ -160,53 +200,105 @@
     .layui-card { height: 100%; margin-bottom: 0; }
     .layui-card-body { height: calc(100% - 100px); overflow: auto; }
 
-    /* 投递按钮特殊样式 */
+    /* 投递按钮特殊样式 - 修复裁剪问题 */
     .layui-btn-sm {
-        height: 26px;
-        line-height: 26px;
+        height: auto;
+        min-height: 28px;
+        line-height: 1.4;
         font-size: 12px;
-        background: rgba(16, 185, 129, 0.15);
-        color: #34d399;
-        border: 1px solid rgba(16, 185, 129, 0.3);
+        background: oklch(var(--su) / 0.15);
+        color: oklch(var(--su));
+        border: 1px solid oklch(var(--su) / 0.3);
         box-shadow: none;
+        padding: 4px 12px;
+        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
     }
     
     .layui-btn-sm:hover {
-        background: rgba(16, 185, 129, 0.25);
-        color: #fff;
+        background: oklch(var(--su) / 0.25);
+        color: oklch(var(--bc));
     }
     
     .layui-btn-normal {
-        background: rgba(148, 163, 184, 0.15) !important;
-        color: #94a3b8 !important;
-        border: 1px solid rgba(148, 163, 184, 0.3) !important;
+        background: oklch(var(--n) / 0.15) !important;
+        color: oklch(var(--bc) / 0.6) !important;
+        border: 1px solid oklch(var(--n) / 0.3) !important;
+    }
+    
+    /* 确保操作列不裁剪 */
+    .layui-table-cell {
+        overflow: visible;
     }
 
-    /* 修复下拉菜单样式 */
+    /* ========================================
+       daisyUI 风格下拉菜单 (select)
+       ======================================== */
+    
+    /* 下拉框容器 */
+    .layui-form-select {
+        position: relative;
+    }
+    
+    /* 下拉框输入框 - daisyUI select 风格 */
+    .layui-form-select .layui-input {
+        background-color: oklch(var(--b1));
+        border: 1px solid oklch(var(--bc) / 0.15);
+        border-radius: 8px;
+        color: oklch(var(--bc));
+        padding-right: 32px;
+        cursor: pointer;
+    }
+    
+    .layui-form-select .layui-input:focus,
+    .layui-form-select.layui-form-selected .layui-input {
+        border-color: oklch(var(--p));
+        box-shadow: 0 0 0 2px oklch(var(--p) / 0.25);
+    }
+    
+    /* 下拉箭头 */
+    .layui-form-select .layui-edge {
+        border-top-color: oklch(var(--bc) / 0.5);
+        right: 12px;
+    }
+    
+    /* 下拉菜单 - daisyUI dropdown 风格 */
     .layui-form-select dl {
-        background-color: #1e293b;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-        padding: 5px 0;
+        background-color: oklch(var(--b2));
+        border: 1px solid oklch(var(--bc) / 0.15);
+        border-radius: 8px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        padding: 4px;
+        margin-top: 4px;
+        max-height: 240px;
+        overflow-y: auto;
     }
     
     .layui-form-select dl dd {
-        color: rgba(255, 255, 255, 0.8);
+        color: oklch(var(--bc) / 0.8);
+        padding: 10px 14px;
+        border-radius: 6px;
+        margin: 2px 0;
+        transition: all 0.15s;
     }
     
     .layui-form-select dl dd:hover {
-        background-color: rgba(255, 255, 255, 0.05);
+        background-color: oklch(var(--p) / 0.15);
+        color: oklch(var(--p));
     }
     
     .layui-form-select dl dd.layui-this {
-        background-color: #3b82f6;
-        color: #fff;
+        background-color: oklch(var(--p));
+        color: oklch(var(--pc));
     }
 
     /* 修复表格 Loading 和空数据样式 */
     .layui-table-init, .layui-none {
         background-color: transparent !important;
-        color: #94a3b8 !important;
+        color: oklch(var(--bc) / 0.6) !important;
     }
     
     .layui-table-body {
@@ -257,6 +349,7 @@
             <div class="layui-input-inline">
               <select name="city" id="city_1">
                 <option value="">请选择城市</option>
+                <option value="全国">全国</option>
                 <option value="北京">北京</option>
                 <option value="上海">上海</option>
                 <option value="天津">天津</option>
