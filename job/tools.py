@@ -9,11 +9,107 @@ from lxml import etree
 from multiprocessing.dummy import Pool
 import pymysql
 import platform
+import threading
+from datetime import datetime
 
 import os
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
+
+# ========================================
+# 爬虫日志系统
+# ========================================
+class SpiderLogger:
+    """爬虫日志记录器"""
+    _instance = None
+    _lock = threading.Lock()
+    
+    def __new__(cls):
+        if cls._instance is None:
+            with cls._lock:
+                if cls._instance is None:
+                    cls._instance = super().__new__(cls)
+                    cls._instance.logs = []
+                    cls._instance.max_logs = 500  # 最多保存500条日志
+                    cls._instance.is_running = False
+                    cls._instance.session_id = None  # 当前爬取任务的会话ID
+        return cls._instance
+    
+    def log(self, message, level='INFO', private=False):
+        """记录日志"""
+        timestamp = datetime.now().strftime('%H:%M:%S')
+        log_entry = {
+            'time': timestamp,
+            'level': level,
+            'message': message,
+            'session_id': self.session_id,  # 记录所属会话
+            'private': private  # 私有日志不发送给前端
+        }
+        with self._lock:
+            self.logs.append(log_entry)
+            # 保持日志数量在限制内
+            if len(self.logs) > self.max_logs:
+                self.logs = self.logs[-self.max_logs:]
+        # 同时打印到控制台
+        print(f"[{timestamp}] [{level}] {message}")
+    
+    def info(self, message):
+        self.log(message, 'INFO')
+    
+    def success(self, message):
+        self.log(message, 'SUCCESS')
+    
+    def warning(self, message):
+        self.log(message, 'WARNING')
+    
+    def error(self, message):
+        self.log(message, 'ERROR')
+    
+    def get_logs(self, since_index=0, session_id=None):
+        """获取从指定索引开始的日志，可按 session_id 过滤，排除私有日志"""
+        with self._lock:
+            # 先过滤掉私有日志
+            public_logs = [log for log in self.logs if not log.get('private', False)]
+            
+            # 如果指定了 session_id，只返回该会话的日志
+            if session_id:
+                filtered = [log for log in public_logs if log.get('session_id') == session_id]
+                return filtered[since_index:], len(filtered)
+            
+            # 如果没有指定 session_id，只返回当前会话的日志（如果有的话）
+            if self.session_id:
+                filtered = [log for log in public_logs if log.get('session_id') == self.session_id]
+                return filtered[since_index:], len(filtered)
+            
+            # 没有当前会话，返回空
+            return [], 0
+    
+    def new_session(self):
+        """生成新的会话ID，使用时间戳确保唯一"""
+        import time
+        self.session_id = str(int(time.time() * 1000))  # 毫秒级时间戳
+        return self.session_id
+    
+    def get_session_id(self):
+        """获取当前会话ID"""
+        return self.session_id
+    
+    def end_session(self):
+        """结束当前会话，将 session_id 设为 None"""
+        self.session_id = None
+    
+    def clear(self):
+        """清空日志"""
+        with self._lock:
+            self.logs = []
+    
+    def set_running(self, running):
+        """设置爬虫运行状态"""
+        self.is_running = running
+
+# 全局日志实例
+spider_logger = SpiderLogger()
 
 try:
     from webdriver_manager.chrome import ChromeDriverManager
@@ -37,7 +133,12 @@ def lieSpider(key_word, city, all_page):
     :param city: 城市名称
     :param all_page: 需要爬取的页数
     """
-    print("开始爬虫")
+    spider_logger.set_running(True)
+    spider_logger.info("========== 爬虫任务启动 ==========")
+    spider_logger.info(f"搜索关键词: {key_word}")
+    spider_logger.info(f"目标城市: {city}")
+    spider_logger.info(f"爬取页数: {all_page}")
+    
     city_dict = {'全国': '410', '北京': '010', '上海': '020', '天津': '030', '重庆': '040', '广州': '050020',
                  '深圳': '050090',
                  '苏州': '060080', '南京': '060020', '杭州': '070020', '大连': '210040', '成都': '280020',
@@ -45,14 +146,18 @@ def lieSpider(key_word, city, all_page):
                  '西安': '270020'}
     # 生成需要爬取的URL列表
     urls_list = get_urls(key_word, all_page, city_dict.get(city, '410'))  # 默认为全国
+    
+    spider_logger.info(f"开始多线程爬取，线程池大小: 3")
     # 使用线程池进行多线程爬取
     pool = Pool(3)  # 创建包含3个线程的线程池，适当增加线程数，但不宜过多以免被封IP
     pool.map(get_pages, urls_list)  # 使用map方法将get_pages函数应用到所有URL
     pool.close()  # 关闭线程池，不再接受新任务
     pool.join()  # 等待所有线程完成
 
-    print("爬虫是否执行完毕：是")
-    print("学生详情：  姓名：白鑫   学号：243303029")
+    spider_logger.success("========== 爬虫任务完成 ==========")
+    spider_logger.log("学生详情: 姓名：白鑫  学号：243303029", 'INFO', private=True)
+    spider_logger.set_running(False)
+    spider_logger.end_session()  # 结束当前会话，前端将获取到新 session_id
     return 0  # 返回0表示爬虫完成，重置状态
 
 def get_urls(key_word, all_page, city_code):
@@ -68,10 +173,9 @@ def get_urls(key_word, all_page, city_code):
     for page in range(int(all_page)):
         url = f'https://www.liepin.com/zhaopin/?city={city_code}&dqs={city_code}&key={key_word}&curPage={page}'
         urls_list.append(url)
-    print(f'生成的链接数：{len(urls_list)}')
-    print('生成的链接：')
-    for url in urls_list:
-        print(f'  {url}')
+    spider_logger.info(f'生成待爬取链接数: {len(urls_list)}')
+    for i, url in enumerate(urls_list):
+        spider_logger.info(f'  链接{i+1}: {url}')
     return urls_list
 
 
@@ -141,7 +245,8 @@ def get_pages(url):
     爬取单个页面的职位信息并存储到数据库
     :param url: 需要爬取的页面URL
     """
-    print(f'开始爬取: {url}')
+    page_num = url.split('curPage=')[-1] if 'curPage=' in url else '0'
+    spider_logger.info(f'[页面{int(page_num)+1}] 开始爬取...')
     
     # 配置Chrome选项
     chrome_options = Options()
@@ -194,7 +299,7 @@ def get_pages(url):
             try:
                 with open(debug_file, 'w', encoding='utf-8') as f:
                     f.write(html)
-                print(f'警告：页面可能异常，已保存到 {debug_file}')
+                spider_logger.warning(f'页面可能异常，已保存调试文件: {debug_file}')
             except Exception:
                 pass
         
@@ -211,13 +316,13 @@ def get_pages(url):
         href_list = req_html.xpath('//a[@data-nick="job-detail-job-info"]/@href')
         
         # 调试信息：打印提取到的数据数量
-        print(f'爬取的数据：name={len(name)}, salary={len(salary)}, company={len(com_name)}, href={len(href_list)}')
+        spider_logger.info(f'[页面{int(page_num)+1}] 解析数据: 职位={len(name)}, 薪资={len(salary)}, 公司={len(com_name)}')
         
         # 是否成功爬取
         if len(name) == 0:
-            print('是否成功爬取：否（爬取的数据为0）')
+            spider_logger.warning(f'[页面{int(page_num)+1}] 未获取到数据，可能被反爬')
         else:
-            print(f'是否成功爬取：是（获取{len(name)}条数据）')
+            spider_logger.success(f'[页面{int(page_num)+1}] 成功获取 {len(name)} 条职位数据')
 
         # 处理标签信息，将每个职位的标签提取出来并分离label和scale
         labels = []  # 存储行业/融资阶段等标签
@@ -269,11 +374,10 @@ def get_pages(url):
         
         # 提交事务
         conn.commit()
-        print(f'是否成功存入数据库：是（存入{min_length}条数据）')
-        
+        spider_logger.success(f'[页面{int(page_num)+1}] 成功存入数据库 {min_length} 条记录')
         
     except Exception as e:
-        print(f'是否成功存入数据库：否（错误: {e}）')
+        spider_logger.error(f'[页面{int(page_num)+1}] 存储失败: {str(e)}')
         conn.rollback()  # 回滚事务
     finally:
         # 关闭资源

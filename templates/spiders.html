@@ -41,7 +41,29 @@
             box-shadow: 0 0 10px oklch(var(--su) / 0.5);
         }
         
-        .layui-card-body { padding: 30px; }
+        .layui-card-body { padding: 30px; overflow: visible; }
+        
+        /* 修复下拉菜单被裁剪问题 */
+        .layui-card { overflow: visible; }
+        .layui-form { overflow: visible; }
+        .layui-form-item { overflow: visible; }
+        .layui-input-block { overflow: visible; }
+        
+        /* 爬虫设置卡片层级高于日志卡片 */
+        .spider-settings-card {
+            position: relative;
+            z-index: 100;
+        }
+        .spider-log-card {
+            position: relative;
+            z-index: 10;
+        }
+        
+        /* 下拉菜单层级 */
+        .dropdown-content {
+            z-index: 9999 !important;
+            position: absolute !important;
+        }
         
         /* 表单元素重构 */
         .layui-form-label {
@@ -157,7 +179,7 @@
 
     <div class="layui-fluid">
         <div class="layui-row layui-col-space15">
-            <div class="layui-col-md12">
+            <div class="layui-col-md12 spider-settings-card">
                 <div class="layui-card">
                     <div class="layui-card-header">爬虫设置</div>
                     <div class="layui-card-body">
@@ -256,6 +278,32 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- 爬虫日志卡片 -->
+            <div class="layui-col-md12 spider-log-card" style="margin-top: 20px;">
+                <div class="layui-card">
+                    <div class="layui-card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>爬虫日志</span>
+                        <div class="flex items-center gap-3">
+                            <div id="log_status" class="badge badge-ghost gap-1">
+                                <span class="w-2 h-2 rounded-full bg-base-content/30"></span>
+                                空闲
+                            </div>
+                            <button class="btn btn-ghost btn-xs" onclick="clearLogs()">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                                清空
+                            </button>
+                        </div>
+                    </div>
+                    <div class="layui-card-body" style="padding: 0;">
+                        <div id="log_container" class="mockup-code bg-base-300 rounded-none" style="max-height: 400px; overflow-y: auto; font-size: 13px;">
+                            <pre data-prefix=">" class="text-base-content/50"><code>等待爬虫任务启动...</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     </body>
@@ -305,7 +353,16 @@
                 btn.classList.remove('btn-success');
                 btn.classList.add('btn-disabled');
                 btn.removeAttribute('lay-filter');
+                
+                // 清空日志
+                clearLogs();
+                
+                // 延迟 200ms 开始轮询，确保 POST 请求已经先到达后端生成新的 session_id
+                setTimeout(function() {
+                    startLogPolling();
+                }, 200);
 
+                // 发送 POST 请求，后端会立即生成新的 session_id
                 $.ajax({
                     type: 'POST',
                     url: '/start_spider/',
@@ -324,9 +381,177 @@
                         btn.classList.add('btn-success');
                         btn.setAttribute("lay-filter", "start_spider");
                     }
-                })
+                });
 
             });
+        });
+        
+        // ========================================
+        // 日志轮询系统
+        // ========================================
+        var logIndex = 0;
+        var logInterval = null;
+        var isFirstLoad = true;
+        var stopCheckCount = 0;  // 停止检查计数器
+        var currentSessionId = null;  // 当前爬取任务的会话ID
+        
+        // 获取日志级别对应的样式
+        function getLogStyle(level) {
+            switch(level) {
+                case 'SUCCESS': return 'text-success';
+                case 'ERROR': return 'text-error';
+                case 'WARNING': return 'text-warning';
+                default: return 'text-info';
+            }
+        }
+        
+        // 获取日志级别对应的前缀符号
+        function getLogPrefix(level) {
+            switch(level) {
+                case 'SUCCESS': return '✓';
+                case 'ERROR': return '✕';
+                case 'WARNING': return '!';
+                default: return '›';
+            }
+        }
+        
+        // 添加日志到容器
+        function appendLogs(logs) {
+            var container = document.getElementById('log_container');
+            
+            // 如果是首次加载且有日志，清空默认提示
+            if (isFirstLoad && logs.length > 0) {
+                container.innerHTML = '';
+                isFirstLoad = false;
+            }
+            
+            logs.forEach(function(log) {
+                var pre = document.createElement('pre');
+                pre.setAttribute('data-prefix', getLogPrefix(log.level));
+                pre.className = getLogStyle(log.level);
+                
+                var code = document.createElement('code');
+                code.textContent = '[' + log.time + '] ' + log.message;
+                pre.appendChild(code);
+                
+                container.appendChild(pre);
+            });
+            
+            // 自动滚动到底部
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        // 更新状态徽章
+        function updateStatus(isRunning) {
+            var status = document.getElementById('log_status');
+            if (isRunning) {
+                status.className = 'badge badge-success gap-1';
+                status.innerHTML = '<span class="loading loading-spinner loading-xs"></span>运行中';
+            } else {
+                status.className = 'badge badge-ghost gap-1';
+                status.innerHTML = '<span class="w-2 h-2 rounded-full bg-base-content/30"></span>空闲';
+            }
+        }
+        
+        // 获取日志
+        function fetchLogs() {
+            var $ = layui.$;
+            var params = { since: logIndex };
+            // 如果有当前会话ID，只获取该会话的日志
+            if (currentSessionId) {
+                params.session_id = currentSessionId;
+            }
+            $.ajax({
+                type: 'GET',
+                url: '/get_spider_logs/',
+                data: params,
+                success: function(res) {
+                    if (res.code === 0) {
+                        // 只有爬虫正在运行时才更新会话ID
+                        if (res.session_id && !currentSessionId && res.is_running) {
+                            currentSessionId = res.session_id;
+                        }
+                        if (res.logs.length > 0) {
+                            appendLogs(res.logs);
+                            logIndex = res.total;
+                        }
+                        updateStatus(res.is_running);
+                        
+                        // 如果爬虫停止运行，继续获取几次确保日志完整
+                        if (!res.is_running && logInterval) {
+                            stopCheckCount++;
+                            // 连续3次检测到停止后才停止轮询
+                            if (stopCheckCount >= 3) {
+                                stopLogPolling();
+                                stopCheckCount = 0;
+                            }
+                        } else {
+                            stopCheckCount = 0;
+                        }
+                    }
+                }
+            });
+        }
+        
+        // 开始轮询
+        function startLogPolling() {
+            if (logInterval) return;
+            logIndex = 0;
+            isFirstLoad = true;
+            logInterval = setInterval(fetchLogs, 1000);
+            fetchLogs(); // 立即获取一次
+        }
+        
+        // 停止轮询
+        function stopLogPolling() {
+            if (logInterval) {
+                clearInterval(logInterval);
+                logInterval = null;
+            }
+        }
+        
+        // 清空日志
+        function clearLogs() {
+            var container = document.getElementById('log_container');
+            container.innerHTML = '<pre data-prefix=">" class="text-base-content/50"><code>等待爬虫任务启动...</code></pre>';
+            logIndex = 0;
+            isFirstLoad = true;
+            currentSessionId = null;  // 重置会话ID，获取新任务的日志
+        }
+        
+        // 页面加载时检查是否有正在运行的爬虫
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                var $ = layui.$;
+                $.ajax({
+                    type: 'GET',
+                    url: '/get_spider_logs/',
+                    data: { since: 0 },
+                    success: function(res) {
+                        if (res.code === 0) {
+                            updateStatus(res.is_running);
+                            // 只有爬虫正在运行时才显示日志
+                            if (res.is_running && res.session_id) {
+                                currentSessionId = res.session_id;
+                                // 用 session_id 重新获取当前任务的日志
+                                $.ajax({
+                                    type: 'GET',
+                                    url: '/get_spider_logs/',
+                                    data: { since: 0, session_id: currentSessionId },
+                                    success: function(res2) {
+                                        if (res2.code === 0 && res2.logs.length > 0) {
+                                            appendLogs(res2.logs);
+                                            logIndex = res2.total;
+                                        }
+                                        startLogPolling();
+                                    }
+                                });
+                            }
+                            // 不运行时不显示历史日志
+                        }
+                    }
+                });
+            }, 500);
         });
     </script>
 {% endblock %}

@@ -7,6 +7,7 @@ import time
 from psutil import cpu_percent, virtual_memory
 from numpy import mean
 from job import tools
+from job.tools import spider_logger
 from job import job_recommend
 
 spider_code = 0  # 定义全局变量，用来识别爬虫的状态，0空闲，1繁忙
@@ -130,6 +131,9 @@ def spiders(request):
 def start_spider(request):
     global spider_code
     if request.method == "POST":
+        # 立即生成新的 session_id，确保前端能获取到最新的
+        spider_logger.new_session()
+        
         key_word = request.POST.get("key_word")
         city = request.POST.get("city")
         page = request.POST.get("page")
@@ -142,9 +146,23 @@ def start_spider(request):
             spider_model.save()
         if role == '猎聘网':
             spider_code = tools.lieSpider(key_word=key_word, city=city, all_page=page)
-        return JsonResponse({"code": 0, "msg": "爬取完毕!"})
+        return JsonResponse({"code": 0, "msg": "爬取完毕!", "session_id": spider_logger.get_session_id()})
     else:
         return JsonResponse({"code": 1, "msg": "请使用POST请求"})
+
+
+def get_spider_logs(request):
+    """获取爬虫日志"""
+    since_index = int(request.GET.get('since', 0))
+    session_id = request.GET.get('session_id', None)
+    logs, total = spider_logger.get_logs(since_index, session_id)
+    return JsonResponse({
+        "code": 0,
+        "logs": logs,
+        "total": total,
+        "is_running": spider_logger.is_running,
+        "session_id": spider_logger.get_session_id()
+    })
 
 
 def job_list(request):

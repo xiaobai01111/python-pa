@@ -27,6 +27,7 @@ urlpatterns = [
     path('welcome/', views.welcome, name="welcome"),
     path('spiders/', views.spiders, name="spiders"),
     path('start_spider/', views.start_spider, name="start_spider"),  # 启动爬虫接口
+    path('get_spider_logs/', views.get_spider_logs, name="get_spider_logs"),  # 获取爬虫日志
     path('job_list/', views.job_list, name="job_list"),
     re_path(r'^get_job_list/$', views.get_job_list, name="get_job_list"),
     path('get_psutil/', views.get_psutil, name="get_psutil"),
