@@ -53,61 +53,22 @@
     
     .layui-card-body { padding: 40px; }
     
-    /* 表单元素重构 */
-    .layui-form-label {
-        color: oklch(var(--bc) / 0.7);
-        width: 100px;
-        padding: 12px 15px;
-        font-size: 14px;
-    }
-    
-    .layui-input-block { margin-left: 130px; max-width: 600px; }
-    
-    .layui-input {
-        background-color: oklch(var(--b1));
-        border: 1px solid oklch(var(--bc) / 0.2);
-        color: oklch(var(--bc));
-        border-radius: 8px;
-        height: 44px;
-        line-height: 44px;
-        transition: all 0.3s;
-    }
-    
-    .layui-input:focus {
-        border-color: oklch(var(--p));
-        box-shadow: 0 0 0 3px oklch(var(--p) / 0.2);
-    }
-    
-    .layui-input:disabled {
+    /* 禁用输入框样式 */
+    .input:disabled {
         background-color: oklch(var(--b3));
-        color: oklch(var(--bc) / 0.5);
-        cursor: not-allowed;
-        border-color: oklch(var(--bc) / 0.1);
+        opacity: 0.6;
     }
     
-    /* 按钮样式 */
-    .layui-btn {
-        background-color: oklch(var(--p));
-        color: oklch(var(--pc));
-        border-radius: 8px;
-        box-shadow: 0 4px 15px oklch(var(--p) / 0.3);
-        border: none;
-        height: 44px;
-        line-height: 44px;
-        padding: 0 40px;
-        font-size: 15px;
-        font-weight: 500;
-        transition: all 0.3s;
+    /* 验证提示默认隐藏 */
+    .validator-hint {
+        display: none;
     }
     
-    .layui-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px oklch(var(--p) / 0.4);
-        opacity: 0.95;
-        background-color: oklch(var(--p));
+    /* 只在输入无效且失去焦点后显示 */
+    .validator:user-invalid ~ .validator-hint,
+    .validator:invalid:not(:placeholder-shown):not(:focus) ~ .validator-hint {
+        display: block;
     }
-    
-    .layui-form-item { margin-bottom: 28px; }
   </style>
 
   <div class="layui-fluid">
@@ -117,44 +78,43 @@
           <div class="layui-card-header">用户设置</div>
           <div class="layui-card-body">
             <div class="layui-form" lay-filter="">
-              <div class="layui-form-item">
-                <label class="layui-form-label">用户名</label>
-                <div class="layui-input-block">
-                  <input type="text" name="user_account" class="layui-input" value="{{ user_obj.user_account }}" disabled>
-                </div>
+              <!-- 用户名 -->
+              <div class="form-control w-full max-w-lg mb-4">
+                <label class="label"><span class="label-text">用户名</span></label>
+                <input type="text" name="user_account" class="input input-bordered w-full" value="{{ user_obj.user_account }}" disabled>
               </div>
-              <div class="layui-form-item">
-                <label class="layui-form-label">名称</label>
-                <div class="layui-input-block">
-                  <input type="text" name="user_name" class="layui-input" value="{{ user_obj.user_name }}" placeholder="请输入您的名称">
-                </div>
+              
+              <!-- 名称 -->
+              <div class="form-control w-full max-w-lg mb-4">
+                <label class="label"><span class="label-text">名称</span></label>
+                <input type="text" name="user_name" class="input input-bordered validator w-full" required placeholder="请输入您的名称" value="{{ user_obj.user_name }}" minlength="2" maxlength="20">
+                <p class="validator-hint text-error text-sm mt-1">名称长度需在2-20个字符之间</p>
               </div>
-              <div class="layui-form-item">
-                <label class="layui-form-label">原密码</label>
-                <div class="layui-input-block">
-                  <input type="password" name="old_pass" class="layui-input" placeholder="请输入原密码">
-                </div>
+              
+              <!-- 原密码 -->
+              <div class="form-control w-full max-w-lg mb-4">
+                <label class="label"><span class="label-text">原密码</span></label>
+                <input type="password" name="old_pass" class="input input-bordered validator w-full" required placeholder="请输入原密码" minlength="6">
+                <p class="validator-hint text-error text-sm mt-1">请输入原密码</p>
               </div>
-              <div class="layui-form-item">
-                <label class="layui-form-label">新密码</label>
-                <div class="layui-input-block">
-                  <input type="password" name="pass_word" class="layui-input" placeholder="请输入新密码">
-                </div>
+              
+              <!-- 新密码 -->
+              <div class="form-control w-full max-w-lg mb-4">
+                <label class="label"><span class="label-text">新密码</span></label>
+                <input type="password" name="pass_word" class="input input-bordered validator w-full" required placeholder="请输入新密码" minlength="6" maxlength="20" pattern=".{6,20}">
+                <p class="validator-hint text-error text-sm mt-1">密码长度需在6-20个字符之间</p>
               </div>
-
-              <div class="layui-form-item">
-                <label class="layui-form-label">确认密码</label>
-                <div class="layui-input-block">
-                  <input type="password" name="pass_word_1" class="layui-input" placeholder="请再次输入新密码">
-                </div>
+              
+              <!-- 确认密码 -->
+              <div class="form-control w-full max-w-lg mb-4">
+                <label class="label"><span class="label-text">确认密码</span></label>
+                <input type="password" name="pass_word_1" class="input input-bordered validator w-full" required placeholder="请再次输入新密码" minlength="6" maxlength="20">
+                <p class="validator-hint text-error text-sm mt-1">请再次输入新密码</p>
               </div>
-
-              <div class="layui-form-item">
-                <div class="layui-input-block">
-                     <button class="layui-btn" lay-submit lay-filter="up_pass" id="up_pass">
-                         <i class="layui-icon layui-icon-release"></i> 确认修改
-                     </button>
-                </div>
+              
+              <!-- 提交按钮 -->
+              <div class="form-control w-full max-w-lg mt-6">
+                <button class="btn btn-primary" lay-submit lay-filter="up_pass" id="up_pass">确认修改</button>
               </div>
             </div>
           </div>
