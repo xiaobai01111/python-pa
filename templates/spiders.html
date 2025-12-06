@@ -115,10 +115,15 @@
         /* 间距微调 */
         .layui-form-item { margin-bottom: 24px; }
 
-        /* 修复底部空白 */
-        html, body { height: 100%; }
-        .layui-row { height: 100%; }
-        .layui-col-md12 { height: 100%; }
+        /* 修复底部空白和背景色 */
+        html, body { 
+            min-height: 100vh; 
+            background-color: #0f172a !important; 
+        }
+        .layui-fluid {
+            min-height: 100vh;
+            background-color: #0f172a;
+        }
 
         /* 下拉菜单深色适配 */
         .layui-form-select dl {
@@ -164,22 +169,29 @@
                             <div class="layui-form-item">
                                 <label class="layui-form-label">城市选择</label>
                                 <div class="layui-input-block">
-                                    <select name="city" lay-verify="">
-                                        <option value="">请选择一个城市</option>
-                                        <option value="北京">北京</option>
-                                        <option value="上海">上海</option>
-                                        <option value="天津">天津</option>
-                                        <option value="重庆">重庆</option>
-                                        <option value="广州">广州</option>
-                                        <option value="深圳">深圳</option>
-                                        <option value="苏州">苏州</option>
-                                        <option value="南京">南京</option>
-                                        <option value="杭州">杭州</option>
-                                        <option value="大连">大连</option>
-                                        <option value="成都">成都</option>
-                                        <option value="武汉">武汉</option>
-                                        <option value="西安">西安</option>
-                                    </select>
+                                    <input type="hidden" name="city" id="city-input" value="">
+                                    <div class="dropdown dropdown-start">
+                                        <div tabindex="0" role="button" class="btn bg-[rgba(15,23,42,0.6)] border border-white/10 text-white hover:bg-slate-700 w-64 justify-start font-normal" id="city-btn">
+                                            <span id="city-text">请选择一个城市</span>
+                                            <svg class="ml-auto h-4 w-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                        </div>
+                                        <ul tabindex="0" class="dropdown-content menu bg-slate-800 border border-white/10 rounded-box z-50 w-52 p-2 shadow-lg mt-1">
+                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectCity('')">请选择一个城市</a></li>
+                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectCity('北京')">北京</a></li>
+                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectCity('上海')">上海</a></li>
+                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectCity('天津')">天津</a></li>
+                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectCity('重庆')">重庆</a></li>
+                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectCity('广州')">广州</a></li>
+                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectCity('深圳')">深圳</a></li>
+                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectCity('苏州')">苏州</a></li>
+                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectCity('南京')">南京</a></li>
+                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectCity('杭州')">杭州</a></li>
+                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectCity('大连')">大连</a></li>
+                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectCity('成都')">成都</a></li>
+                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectCity('武汉')">武汉</a></li>
+                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectCity('西安')">西安</a></li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                             <div class="layui-form-item">
@@ -191,19 +203,26 @@
                             <div class="layui-form-item">
                                 <label class="layui-form-label">页数选择</label>
                                 <div class="layui-input-block">
-                                    <select name="page" lay-verify="">
-                                        <option value="">请选择需要爬取页数数量</option>
-                                        <option value="1">1页</option>
-                                        <option value="2">2页</option>
-                                        <option value="3">3页</option>
-                                        <option value="4">4页</option>
-                                        <option value="5">5页</option>
-                                        <option value="6">6页</option>
-                                        <option value="7">7页</option>
-                                        <option value="8">8页</option>
-                                        <option value="9">9页</option>
-                                        <option value="10">10页</option>
-                                    </select>
+                                    <input type="hidden" name="page" id="page-input" value="">
+                                    <div class="dropdown dropdown-start">
+                                        <div tabindex="0" role="button" class="btn bg-[rgba(15,23,42,0.6)] border border-white/10 text-white hover:bg-slate-700 w-64 justify-start font-normal" id="page-btn">
+                                            <span id="page-text">请选择需要爬取页数数量</span>
+                                            <svg class="ml-auto h-4 w-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                        </div>
+                                        <ul tabindex="0" class="dropdown-content menu bg-slate-800 border border-white/10 rounded-box z-50 w-52 p-2 shadow-lg mt-1">
+                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectPage('')">请选择需要爬取页数数量</a></li>
+                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectPage('1')">1页</a></li>
+                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectPage('2')">2页</a></li>
+                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectPage('3')">3页</a></li>
+                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectPage('4')">4页</a></li>
+                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectPage('5')">5页</a></li>
+                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectPage('6')">6页</a></li>
+                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectPage('7')">7页</a></li>
+                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectPage('8')">8页</a></li>
+                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectPage('9')">9页</a></li>
+                                            <li><a class="text-white/80 hover:bg-blue-500 hover:text-white" onclick="selectPage('10')">10页</a></li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                             <div class="layui-form-item">
@@ -228,6 +247,19 @@
 
 {% block js %}
     <script>
+        // daisyUI dropdown 选择函数
+        function selectCity(value) {
+            document.getElementById('city-input').value = value;
+            document.getElementById('city-text').textContent = value || '请选择一个城市';
+            document.activeElement.blur();
+        }
+        
+        function selectPage(value) {
+            document.getElementById('page-input').value = value;
+            document.getElementById('page-text').textContent = value ? value + '页' : '请选择需要爬取页数数量';
+            document.activeElement.blur();
+        }
+        
         layui.config({
             base: '{% static "layuiadmin/" %}' //静态资源所在路径
         }).extend({
