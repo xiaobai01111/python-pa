@@ -206,19 +206,18 @@
             index: 'lib/index' //主入口模块
         }).use(['index', 'form'], function () {
             var $ = layui.$,
-                layer = layui.layer
-                , form = layui.form;
+                form = layui.form;
 
             form.on('submit(expect)', function (data) {
                 var post_data = data.field;
-                console.log(post_data)
+                
                 if (post_data.key_word == "") {
-                    layer.msg("期望职位不能为空！", {icon: 5, anim: 6})
-                    return false
+                    showToast("期望职位不能为空！", "warning");
+                    return false;
                 }
                 if (post_data.city == "") {
-                    layer.msg("城市不能为空！", {icon: 5, anim: 6})
-                    return false
+                    showToast("城市不能为空！", "warning");
+                    return false;
                 }
 
                 $.ajax({
@@ -226,13 +225,12 @@
                     url: '/job_expect/',
                     data: post_data,
                     success: function (res) {
-                        layer.msg(res.msg, {icon: 1, time: 2000});
+                        showToast(res.msg, "success");
                     },
                     error: function (response) {
-                        layer.msg(response.msg, {icon: 2});
+                        showToast("保存失败，请重试", "error");
                     }
-                })
-
+                });
             });
         });
     </script>

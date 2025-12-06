@@ -282,23 +282,22 @@
             index: 'lib/index' //主入口模块
         }).use(['index', 'form'], function () {
             var $ = layui.$,
-                layer = layui.layer
-                , form = layui.form;
+                form = layui.form;
 
             form.on('submit(start_spider)', function (data) {
                 var field = data.field;
-                console.log(field)
+                
                 if (field.key_word == "") {
-                    layer.msg("关键字不能为空！", {icon: 5, anim: 6})
-                    return false
+                    showToast("关键字不能为空！", "warning");
+                    return false;
                 }
                 if (field.page == "") {
-                    layer.msg("页数不能为空！", {icon: 5, anim: 6})
-                    return false
+                    showToast("页数不能为空！", "warning");
+                    return false;
                 }
                 if (field.city == "") {
-                    layer.msg("城市不能为空！", {icon: 5, anim: 6})
-                    return false
+                    showToast("城市不能为空！", "warning");
+                    return false;
                 }
 
                 var btn = document.getElementById("start_spider");
@@ -312,14 +311,14 @@
                     url: '/start_spider/',
                     data: field,
                     success: function (res) {
-                        layer.msg(res.msg, {icon: 1, time: 2000});
+                        showToast(res.msg, "success");
                         btn.innerHTML = '<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>开始爬取';
                         btn.classList.remove('btn-disabled');
                         btn.classList.add('btn-success');
                         btn.setAttribute("lay-filter", "start_spider");
                     },
                     error: function (response) {
-                        layer.msg(response.msg || "服务器错误", {icon: 2});
+                        showToast("服务器错误", "error");
                         btn.innerHTML = '<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>开始爬取';
                         btn.classList.remove('btn-disabled');
                         btn.classList.add('btn-success');

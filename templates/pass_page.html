@@ -133,29 +133,27 @@
     index: 'lib/index' //主入口模块
   }).use(['index', 'form'], function() {
       var $ = layui.$,
-          layer= layui.layer
-          , form = layui.form;
+          form = layui.form;
 
       form.on('submit(up_pass)', function (data) {
           var field = data.field;
-          console.log(field)
+          
           if(field.user_name == ""){
-              layer.msg("名称不能为空！", {icon: 5, anim: 6})
-              return false
+              showToast("名称不能为空！", "warning");
+              return false;
           }
           if(field.old_pass == ""){
-              layer.msg("原密码不能为空！", {icon: 5, anim: 6})
-              return false
+              showToast("原密码不能为空！", "warning");
+              return false;
           }
           if(field.pass_word == ""){
-              layer.msg("新密码不能为空！", {icon: 5, anim: 6})
-              return false
+              showToast("新密码不能为空！", "warning");
+              return false;
           }
           if(field.pass_word != field.pass_word_1){
-              layer.msg("两次密码输入不一致", {icon: 5, anim: 6})
-              return false
+              showToast("两次密码输入不一致", "warning");
+              return false;
           }
-
 
           $.ajax({
                type: 'POST',
@@ -168,16 +166,15 @@
                },
                success: function (res) {
                    if(res.code === 0) {
-                       layer.msg(res.msg, {icon: 1});
+                       showToast(res.msg, "success");
                    } else {
-                       layer.msg(res.msg, {icon: 2});
+                       showToast(res.msg, "error");
                    }
                },
                error:function(response){
-                   layer.msg('请求失败，请重试', {icon: 2});
+                   showToast('请求失败，请重试', "error");
                }
-           })
-
+           });
         });
   });
   </script>

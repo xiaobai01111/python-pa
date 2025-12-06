@@ -257,31 +257,35 @@
       table.on('tool(LAY-app-forum-list)', function(obj) {
           var data = obj.data;
           if (obj.event === 'send') {
-              layer.confirm('确定投递职位 ' + data.name + ' 吗？', function(index) {
+              showConfirm('确定投递职位「' + data.name + '」吗？', function() {
                   $.ajax({
                       type: 'POST',
                       url: '/send_job/',
                       data: {job_id: data.job_id, send_key: data.send_key},
                       success: function(res) {
-                          layer.msg(res.msg);
-                          location.reload();
+                          showToast(res.msg, 'success');
+                          setTimeout(function() { location.reload(); }, 1000);
+                      },
+                      error: function() {
+                          showToast('操作失败', 'error');
                       }
                   });
-                  layer.close(index);
-              });
+              }, {title: '投递确认', btnClass: 'btn-success'});
           } else if (obj.event === 'send_1') {
-              layer.confirm('确定取消投递 ' + data.name + ' 吗？', function(index) {
+              showConfirm('确定取消投递「' + data.name + '」吗？', function() {
                   $.ajax({
                       type: 'POST',
                       url: '/send_job/',
                       data: {job_id: data.job_id, send_key: data.send_key},
                       success: function(res) {
-                          layer.msg(res.msg);
-                          location.reload();
+                          showToast(res.msg, 'success');
+                          setTimeout(function() { location.reload(); }, 1000);
+                      },
+                      error: function() {
+                          showToast('操作失败', 'error');
                       }
                   });
-                  layer.close(index);
-              });
+              }, {title: '取消投递', btnClass: 'btn-error'});
           }
       });
       

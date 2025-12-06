@@ -90,34 +90,25 @@
     base: '{% static "layuiadmin/" %}' //静态资源所在路径
   }).extend({
     index: 'lib/index' //主入口模块
-  }).use(['index', 'jquery','layer','element']);
+  }).use(['index', 'jquery','element']);
 
   function send(job_id, job_name) {
-      var $ = layui.$,
-	    layer = layui.layer,
-	    element = layui.element;
-
-          console.log(job_id)
-        layer.confirm("确定投递职位 "+job_name +" 吗？", {
-            title: '投递确认',
-            skin: 'layui-layer-molv', // 墨绿皮肤，可自定义深色皮肤
-            btn: ['确定', '取消']
-        }, function(t) {
-			$.ajax({
-				   type: 'POST',
-				   data:{"job_id":job_id, "send_key":0},
-				   url: '/send_job/',
-				   success: function (res) {
-					   layer.msg(res.msg, {icon: 1});
-                       setTimeout(function(){ location.reload() }, 1000);
-				   },
-				   error:function(response){
-					   layer.msg(response.msg, {icon: 2});
-				   }
-			   }),
-				layer.close(t)
-		})
-      }
-
+      var $ = layui.$;
+      
+      showConfirm('确定投递职位「' + job_name + '」吗？', function() {
+          $.ajax({
+              type: 'POST',
+              data: {"job_id": job_id, "send_key": 0},
+              url: '/send_job/',
+              success: function(res) {
+                  showToast(res.msg, 'success');
+                  setTimeout(function() { location.reload(); }, 1000);
+              },
+              error: function() {
+                  showToast('投递失败，请重试', 'error');
+              }
+          });
+      }, {title: '投递确认', btnClass: 'btn-success'});
+  }
   </script>
 {% endblock js %}
