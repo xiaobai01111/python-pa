@@ -262,32 +262,92 @@
 
         <div style="height: 30px;"></div> 
 
-        <div class="layui-row layui-col-space30">
-            <div class="layui-col-md8">
-                <div class="layui-card">
-                    <div class="layui-card-header">
-                        <span>数据概览与分析</span>
-                        <span class="layui-badge layui-bg-blue" style="margin-left: 10px; border-radius: 4px; opacity: 0.8;">Live</span>
-                    </div>
-                    <div class="layui-card-body">
-                        <div class="layui-carousel layadmin-carousel layadmin-dataview" data-anim="fade"
-                             lay-filter="LAY-index-dataview" style="background: transparent;">
-                            <div carousel-item id="LAY-index-dataview" style="background: transparent;">
-                                <div><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
+        <div class="layui-row layui-col-space30" style="display: flex; flex-wrap: wrap;">
+            <div class="layui-col-md8" style="display: flex;">
+                <div class="card bg-base-200 border border-base-content/10 shadow-xl" style="flex: 1;">
+                    <div class="card-body p-0">
+                        <div class="flex items-center justify-between px-6 py-4 border-b border-base-content/10">
+                            <div class="flex items-center gap-3">
+                                <div class="w-1 h-5 bg-primary rounded-full"></div>
+                                <h3 class="font-semibold text-base-content">数据概览与分析</h3>
+                            </div>
+                            <div class="badge badge-primary badge-sm gap-1">
+                                <span class="loading loading-ring loading-xs"></span>
+                                Live
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="layui-carousel layadmin-carousel layadmin-dataview" data-anim="fade"
+                                 lay-filter="LAY-index-dataview" style="background: transparent;">
+                                <div carousel-item id="LAY-index-dataview" style="background: transparent;">
+                                    <div class="flex items-center justify-center h-full">
+                                        <span class="loading loading-spinner loading-lg text-primary"></span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="layui-col-md4">
-                <div class="layui-card">
+            <div class="layui-col-md4" style="display: flex;">
+                <div class="layui-card" style="flex: 1;">
                     <div class="layui-card-header">实时系统监控</div>
-                    <div class="layui-card-body">
-                        <div class="layui-carousel layadmin-carousel layadmin-dataview" data-anim="fade"
-                             lay-filter="LAY-index-control" style="background: transparent;">
-                            <div carousel-item id="LAY-index-control" style="background: transparent;">
-                                <div><i class="layui-icon layui-icon-loading1 layadmin-loading"></i>正在加载...</div>
+                    <div class="layui-card-body" style="padding: 24px 30px; display: flex; flex-direction: column; justify-content: space-between; height: calc(100% - 60px);">
+                        <!-- CPU 使用率 -->
+                        <div class="mb-6">
+                            <div class="flex justify-between items-center mb-2">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-8 rounded-lg bg-info/20 flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/>
+                                        </svg>
+                                    </div>
+                                    <span class="font-medium text-base-content">CPU 使用率</span>
+                                </div>
+                                <span id="cpu-value" class="text-lg font-bold text-info">0%</span>
                             </div>
+                            <progress id="cpu-progress" class="progress progress-info w-full h-3" value="0" max="100"></progress>
+                        </div>
+                        
+                        <!-- 内存使用率 -->
+                        <div class="mb-6">
+                            <div class="flex justify-between items-center mb-2">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-8 rounded-lg bg-success/20 flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                                        </svg>
+                                    </div>
+                                    <span class="font-medium text-base-content">内存使用率</span>
+                                </div>
+                                <span id="memory-value" class="text-lg font-bold text-success">0%</span>
+                            </div>
+                            <progress id="memory-progress" class="progress progress-success w-full h-3" value="0" max="100"></progress>
+                        </div>
+                        
+                        <!-- 网络状态 -->
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.14 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"/>
+                                        </svg>
+                                    </div>
+                                    <span class="font-medium text-base-content">网络状态</span>
+                                </div>
+                                <span id="network-status" class="badge badge-primary badge-sm">在线</span>
+                            </div>
+                        </div>
+                        
+                        <div class="divider my-4"></div>
+                        
+                        <div class="flex justify-between text-xs text-base-content/50">
+                            <span>上次更新: <span id="last-update">--:--:--</span></span>
+                            <span class="flex items-center gap-1">
+                                <span class="loading loading-ring loading-xs"></span>
+                                每5秒刷新
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -350,5 +410,35 @@
         }).extend({
             index: 'lib/index' 
         }).use(['index', 'console']);
+        
+        // 系统监控进度条更新
+        function updateSystemMonitor() {
+            fetch('/get_psutil/')
+                .then(response => response.json())
+                .then(data => {
+                    // 更新 CPU
+                    const cpuValue = parseFloat(data.cpu_data).toFixed(1);
+                    document.getElementById('cpu-value').textContent = cpuValue + '%';
+                    document.getElementById('cpu-progress').value = cpuValue;
+                    
+                    // 更新内存
+                    const memoryValue = parseFloat(data.memory_data).toFixed(1);
+                    document.getElementById('memory-value').textContent = memoryValue + '%';
+                    document.getElementById('memory-progress').value = memoryValue;
+                    
+                    // 更新时间
+                    const now = new Date();
+                    document.getElementById('last-update').textContent = 
+                        now.toLocaleTimeString('zh-CN', { hour12: false });
+                })
+                .catch(error => console.log('系统监控更新失败:', error));
+        }
+        
+        // 页面加载后立即执行一次
+        document.addEventListener('DOMContentLoaded', function() {
+            updateSystemMonitor();
+            // 每 5 秒刷新一次
+            setInterval(updateSystemMonitor, 5000);
+        });
     </script>
 {% endblock %}
