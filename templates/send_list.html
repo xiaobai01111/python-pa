@@ -156,10 +156,31 @@
         overflow: hidden !important;
         text-overflow: ellipsis !important;
         white-space: nowrap !important;
+        cursor: pointer;
+    }
+    
+    /* 点击展开 */
+    .layui-table-cell.expanded {
+        white-space: normal !important;
+        height: auto !important;
+        overflow: visible !important;
+        background: oklch(var(--b1));
+        position: relative;
+        z-index: 10;
+        padding: 8px !important;
+        border-radius: 6px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
     
     .layui-table td {
         padding: 10px 8px !important;
+    }
+    
+    /* daisyUI 按钮样式 */
+    .layui-table-cell .btn {
+        min-height: 24px;
+        height: 24px;
+        font-size: 12px;
     }
   </style>
 
@@ -170,9 +191,9 @@
           {% verbatim %}
             <script type="text/html" id="table-forum-list">
                {{#  if(d.send_key == 0){ }}
-              <a class="layui-btn layui-btn-xs" lay-event="send"><i class="layui-icon layui-icon-add-circle-fine"></i> 投递</a>
+              <a class="btn btn-success btn-xs" lay-event="send">投递</a>
                {{#  } else { }}
-              <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="send_1"><i class="layui-icon layui-icon-close"></i> 取消</a>
+              <a class="btn btn-error btn-xs" lay-event="send_1">取消</a>
                {{#  } }}
             </script>
           {% endverbatim %}
@@ -188,27 +209,80 @@
     base: '{% static "layuiadmin/" %}' //静态资源所在路径
   }).extend({
     index: 'lib/index' //主入口模块
-  }).use(['index', 'send_list', 'table'], function() {
+  }).use(['index', 'table', 'form'], function() {
       var $ = layui.$
           , form = layui.form
           , table = layui.table;
-
-
-          //执行重载
-          table.reload('LAY-app-forum-list', {
-              page:{curr:1},
-              where: {}
-          });
+      
+      // 表格配置 - 与数据检索一致
+      table.render({
+          elem: '#LAY-app-forum-list',
+          url: '/send_list/',
+          cols: [[
+              {field: 'job_id', title: '#', width: 50, align: 'center'},
+              {field: 'name', title: '职位名称',width: 180},
+              {field: 'salary', title: '薪资', width: 90},
+              {field: 'education', title: '学历', width: 100},
+              {field: 'experience', title: '经验', width: 100},
+              {field: 'place', title: '地点', width: 120},
+              {field: 'company', title: '公司名称',width: 180},
+              {field: 'label', title: '行业', width: 120},
+              {field: 'scale', title: '规模', width: 100},
+              {title: '操作', width: 70, align: 'center', toolbar: '#table-forum-list'}
+          ]],
+          page: true,
+          limit: 15,
+          limits: [15, 20, 30, 50],
+          size: 'sm'
+      });
+      
+      // 监听操作按钮
+      table.on('tool(LAY-app-forum-list)', function(obj) {
+          var data = obj.data;
+          if (obj.event === 'send') {
+              layer.confirm('确定投递职位 ' + data.name + ' 吗？', function(index) {
+                  $.ajax({
+                      type: 'POST',
+                      url: '/send_job/',
+                      data: {job_id: data.job_id, send_key: data.send_key},
+                      success: function(res) {
+                          layer.msg(res.msg);
+                          location.reload();
+                      }
+                  });
+                  layer.close(index);
+              });
+          } else if (obj.event === 'send_1') {
+              layer.confirm('确定取消投递 ' + data.name + ' 吗？', function(index) {
+                  $.ajax({
+                      type: 'POST',
+                      url: '/send_job/',
+                      data: {job_id: data.job_id, send_key: data.send_key},
+                      success: function(res) {
+                          layer.msg(res.msg);
+                          location.reload();
+                      }
+                  });
+                  layer.close(index);
+              });
+          }
+      });
+      
+      // 点击单元格展开/收起
+      $(document).on('click', '.layui-table-body .layui-table-cell', function(e) {
+          if ($(e.target).hasClass('btn') || $(e.target).closest('.btn').length) {
+              return;
+          }
+          $('.layui-table-cell.expanded').not(this).removeClass('expanded');
+          $(this).toggleClass('expanded');
+      });
+      
+      // 点击其他地方收起
+      $(document).on('click', function(e) {
+          if (!$(e.target).closest('.layui-table-cell').length) {
+              $('.layui-table-cell.expanded').removeClass('expanded');
+          }
+      });
   });
-
-  function notNumber(val) {
-    var regPos = /^\d+(\.\d+)?$/; //非负浮点数
-    var regNeg = /^(-(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*)))$/; //负浮点数
-    if(regPos.test(val) || regNeg.test(val)) {
-        return false;
-        } else {
-        return true;
-        }
-    }
   </script>
 {% endblock %}
