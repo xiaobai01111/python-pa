@@ -130,23 +130,36 @@
         gap: 4px;
     }
     
-    /* 防止操作列按钮被裁剪 */
-    .layui-table-cell .layui-btn {
-        vertical-align: middle;
+    /* 隐藏固定列表格，避免重复显示 */
+    .layui-table-fixed {
+        display: none !important;
     }
     
-    /* 增加表格行高 */
-    .layui-table tbody tr {
-        height: 50px !important;
+    /* 修复表格对齐 */
+    .layui-table-view .layui-table {
+        width: 100% !important;
     }
     
-    .layui-table td {
-        padding: 12px 10px !important;
+    .layui-table-header,
+    .layui-table-body {
+        overflow-x: auto !important;
     }
     
+    .layui-table-main {
+        width: 100% !important;
+    }
+    
+    /* 表格单元格样式 */
     .layui-table-cell {
         height: 40px !important;
         line-height: 40px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+    }
+    
+    .layui-table td {
+        padding: 10px 8px !important;
     }
   </style>
 

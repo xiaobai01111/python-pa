@@ -10,46 +10,43 @@ layui.define(["table", "form"], function(e) {
 		cols: [
 			[{
 				field: "job_id",
-				title: "职位编号",
-				width: 90,
-				fixed: "left",
+				title: "#",
+				width: 45,
 				align: "center",
 			}, {
 				field: "name",
-				title: "职位名称"
+				title: "职位"
 			}, {
 				field: "salary",
-				title: "薪资待遇",
-				width: 150
+				title: "薪资",
+				width: 60
 			}, {
 				field: "education",
-				title: "学历要求",
-				width: 150
+				title: "学历",
+				width: 45
 			}, {
 				field: "experience",
-				title: "经验要求",
-				width: 150
+				title: "经验",
+				width: 50
 			}, {
 				field: "place",
-				title: "工作地点",
-				width: 200
-			},  {
+				title: "地点",
+				width: 55
+			}, {
 				field: "company",
-				title: "公司名称"
+				title: "公司"
 			},{
 				field: "label",
-				title: "所属行业",
-				width: 150,
+				title: "行业",
+				width: 80
 			},{
 				field: "scale",
-				title: "公司规模",
-				width: 120,
-				align: "left"
+				title: "规模",
+				width: 75
 			},{
-				title: "操作",
-				width: 100,
+				title: "",
+				width: 60,
 				align: "center",
-				fixed: "right",
 				toolbar: "#table-forum-list"
 			}]
 		],

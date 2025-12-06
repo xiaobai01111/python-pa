@@ -11,8 +11,7 @@ layui.define(["table", "form"], function(e) {
 			[{
 				field: "job_id",
 				title: "职位编号",
-				width: 90,
-				fixed: "left",
+				width: 70,
 				align: "center",
 			}, {
 				field: "name",
@@ -47,9 +46,8 @@ layui.define(["table", "form"], function(e) {
 				align: "left"
 			},{
 				title: "操作",
-				width: 110,
+				width: 100,
 				align: "center",
-				fixed: "right",
 				toolbar: "#table-forum-list"
 			}]
 		],

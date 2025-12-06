@@ -100,66 +100,69 @@
         transform: scale(0.98);
     }
     
-    /* 表格样式覆盖 */
+    /* ========================================
+       daisyUI Table 样式
+       ======================================== */
+    
     .layui-table-view {
         border: none !important;
         background-color: transparent !important;
     }
     
+    /* 使用 daisyUI table 样式 */
     .layui-table {
+        width: 100% !important;
+        border-collapse: collapse;
         background-color: transparent !important;
         color: oklch(var(--bc));
+        font-size: 14px;
     }
     
-    /* 修复表头背景 */
+    /* 表头 - daisyUI 风格 */
     .layui-table-header {
-        background-color: oklch(var(--b3)) !important; /* base-300 */
-        border-bottom: 1px solid oklch(var(--bc) / 0.1) !important;
+        background-color: oklch(var(--b2)) !important;
     }
     
     .layui-table th {
-        background-color: oklch(var(--b3)) !important;
-        color: oklch(var(--bc) / 0.8) !important;
+        background-color: oklch(var(--b2)) !important;
+        color: oklch(var(--bc) / 0.6) !important;
         font-weight: 600;
-        border-color: oklch(var(--bc) / 0.05) !important;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 12px 16px !important;
+        border-bottom: 1px solid oklch(var(--bc) / 0.1) !important;
+        border-right: none !important;
+        border-left: none !important;
+        text-align: left;
     }
     
-    .layui-table th span {
-        background-color: transparent !important;
-        color: oklch(var(--bc) / 0.8) !important;
+    .layui-table th .layui-table-cell {
+        padding: 0 !important;
+        height: auto !important;
+        line-height: 1.5 !important;
     }
     
+    /* 表格行 - daisyUI hover:bg-base-300 */
     .layui-table td {
-        border-color: oklch(var(--bc) / 0.05);
-        color: oklch(var(--bc));
-    }
-    
-    /* ========================================
-       daisyUI 风格表格悬停高亮
-       ======================================== */
-    
-    /* 表格行基础样式 */
-    .layui-table tbody tr {
-        transition: all 0.15s ease;
-    }
-    
-    /* 悬停高亮效果 - daisyUI hover:bg-base-300 风格 */
-    .layui-table-hover,
-    .layui-table tbody tr:hover,
-    .layui-table-body tr:hover {
-        background-color: oklch(var(--b2)) !important; 
-    }
-    
-    .layui-table-hover td,
-    .layui-table tbody tr:hover td,
-    .layui-table-body tr:hover td {
+        padding: 12px 16px !important;
+        border-bottom: 1px solid oklch(var(--bc) / 0.05) !important;
+        border-right: none !important;
+        border-left: none !important;
         background-color: transparent !important;
     }
     
-    /* 点击选中状态 */
-    .layui-table-click,
+    .layui-table tbody tr {
+        transition: background-color 0.2s;
+    }
+    
+    .layui-table tbody tr:hover td {
+        background-color: oklch(var(--b3)) !important;
+    }
+    
+    /* 选中状态 */
     .layui-table-click td {
-        background-color: oklch(var(--p) / 0.15) !important;
+        background-color: oklch(var(--p) / 0.1) !important;
     }
     
     /* 分页样式修复 */
@@ -305,33 +308,51 @@
         overflow-x: auto;
     }
     
-    /* 增加表格行高防止重叠 */
-    .layui-table tbody tr {
-        height: 50px !important;
+    /* 隐藏固定列表格 */
+    .layui-table-fixed {
+        display: none !important;
     }
     
-    .layui-table td {
-        padding: 12px 10px !important;
-    }
-    
+    /* 单元格样式 */
     .layui-table-cell {
-        height: 40px !important;
-        line-height: 40px !important;
+        padding: 0 !important;
+        height: auto !important;
+        line-height: 1.5 !important;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        cursor: pointer;
     }
     
-    /* 操作按钮样式 */
-    .layui-btn-xs {
-        height: auto !important;
-        line-height: 1.4 !important;
-        padding: 4px 10px !important;
+    /* 点击展开 */
+    .layui-table-cell.expanded {
+        white-space: normal !important;
+        overflow: visible !important;
+        background: oklch(var(--b1));
+        position: relative;
+        z-index: 10;
+        padding: 8px !important;
+        border-radius: 6px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    
+    /* daisyUI 按钮在表格中的样式 */
+    .layui-table-cell .btn {
+        min-height: 24px;
+        height: 24px;
         font-size: 12px;
     }
     
-    .layui-btn-normal {
-        background: oklch(var(--n) / 0.15) !important;
-        color: oklch(var(--bc) / 0.6) !important;
-        border: 1px solid oklch(var(--n) / 0.3) !important;
+    /* 强制表格使用固定布局 */
+    .layui-table {
+        table-layout: fixed !important;
     }
+    
+    /* 通过 colgroup 控制列宽 */
+    .layui-table-view colgroup col:nth-child(3) { width: 55px !important; } /* 薪资 */
+    .layui-table-view colgroup col:nth-child(4) { width: 40px !important; } /* 学历 */
+    .layui-table-view colgroup col:nth-child(5) { width: 45px !important; } /* 经验 */
+    .layui-table-view colgroup col:nth-child(6) { width: 50px !important; } /* 地点 */
   </style>
 
   <div class="layui-fluid">
@@ -437,9 +458,9 @@
           {% verbatim %}
             <script type="text/html" id="table-forum-list">
                {{#  if(d.send_key == 0){ }}
-              <a class="layui-btn layui-btn-xs" lay-event="send"><i class="layui-icon layui-icon-add-circle-fine"></i> 投递</a>
+              <a class="btn btn-primary btn-xs" lay-event="send">投递</a>
                {{#  } else { }}
-              <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="send_1">已投递</a>
+              <a class="btn btn-ghost btn-xs" lay-event="send_1">已投递</a>
                {{#  } }}
             </script>
           {% endverbatim %}
@@ -499,6 +520,39 @@
               page:{curr:1},
               where: field
           });
+      });
+      
+      // 压缩列宽
+      function compressColumns() {
+          // 薪资、学历、经验、地点列 (第3-6列)
+          $('.layui-table-view .layui-table-header th:eq(2), .layui-table-view .layui-table-body td[data-field="salary"]').parent().find('td:eq(2)').css('width', '55px');
+          
+          // 直接修改 colgroup
+          $('.layui-table-view colgroup col:eq(2)').css('width', '55px'); // 薪资
+          $('.layui-table-view colgroup col:eq(3)').css('width', '40px'); // 学历
+          $('.layui-table-view colgroup col:eq(4)').css('width', '45px'); // 经验
+          $('.layui-table-view colgroup col:eq(5)').css('width', '50px'); // 地点
+      }
+      
+      // 表格渲染完成后执行
+      setTimeout(compressColumns, 500);
+      
+      // 点击单元格展开/收起（排除按钮）
+      $(document).on('click', '.layui-table-body .layui-table-cell', function(e) {
+          // 排除按钮点击
+          if ($(e.target).hasClass('layui-btn') || $(e.target).closest('.layui-btn').length || $(e.target).hasClass('layui-icon')) {
+              return;
+          }
+          // 收起其他展开的单元格
+          $('.layui-table-cell.expanded').not(this).removeClass('expanded');
+          $(this).toggleClass('expanded');
+      });
+      
+      // 点击其他地方收起
+      $(document).on('click', function(e) {
+          if (!$(e.target).closest('.layui-table-cell').length) {
+              $('.layui-table-cell.expanded').removeClass('expanded');
+          }
       });
   });
 
