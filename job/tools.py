@@ -24,17 +24,22 @@ class SpiderLogger:
     """爬虫日志记录器"""
     _instance = None
     _lock = threading.Lock()
+    _initialized = False
     
     def __new__(cls):
         if cls._instance is None:
             with cls._lock:
                 if cls._instance is None:
                     cls._instance = super().__new__(cls)
-                    cls._instance.logs = []
-                    cls._instance.max_logs = 500  # 最多保存500条日志
-                    cls._instance.is_running = False
-                    cls._instance.session_id = None  # 当前爬取任务的会话ID
         return cls._instance
+    
+    def __init__(self):
+        if not SpiderLogger._initialized:
+            self.logs = []
+            self.max_logs = 500  # 最多保存500条日志
+            self.is_running = False
+            self.session_id = None  # 当前爬取任务的会话ID
+            SpiderLogger._initialized = True
     
     def log(self, message, level='INFO', private=False):
         """记录日志"""
@@ -111,18 +116,49 @@ class SpiderLogger:
 # 全局日志实例
 spider_logger = SpiderLogger()
 
+# 获取当前文件的目录，定义 chromedriver 备用路径
+_current_dir = os.path.dirname(os.path.abspath(__file__))
+if platform.system() == 'Windows':
+    chromedriver_path = os.path.join(_current_dir, 'chromedriver.exe')
+else:
+    chromedriver_path = os.path.join(_current_dir, 'chromedriver')
+
 try:
     from webdriver_manager.chrome import ChromeDriverManager
     USE_WEBDRIVER_MANAGER = True
 except ImportError:
+    ChromeDriverManager = None  # 定义为None以避免未定义警告
     USE_WEBDRIVER_MANAGER = False
-    # 获取当前文件的目录
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    # 指定 chromedriver 的路径，根据操作系统选择对应的文件
-    if platform.system() == 'Windows':
-        chromedriver_path = os.path.join(current_dir, 'chromedriver.exe')
+
+
+def _create_chrome_options():
+    """创建Chrome浏览器配置选项（公共函数，避免代码重复）"""
+    chrome_options = Options()
+    chrome_options.add_argument('--headless')  # 无头模式
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument('--disable-dev-shm-usage')
+    chrome_options.add_argument('--disable-gpu')
+    # noinspection SpellCheckingInspection
+    chrome_options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36')
+    # 反爬虫配置：隐藏自动化特征
+    chrome_options.add_argument('--disable-blink-features=AutomationControlled')
+    chrome_options.add_experimental_option('excludeSwitches', ['enable-automation', 'enable-logging'])
+    chrome_options.add_experimental_option('useAutomationExtension', False)
+    # 禁用日志输出
+    chrome_options.add_argument('--log-level=3')
+    chrome_options.add_argument('--silent')
+    chrome_options.add_argument('--disable-logging')
+    return chrome_options
+
+
+def _create_chrome_driver():
+    """创建Chrome浏览器驱动实例（公共函数，避免代码重复）"""
+    chrome_options = _create_chrome_options()
+    if USE_WEBDRIVER_MANAGER:
+        service = Service(ChromeDriverManager().install())
     else:
-        chromedriver_path = os.path.join(current_dir, 'chromedriver')
+        service = Service(chromedriver_path)
+    return webdriver.Chrome(service=service, options=chrome_options)
 
 
 # city, all_page, spider_code
@@ -185,29 +221,7 @@ def get_city():
     :return: 城市列表，每个元素为[城市名称, 城市代码]
     """
     print('开始抓取城市列表...')
-    
-    # 配置Chrome选项
-    chrome_options = Options()
-    chrome_options.add_argument('--headless')  # 无头模式，不显示浏览器界面
-    chrome_options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (HTML, like Gecko) Chrome/142.0.0.0 Safari/537.36')
-    chrome_options.add_argument('--no-sandbox')  # 解决DevToolsActivePort文件不存在的报错
-    chrome_options.add_argument('--disable-dev-shm-usage')  # 解决资源限制问题
-    chrome_options.add_argument('--disable-gpu')  # 禁用GPU加速
-    chrome_options.add_argument('--disable-blink-features=AutomationControlled')
-    chrome_options.add_experimental_option('excludeSwitches', ['enable-automation'])
-    chrome_options.add_experimental_option('useAutomationExtension', False)
-        # 禁用日志输出
-    chrome_options.add_argument('--log-level=3')  # 只显示严重错误
-    chrome_options.add_argument('--silent')
-    chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
-    chrome_options.add_argument('--disable-logging')
-
-    # 使用 Service 指定 chromedriver 路径
-    if USE_WEBDRIVER_MANAGER:
-        service = Service(ChromeDriverManager().install())
-    else:
-        service = Service(chromedriver_path)
-    driver = webdriver.Chrome(service=service, options=chrome_options)
+    driver = _create_chrome_driver()
     
     try:
         # 访问猎聘网城市选择页面
@@ -248,29 +262,8 @@ def get_pages(url):
     page_num = url.split('curPage=')[-1] if 'curPage=' in url else '0'
     spider_logger.info(f'[页面{int(page_num)+1}] 开始爬取...')
     
-    # 配置Chrome选项
-    chrome_options = Options()
-    chrome_options.add_argument('--headless')  # 无头模式
-    chrome_options.add_argument('--no-sandbox')
-    chrome_options.add_argument('--disable-dev-shm-usage')
-    chrome_options.add_argument('--disable-gpu')
-    chrome_options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36')
-    # 反爬虫配置：隐藏自动化特征
-    chrome_options.add_argument('--disable-blink-features=AutomationControlled')
-    chrome_options.add_experimental_option('excludeSwitches', ['enable-automation'])
-    chrome_options.add_experimental_option('useAutomationExtension', False)
-    # 禁用日志输出
-    chrome_options.add_argument('--log-level=3')  # 只显示严重错误
-    chrome_options.add_argument('--silent')
-    chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
-    chrome_options.add_argument('--disable-logging')
-    
     # 创建浏览器实例
-    if USE_WEBDRIVER_MANAGER:
-        service = Service(ChromeDriverManager().install())
-    else:
-        service = Service(chromedriver_path)
-    driver = webdriver.Chrome(service=service, options=chrome_options)
+    driver = _create_chrome_driver()
     
     # 获取数据库连接
     conn, cursor = get_mysql()
@@ -300,7 +293,7 @@ def get_pages(url):
                 with open(debug_file, 'w', encoding='utf-8') as f:
                     f.write(html)
                 spider_logger.warning(f'页面可能异常，已保存调试文件: {debug_file}')
-            except Exception:
+            except (IOError, OSError):
                 pass
         
         req_html = etree.HTML(html)

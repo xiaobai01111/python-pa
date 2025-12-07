@@ -50,6 +50,16 @@ def get_user_expect(user_id):
     return models.UserExpect.objects.filter(user_id=user_id).first()
 
 
+def _build_job_list_from_sorted(sorted_jobs, top_n):
+    """从排序后的(job_id, score)列表构建职位信息列表"""
+    recommend_list = []
+    for job_id, _ in sorted_jobs[:top_n]:
+        job_item = models.JobData.objects.filter(job_id=job_id).values().first()
+        if job_item:
+            recommend_list.append(job_item)
+    return recommend_list
+
+
 def get_user_prefer_keywords(job_ids, limit=3):
     """从投递历史中提取用户偏好的关键词"""
     keyword_stats = models.JobData.objects.filter(
@@ -59,7 +69,7 @@ def get_user_prefer_keywords(job_ids, limit=3):
         count=Count('key_word')
     ).order_by('-count')[:limit]
     
-    return [item['key_word'] for item in keyword_stats]
+    return [stat['key_word'] for stat in keyword_stats]
 
 
 # ============================================================
@@ -112,7 +122,7 @@ def recommend_case2_expect(user_expect, top_n=9):
     
     # Step2: 关键词匹配（模糊搜索职位名称）
     if len(recommend_list) < top_n and keyword:
-        existing_ids = [job['job_id'] for job in recommend_list]
+        existing_ids = [j['job_id'] for j in recommend_list]
         keyword_match = models.JobData.objects.filter(
             Q(key_word=keyword) | Q(name__icontains=keyword)
         ).exclude(job_id__in=existing_ids).annotate(
@@ -122,7 +132,7 @@ def recommend_case2_expect(user_expect, top_n=9):
     
     # Step3: 城市匹配 + 热门排序
     if len(recommend_list) < top_n and place:
-        existing_ids = [job['job_id'] for job in recommend_list]
+        existing_ids = [j['job_id'] for j in recommend_list]
         place_match = models.JobData.objects.filter(
             place__icontains=place
         ).exclude(job_id__in=existing_ids).annotate(
@@ -132,11 +142,11 @@ def recommend_case2_expect(user_expect, top_n=9):
     
     # Step4: 不足则用热门填充
     if len(recommend_list) < top_n:
-        existing_ids = [job['job_id'] for job in recommend_list]
+        existing_ids = [j['job_id'] for j in recommend_list]
         hot_fill = recommend_case1_hot(top_n - len(recommend_list))
-        for job in hot_fill:
-            if job['job_id'] not in existing_ids:
-                recommend_list.append(job)
+        for job_item in hot_fill:
+            if job_item['job_id'] not in existing_ids:
+                recommend_list.append(job_item)
                 if len(recommend_list) >= top_n:
                     break
     
@@ -148,7 +158,7 @@ def recommend_case2_expect(user_expect, top_n=9):
 # 情况三：无求职意向 + 有投递记录 → 协同过滤推荐
 # ============================================================
 
-def recommend_case3_cf(user_id, send_job_ids, top_n=9):
+def recommend_case3_cf(_user_id, send_job_ids, top_n=9):
     """
     情况三：无意向有行为 - 协同过滤推荐
     策略：基于投递历史的 Item-Based CF
@@ -177,16 +187,11 @@ def recommend_case3_cf(user_id, send_job_ids, top_n=9):
     
     # 按相似度排序
     sorted_jobs = sorted(recommend_dict.items(), key=lambda x: x[1], reverse=True)
-    
-    recommend_list = []
-    for job_id, _ in sorted_jobs[:top_n]:
-        job = models.JobData.objects.filter(job_id=job_id).values().first()
-        if job:
-            recommend_list.append(job)
+    recommend_list = _build_job_list_from_sorted(sorted_jobs, top_n)
     
     # 不足则用相同关键词职位填充
     if len(recommend_list) < top_n and user_prefer:
-        existing_ids = [job['job_id'] for job in recommend_list] + send_job_ids
+        existing_ids = [j['job_id'] for j in recommend_list] + send_job_ids
         fill_jobs = models.JobData.objects.filter(
             key_word__in=user_prefer
         ).exclude(job_id__in=existing_ids).values()
@@ -202,7 +207,7 @@ def recommend_case3_cf(user_id, send_job_ids, top_n=9):
 # 情况四：有求职意向 + 有投递记录 → 混合推荐
 # ============================================================
 
-def recommend_case4_hybrid(user_id, user_expect, send_job_ids, top_n=9):
+def recommend_case4_hybrid(_user_id, user_expect, send_job_ids, top_n=9):
     """
     情况四：有意向有行为 - 混合推荐
     策略：意向匹配(40%) + 协同过滤(60%)
@@ -231,16 +236,16 @@ def recommend_case4_hybrid(user_id, user_expect, send_job_ids, top_n=9):
     # 计算综合得分
     score_dict = {}
     
-    for job_id in un_send_ids:
-        job = models.JobData.objects.filter(job_id=job_id).first()
-        if not job:
+    for candidate_id in un_send_ids:
+        candidate = models.JobData.objects.filter(job_id=candidate_id).first()
+        if not candidate:
             continue
         
         # 意向匹配得分 (40%)
         expect_score = 0
-        if keyword and (job.key_word == keyword or (job.name and keyword in job.name)):
+        if keyword and (candidate.key_word == keyword or (candidate.name and keyword in candidate.name)):
             expect_score += 0.3
-        if place and job.place and place in job.place:
+        if place and candidate.place and place in candidate.place:
             expect_score += 0.1
         
         # 协同过滤得分 (60%)
@@ -251,24 +256,19 @@ def recommend_case4_hybrid(user_id, user_expect, send_job_ids, top_n=9):
         ).values_list('job_id', flat=True)[:10])
         
         for send_id in send_prefer_ids:
-            cf_score += similarity(send_id, job_id) * 0.6
+            cf_score += similarity(send_id, candidate_id) * 0.6
         
         total_score = expect_score + cf_score
         if total_score > 0:
-            score_dict[job_id] = total_score
+            score_dict[candidate_id] = total_score
     
     # 按综合得分排序
     sorted_jobs = sorted(score_dict.items(), key=lambda x: x[1], reverse=True)
-    
-    recommend_list = []
-    for job_id, _ in sorted_jobs[:top_n]:
-        job = models.JobData.objects.filter(job_id=job_id).values().first()
-        if job:
-            recommend_list.append(job)
+    recommend_list = _build_job_list_from_sorted(sorted_jobs, top_n)
     
     # 不足则用意向匹配填充
     if len(recommend_list) < top_n:
-        existing_ids = [job['job_id'] for job in recommend_list] + send_job_ids
+        existing_ids = [j['job_id'] for j in recommend_list] + send_job_ids
         fill_query = models.JobData.objects.filter(
             Q(key_word__in=user_prefer) | Q(name__icontains=keyword) if keyword else Q(key_word__in=user_prefer)
         ).exclude(job_id__in=existing_ids)
@@ -301,7 +301,7 @@ def recommend_case5_global_hot(top_n=9):
     
     # 热门不足则随机填充
     if len(job_list) < top_n:
-        existing_ids = [job['job_id'] for job in job_list]
+        existing_ids = [j['job_id'] for j in job_list]
         fill_jobs = list(models.JobData.objects.exclude(
             job_id__in=existing_ids
         ).values())
@@ -367,11 +367,11 @@ if __name__ == '__main__':
     # 测试用户推荐
     result = recommend_by_item_id(1)
     print(f"\n用户1的推荐结果（{len(result)}条）:")
-    for job in result[:3]:
-        print(f"  - {job.get('name', 'N/A')} | {job.get('salary', 'N/A')} | {job.get('place', 'N/A')}")
+    for item in result[:3]:
+        print(f"  - {item.get('name', 'N/A')} | {item.get('salary', 'N/A')} | {item.get('place', 'N/A')}")
     
     # 测试全局热门
     hot = get_global_hot_jobs(5)
     print(f"\n全局热门职位（{len(hot)}条）:")
-    for job in hot:
-        print(f"  - {job.get('name', 'N/A')} | {job.get('company', 'N/A')}")
+    for item in hot:
+        print(f"  - {item.get('name', 'N/A')} | {item.get('company', 'N/A')}")
