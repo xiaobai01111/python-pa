@@ -351,21 +351,39 @@ def get_pages(url):
         created_count = 0
         updated_count = 0
         for i in range(min_length):
-            job_href = 'https://www.liepin.com' + href_list[i] if i < len(href_list) else ''
+            raw_href = href_list[i] if i < len(href_list) else ''
             
-            # 使用 update_or_create 去重：href 作为唯一标识
-            # 如果存在相同 href 的记录则更新，否则创建新记录
+            # 修复 href：避免重复拼接域名，提取核心路径
+            if raw_href.startswith('https://'):
+                job_href = raw_href.split('?')[0]  # 去掉查询参数
+            elif raw_href.startswith('/'):
+                job_href = 'https://www.liepin.com' + raw_href.split('?')[0]
+            else:
+                job_href = raw_href.split('?')[0] if raw_href else ''
+            
+            # 提取当前记录的字段值
+            job_name = name[i] if i < len(name) else ''
+            job_salary = salary[i] if i < len(salary) else ''
+            job_place = address[i] if i < len(address) else ''
+            job_education = education[i] if i < len(education) else ''
+            job_experience = experience[i] if i < len(experience) else ''
+            job_company = com_name[i] if i < len(com_name) else ''
+            job_label = labels[i] if i < len(labels) else ''
+            job_scale = scales[i] if i < len(scales) else ''
+            
+            # 多重去重判断：职位名 + 公司名 + 工作地点 作为唯一标识
+            # 这比仅依赖 href 更可靠
             _, created = models.JobData.objects.update_or_create(
-                href=job_href,  # 查找条件：职位链接唯一
+                name=job_name,
+                company=job_company,
+                place=job_place,
                 defaults={
-                    'name': name[i] if i < len(name) else '',
-                    'salary': salary[i] if i < len(salary) else '',
-                    'place': address[i] if i < len(address) else '',
-                    'education': education[i] if i < len(education) else '',
-                    'experience': experience[i] if i < len(experience) else '',
-                    'company': com_name[i] if i < len(com_name) else '',
-                    'label': labels[i] if i < len(labels) else '',
-                    'scale': scales[i] if i < len(scales) else '',
+                    'salary': job_salary,
+                    'education': job_education,
+                    'experience': job_experience,
+                    'label': job_label,
+                    'scale': job_scale,
+                    'href': job_href,
                     'key_word': key_word
                 }
             )
@@ -374,10 +392,17 @@ def get_pages(url):
             else:
                 updated_count += 1
         
-        if updated_count > 0:
-            spider_logger.success(f'[页面{int(page_num)+1}] 新增 {created_count} 条，更新 {updated_count} 条（已去重）')
+        # 显示去重结果（区分爬取失败和数据重复）
+        total = created_count + updated_count
+        if min_length == 0:
+            # 解析到 0 条数据 = 爬取失败
+            pass  # 上面已经有 "未获取到数据" 的警告
+        elif updated_count == 0:
+            spider_logger.success(f'[页面{int(page_num)+1}] 存入 {created_count} 条新数据')
+        elif created_count == 0:
+            spider_logger.info(f'[页面{int(page_num)+1}] {updated_count} 条数据已存在（全部重复，已更新）')
         else:
-            spider_logger.success(f'[页面{int(page_num)+1}] 成功存入数据库 {created_count} 条记录')
+            spider_logger.success(f'[页面{int(page_num)+1}] 新增 {created_count} 条，{updated_count} 条重复已更新')
         
     except Exception as e:
         spider_logger.error(f'[页面{int(page_num)+1}] 存储失败: {str(e)}')

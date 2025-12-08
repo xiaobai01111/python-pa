@@ -22,9 +22,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-o1v2#%cj30hv45yl0+)b#(qh$$290y5i4y3=w2(-@c*9#cj)_s'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 # Application definition
 # 隐藏右侧SimpleUI广告链接和使用分析
@@ -89,14 +89,27 @@ WSGI_APPLICATION = 'JobRecommend.wsgi.application'
 #     }
 # }
 
+# MySQL 配置
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'recommend_job',
+#         'USER': 'root',
+#         'PASSWORD': '20040226Bx/',
+#         'HOST': '127.0.0.1',
+#         'PORT': '3306',
+#     }
+# }
+
+# # PostgreSQL 配置
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'recommend_job',
-        'USER': 'root',
+        'USER': 'xiaobai',
         'PASSWORD': '20040226Bx/',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 

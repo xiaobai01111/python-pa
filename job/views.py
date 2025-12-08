@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
+from functools import wraps
 # Create your views here.
 from job import models
 import re
@@ -11,6 +12,18 @@ from job.tools import spider_logger
 from job import job_recommend
 
 spider_code = 0  # 定义全局变量，用来识别爬虫的状态，0空闲，1繁忙
+
+
+# 登录验证装饰器
+def login_required(view_func):
+    """检查用户是否已登录，未登录则重定向到登录页"""
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        if not request.session.get('user_id'):
+            # 未登录，重定向到登录页
+            return redirect('login')
+        return view_func(request, *args, **kwargs)
+    return wrapper
 
 
 # python manage.py inspectdb > job/models.py
@@ -81,11 +94,13 @@ def logout(request):
     return redirect('login')
 
 
+@login_required
 def index(request):
     """此函数用于返回主页，主页包括头部，左侧菜单"""
     return render(request, "index.html")
 
 
+@login_required
 def welcome(request):
     """此函数用于处理控制台页面"""
     job_data_queryset = models.JobData.objects.all().values()  # 查询所有的职位信息
@@ -122,6 +137,7 @@ def welcome(request):
     })
 
 
+@login_required
 def spiders(request):
     global spider_code
     spider_code_1 = spider_code
@@ -140,6 +156,7 @@ def _run_spider_task(key_word, city, page, role):
         spider_code = 0
 
 
+@login_required
 def start_spider(request):
     global spider_code
     if request.method == "POST":
@@ -175,6 +192,7 @@ def start_spider(request):
         return JsonResponse({"code": 1, "msg": "请使用POST请求"})
 
 
+@login_required
 def get_spider_logs(request):
     """获取爬虫日志"""
     since_index = int(request.GET.get('since', 0))
@@ -189,10 +207,12 @@ def get_spider_logs(request):
     })
 
 
+@login_required
 def job_list(request):
     return render(request, "job_list.html")
 
 
+@login_required
 def get_job_list(request):
     """此函数用来渲染职位信息列表"""
     page = int(request.GET.get("page", "1"))  # 获取请求地址中页码
@@ -245,6 +265,7 @@ def get_job_list(request):
     return JsonResponse({"code": 0, "msg": "success", "count": "{}".format(len(job_data)), "data": job_data_1})
 
 
+@login_required
 def get_psutil(request):
     """此函数用于读取cpu使用率和内存占用率"""
     # cpu_percent()可以获取cpu的使用率，参数interval是获取的间隔
@@ -253,6 +274,7 @@ def get_psutil(request):
     return JsonResponse({'cpu_data': cpu_percent(interval=1), 'memory_data': virtual_memory()[2]})
 
 
+@login_required
 def get_pie(request):
     """此函数用于渲染控制台饼图的数据,要求学历的数据和薪资待遇的数据"""
     _ = request  # Django视图必需的参数
@@ -303,6 +325,7 @@ def get_pie(request):
     return JsonResponse({'edu_data': edu_data, 'salary_data': salary_data})
 
 
+@login_required
 def send_job(request):
     """此函数用于投递职位和取消投递"""
     if request.method == "POST":
@@ -318,6 +341,7 @@ def send_job(request):
         return JsonResponse({"Code": 1, "msg": "请使用POST请求"})
 
 
+@login_required
 def job_expect(request):
     if request.method == "POST":
         job_name = request.POST.get("key_word")
@@ -340,15 +364,18 @@ def job_expect(request):
         return render(request, "expect.html", {'keyword': keyword, 'place': place})
 
 
+@login_required
 def get_recommend(request):
     recommend_list = job_recommend.recommend_by_item_id(request.session.get("user_id"), 9)
     return render(request, "recommend.html", {'recommend_list': recommend_list})
 
 
+@login_required
 def send_page(request):
     return render(request, "send_list.html")
 
 
+@login_required
 def send_list(request):
     send_list_data = list(models.JobData.objects.filter(sendlist__user=request.session.get("user_id")).values())
     for send in send_list_data:
@@ -360,11 +387,13 @@ def send_list(request):
         return JsonResponse({"code": 0, "msg": "success", "count": "{}".format(len(send_list_data)), "data": send_list_data})
 
 
+@login_required
 def pass_page(request):
     user_obj = models.UserList.objects.filter(user_id=request.session.get("user_id")).first()
     return render(request, "pass_page.html", {'user_obj': user_obj})
 
 ##修改密码
+@login_required
 def up_info(request):
     if request.method == "POST":
         old_password = request.POST.get("old_password")
@@ -394,18 +423,22 @@ def up_info(request):
 
 
 
+@login_required
 def salary(request):
     return render(request, "salary.html")
 
 
+@login_required
 def edu(request):
     return render(request, "edu.html")
 
 
+@login_required
 def bar_page(request):
     return render(request, "bar_page.html")
 
 
+@login_required
 def bar(request):
     _ = request  # Django视图必需的参数
     # 获取所有职位的关键词

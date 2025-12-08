@@ -78,17 +78,16 @@
           <div class="layui-card-header">用户设置</div>
           <div class="layui-card-body">
             <div class="layui-form" lay-filter="">
-              <!-- 用户名 -->
+              <!-- 用户名（账号，不可修改） -->
               <div class="form-control w-full max-w-lg mb-4">
                 <label class="label"><span class="label-text">用户名</span></label>
-                <input type="text" name="user_account" class="input input-bordered w-full" value="{{ user_obj.user_account }}" disabled>
+                <input type="text" class="input input-bordered w-full" value="{{ user_obj.user_account|default:'未设置' }}" disabled>
               </div>
               
-              <!-- 名称 -->
+              <!-- 昵称（不可修改） -->
               <div class="form-control w-full max-w-lg mb-4">
-                <label class="label"><span class="label-text">名称</span></label>
-                <input type="text" name="user_name" class="input input-bordered validator w-full" required placeholder="请输入您的名称" value="{{ user_obj.user_name }}" minlength="2" maxlength="20">
-                <p class="validator-hint text-error text-sm mt-1">名称长度需在2-20个字符之间</p>
+                <label class="label"><span class="label-text">昵称</span></label>
+                <input type="text" class="input input-bordered w-full" value="{{ user_obj.user_name|default:'未设置' }}" disabled>
               </div>
               
               <!-- 原密码 -->
@@ -138,10 +137,6 @@
       form.on('submit(up_pass)', function (data) {
           var field = data.field;
           
-          if(field.user_name == ""){
-              showToast("名称不能为空！", "warning");
-              return false;
-          }
           if(field.old_pass == ""){
               showToast("原密码不能为空！", "warning");
               return false;
@@ -159,7 +154,6 @@
                type: 'POST',
                url: '/up_info/',
                data:{
-                   "user_name": field.user_name, 
                    "old_password": field.old_pass, 
                    "new_password": field.pass_word,
                    "re_password": field.pass_word_1
