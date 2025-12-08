@@ -347,22 +347,37 @@ def get_pages(url):
         # 从URL中提取关键词
         key_word = url.split('key=')[1].split('&')[0] if 'key=' in url else ''
 
-        # 使用 Django ORM 插入数据库（支持多种数据库）
+        # 使用 Django ORM 插入数据库（支持多种数据库，自动去重）
+        created_count = 0
+        updated_count = 0
         for i in range(min_length):
-            models.JobData.objects.create(
-                name=name[i] if i < len(name) else '',
-                salary=salary[i] if i < len(salary) else '',
-                place=address[i] if i < len(address) else '',
-                education=education[i] if i < len(education) else '',
-                experience=experience[i] if i < len(experience) else '',
-                company=com_name[i] if i < len(com_name) else '',
-                label=labels[i] if i < len(labels) else '',
-                scale=scales[i] if i < len(scales) else '',
-                href='https://www.liepin.com' + href_list[i] if i < len(href_list) else '',
-                key_word=key_word
+            job_href = 'https://www.liepin.com' + href_list[i] if i < len(href_list) else ''
+            
+            # 使用 update_or_create 去重：href 作为唯一标识
+            # 如果存在相同 href 的记录则更新，否则创建新记录
+            _, created = models.JobData.objects.update_or_create(
+                href=job_href,  # 查找条件：职位链接唯一
+                defaults={
+                    'name': name[i] if i < len(name) else '',
+                    'salary': salary[i] if i < len(salary) else '',
+                    'place': address[i] if i < len(address) else '',
+                    'education': education[i] if i < len(education) else '',
+                    'experience': experience[i] if i < len(experience) else '',
+                    'company': com_name[i] if i < len(com_name) else '',
+                    'label': labels[i] if i < len(labels) else '',
+                    'scale': scales[i] if i < len(scales) else '',
+                    'key_word': key_word
+                }
             )
+            if created:
+                created_count += 1
+            else:
+                updated_count += 1
         
-        spider_logger.success(f'[页面{int(page_num)+1}] 成功存入数据库 {min_length} 条记录')
+        if updated_count > 0:
+            spider_logger.success(f'[页面{int(page_num)+1}] 新增 {created_count} 条，更新 {updated_count} 条（已去重）')
+        else:
+            spider_logger.success(f'[页面{int(page_num)+1}] 成功存入数据库 {created_count} 条记录')
         
     except Exception as e:
         spider_logger.error(f'[页面{int(page_num)+1}] 存储失败: {str(e)}')
