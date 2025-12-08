@@ -7,13 +7,18 @@ import time
 import random
 from lxml import etree
 from multiprocessing.dummy import Pool
-import pymysql
 import platform
 import threading
 from datetime import datetime
 
 import os
 from selenium import webdriver
+
+# Django ORM 支持
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "JobRecommend.settings")
+import django
+django.setup()
+from job import models
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 
@@ -265,9 +270,6 @@ def get_pages(url):
     # 创建浏览器实例
     driver = _create_chrome_driver()
     
-    # 获取数据库连接
-    conn, cursor = get_mysql()
-    
     try:
         # 添加随机延迟，避免被识别为爬虫
         time.sleep(random.uniform(1, 3))
@@ -345,60 +347,30 @@ def get_pages(url):
         # 从URL中提取关键词
         key_word = url.split('key=')[1].split('&')[0] if 'key=' in url else ''
 
-        # 插入数据库
+        # 使用 Django ORM 插入数据库（支持多种数据库）
         for i in range(min_length):
-            sql = """
-                INSERT INTO job_data (name, salary, place, education, experience, company, label, scale, href, key_word)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-            """
-            values = (
-                name[i] if i < len(name) else '',
-                salary[i] if i < len(salary) else '',
-                address[i] if i < len(address) else '',
-                education[i] if i < len(education) else '',
-                experience[i] if i < len(experience) else '',
-                com_name[i] if i < len(com_name) else '',
-                labels[i] if i < len(labels) else '',
-                scales[i] if i < len(scales) else '',
-                'https://www.liepin.com' + href_list[i] if i < len(href_list) else '',
-                key_word
+            models.JobData.objects.create(
+                name=name[i] if i < len(name) else '',
+                salary=salary[i] if i < len(salary) else '',
+                place=address[i] if i < len(address) else '',
+                education=education[i] if i < len(education) else '',
+                experience=experience[i] if i < len(experience) else '',
+                company=com_name[i] if i < len(com_name) else '',
+                label=labels[i] if i < len(labels) else '',
+                scale=scales[i] if i < len(scales) else '',
+                href='https://www.liepin.com' + href_list[i] if i < len(href_list) else '',
+                key_word=key_word
             )
-            cursor.execute(sql, values)
         
-        # 提交事务
-        conn.commit()
         spider_logger.success(f'[页面{int(page_num)+1}] 成功存入数据库 {min_length} 条记录')
         
     except Exception as e:
         spider_logger.error(f'[页面{int(page_num)+1}] 存储失败: {str(e)}')
-        conn.rollback()  # 回滚事务
     finally:
-        # 关闭资源
-        cursor.close()
-        conn.close()
+        # 关闭浏览器
         driver.quit()
 
 
-
-
-
-def get_mysql():
-    """
-    连接MySQL数据库
-    :return: 数据库连接和游标
-    """
-    # 从Django配置中读取数据库连接信息
-    # 这里直接使用配置信息，实际项目中应该从settings.py导入
-    conn = pymysql.connect(
-        host='127.0.0.1',  # 数据库主机地址
-        port=3306,  # 数据库端口
-        user='root',  # 数据库用户名
-        password='20040226Bx/',  # 数据库密码
-        database='recommend_job',  # 数据库名称
-        charset='utf8mb4'  # 字符集，支持中文和特殊字符
-    )
-    cursor = conn.cursor()  # 创建游标对象
-    return conn, cursor
 
 
 
