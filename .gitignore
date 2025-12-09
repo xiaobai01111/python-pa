@@ -145,7 +145,7 @@ ehthumbs.db
 Thumbs.db
 
 # Database
-*.sql
+# *.sql  # Commented out to allow specific SQL files
 *.sqlite
 *.sqlite3
 
@@ -161,8 +161,7 @@ staticfiles/
 config.py
 secrets.json
 
-# SSL Certificates
-certs/
-*.pem
-*.key
-*.crt
+# SSL Certificates - keep folder structure but ignore sensitive files
+certs/*.pem
+certs/*.key
+certs/*.crt
