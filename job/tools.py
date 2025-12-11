@@ -21,6 +21,10 @@ django.setup()
 from job import models
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
 
 # ========================================
 # 爬虫日志系统
@@ -44,6 +48,9 @@ class SpiderLogger:
             self.max_logs = 500  # 最多保存500条日志
             self.is_running = False
             self.session_id = None  # 当前爬取任务的会话ID
+            # 日志文件目录
+            self.log_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'log')
+            os.makedirs(self.log_dir, exist_ok=True)
             SpiderLogger._initialized = True
     
     def log(self, message, level='INFO', private=False):
@@ -61,8 +68,20 @@ class SpiderLogger:
             # 保持日志数量在限制内
             if len(self.logs) > self.max_logs:
                 self.logs = self.logs[-self.max_logs:]
+            # 写入日志文件
+            self._write_to_file(timestamp, level, message)
         # 同时打印到控制台
         print(f"[{timestamp}] [{level}] {message}")
+    
+    def _write_to_file(self, timestamp, level, message):
+        """将日志写入文件"""
+        date_str = datetime.now().strftime('%Y-%m-%d')
+        log_file = os.path.join(self.log_dir, f'spider_{date_str}.log')
+        try:
+            with open(log_file, 'a', encoding='utf-8') as f:
+                f.write(f"[{timestamp}] [{level}] {message}\n")
+        except (IOError, OSError):
+            pass  # 写入失败不影响主流程
     
     def info(self, message):
         self.log(message, 'INFO')
@@ -210,9 +229,9 @@ def get_urls(key_word, all_page, city_code):
     :return: URL列表
     """
     urls_list = []
-    # 猎聘网搜索页面URL格式：https://www.liepin.com/zhaopin/?city=城市代码&dqs=城市代码&key=关键词&curPage=页码
-    for page in range(int(all_page)):
-        url = f'https://www.liepin.com/zhaopin/?city={city_code}&dqs={city_code}&key={key_word}&curPage={page}'
+    # 猎聘网搜索页面URL格式：https://www.liepin.com/zhaopin/?city=城市代码&dqs=城市代码&key=关键词&currentPage=页码
+    for page in range(1, int(all_page) + 1):
+        url = f'https://www.liepin.com/zhaopin/?city={city_code}&dqs={city_code}&key={key_word}&currentPage={page}'
         urls_list.append(url)
     spider_logger.info(f'生成待爬取链接数: {len(urls_list)}')
     for i, url in enumerate(urls_list):
@@ -231,7 +250,7 @@ def get_city():
     try:
         # 访问猎聘网城市选择页面
         driver.get('https://www.liepin.com/citylist/')
-        time.sleep(2)  # 等待页面加载
+        time.sleep(5)  # 等待页面加载
         
         # 获取页面HTML
         html = driver.page_source
@@ -264,8 +283,8 @@ def get_pages(url):
     爬取单个页面的职位信息并存储到数据库
     :param url: 需要爬取的页面URL
     """
-    page_num = url.split('curPage=')[-1] if 'curPage=' in url else '0'
-    spider_logger.info(f'[页面{int(page_num)+1}] 开始爬取...')
+    page_num = url.split('currentPage=')[-1] if 'currentPage=' in url else '1'
+    spider_logger.info(f'[页面{page_num}] 开始爬取...')
     
     # 创建浏览器实例
     driver = _create_chrome_driver()
@@ -277,26 +296,28 @@ def get_pages(url):
         # 访问URL
         driver.get(url)
         
-        # 随机等待时间，模拟人类行为
-        time.sleep(random.uniform(4, 7))
+        # 显式等待：等待职位列表元素出现（最多等待15秒）
+        try:
+            # 等待职位卡片元素出现
+            WebDriverWait(driver, 15).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, '[data-nick="job-detail-job-info"]'))
+            )
+            spider_logger.info(f'[页面{page_num}] 职位列表已加载')
+        except TimeoutException:
+            spider_logger.warning(f'[页面{page_num}] 等待职位列表超时，尝试继续...')
+        
+        # 短暂等待确保数据完全渲染
+        time.sleep(random.uniform(1, 2))
         
         # 滚动页面以触发懒加载
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         time.sleep(random.uniform(1, 2))
         
+        # 再次等待可能的懒加载内容
+        time.sleep(random.uniform(0.5, 1))
+        
         # 获取页面HTML
         html = driver.page_source
-        
-        # 调试：保存HTML页面（仅在没有数据时保存）
-        if '职位' not in html or 'job' not in html.lower():
-            page_num = url.split('curPage=')[-1] if 'curPage=' in url else '0'
-            debug_file = f'debug_page_{page_num}.html'
-            try:
-                with open(debug_file, 'w', encoding='utf-8') as f:
-                    f.write(html)
-                spider_logger.warning(f'页面可能异常，已保存调试文件: {debug_file}')
-            except (IOError, OSError):
-                pass
         
         req_html = etree.HTML(html)
 
@@ -311,13 +332,13 @@ def get_pages(url):
         href_list = req_html.xpath('//a[@data-nick="job-detail-job-info"]/@href')
         
         # 调试信息：打印提取到的数据数量
-        spider_logger.info(f'[页面{int(page_num)+1}] 解析数据: 职位={len(name)}, 薪资={len(salary)}, 公司={len(com_name)}')
+        spider_logger.info(f'[页面{page_num}] 解析数据: 职位={len(name)}, 薪资={len(salary)}, 公司={len(com_name)}')
         
         # 是否成功爬取
         if len(name) == 0:
-            spider_logger.warning(f'[页面{int(page_num)+1}] 未获取到数据，可能被反爬')
+            spider_logger.warning(f'[页面{page_num}] 未获取到数据，可能被反爬')
         else:
-            spider_logger.success(f'[页面{int(page_num)+1}] 成功获取 {len(name)} 条职位数据')
+            spider_logger.success(f'[页面{page_num}] 成功获取 {len(name)} 条职位数据')
 
         # 处理标签信息，将每个职位的标签提取出来并分离label和scale
         labels = []  # 存储行业/融资阶段等标签
@@ -398,14 +419,14 @@ def get_pages(url):
             # 解析到 0 条数据 = 爬取失败
             pass  # 上面已经有 "未获取到数据" 的警告
         elif updated_count == 0:
-            spider_logger.success(f'[页面{int(page_num)+1}] 存入 {created_count} 条新数据')
+            spider_logger.success(f'[页面{page_num}] 存入 {created_count} 条新数据')
         elif created_count == 0:
-            spider_logger.info(f'[页面{int(page_num)+1}] {updated_count} 条数据已存在（全部重复，已更新）')
+            spider_logger.info(f'[页面{page_num}] {updated_count} 条数据已存在（全部重复，已更新）')
         else:
-            spider_logger.success(f'[页面{int(page_num)+1}] 新增 {created_count} 条，{updated_count} 条重复已更新')
+            spider_logger.success(f'[页面{page_num}] 新增 {created_count} 条，{updated_count} 条重复已更新')
         
     except Exception as e:
-        spider_logger.error(f'[页面{int(page_num)+1}] 存储失败: {str(e)}')
+        spider_logger.error(f'[页面{page_num}] 存储失败: {str(e)}')
     finally:
         # 关闭浏览器
         driver.quit()

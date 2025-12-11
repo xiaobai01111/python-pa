@@ -90,28 +90,28 @@ WSGI_APPLICATION = 'JobRecommend.wsgi.application'
 # }
 
 # MySQL 配置
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'recommend_job',
-#         'USER': 'root',
-#         'PASSWORD': '20040226Bx/',
-#         'HOST': '127.0.0.1',
-#         'PORT': '3306',
-#     }
-# }
-
-# # PostgreSQL 配置
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': 'recommend_job',
-        'USER': 'xiaobai',
+        'USER': 'root',
         'PASSWORD': '20040226Bx/',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
     }
 }
+
+# # PostgreSQL 配置
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'recommend_job',
+#         'USER': 'xiaobai',
+#         'PASSWORD': '20040226Bx/',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
