@@ -1,0 +1,369 @@
+{% load static %}
+<!DOCTYPE html>
+<html data-theme="dark">
+
+<head>
+  <!-- 立即应用保存的主题，防止闪烁 -->
+  <script>
+    (function () {
+      var theme = localStorage.getItem('daisyui-theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+  <meta charset="utf-8">
+  <title>职位信息可视化推荐系统</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4/dist/full.min.css" rel="stylesheet" type="text/css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- 全局主题样式 - 覆盖所有页面 -->
+  <style>
+    /* ========================================sc
+       全局 daisyUI 主题变量映射
+       ======================================== */
+
+    /* 背景色映射 */
+    body {
+      background-color: oklch(var(--b1)) !important;
+      color: oklch(var(--bc)) !important;
+    }
+
+    /* 卡片组件 */
+    .layui-card {
+      background-color: oklch(var(--b2) / 0.8) !important;
+      border-color: oklch(var(--bc) / 0.1) !important;
+    }
+
+    .layui-card-header {
+      color: oklch(var(--bc)) !important;
+      border-color: oklch(var(--bc) / 0.1) !important;
+    }
+
+    .layui-card-body {
+      color: oklch(var(--bc)) !important;
+    }
+
+    /* 表单元素 */
+    .layui-input,
+    .layui-textarea,
+    .layui-select {
+      background-color: oklch(var(--b1)) !important;
+      border-color: oklch(var(--bc) / 0.15) !important;
+      color: oklch(var(--bc)) !important;
+    }
+
+    .layui-input:focus,
+    .layui-textarea:focus {
+      border-color: oklch(var(--p)) !important;
+      box-shadow: 0 0 0 2px oklch(var(--p) / 0.25) !important;
+    }
+
+    .layui-form-label {
+      color: oklch(var(--bc) / 0.7) !important;
+    }
+
+    /* 按钮 */
+    .layui-btn {
+      background-color: oklch(var(--p)) !important;
+      color: oklch(var(--pc)) !important;
+    }
+
+    .layui-btn:hover {
+      background-color: oklch(var(--p) / 0.9) !important;
+    }
+
+    /* 表格 */
+    .layui-table {
+      color: oklch(var(--bc)) !important;
+    }
+
+    .layui-table th {
+      background-color: oklch(var(--b2)) !important;
+      color: oklch(var(--bc) / 0.7) !important;
+    }
+
+    .layui-table td {
+      border-color: oklch(var(--bc) / 0.05) !important;
+    }
+
+    .layui-table tbody tr:hover,
+    .layui-table-hover {
+      background-color: oklch(var(--b3) / 0.6) !important;
+    }
+
+    .layui-table-header {
+      background-color: oklch(var(--b2)) !important;
+    }
+
+    /* 分页 */
+    .layui-laypage a,
+    .layui-laypage span {
+      background-color: transparent !important;
+      color: oklch(var(--bc) / 0.7) !important;
+      border-color: oklch(var(--bc) / 0.15) !important;
+    }
+
+    .layui-laypage .layui-laypage-curr .layui-laypage-em {
+      background-color: oklch(var(--p)) !important;
+    }
+
+    /* 下拉菜单 */
+    .layui-form-select dl {
+      background-color: oklch(var(--b2)) !important;
+      border-color: oklch(var(--bc) / 0.15) !important;
+    }
+
+    .layui-form-select dl dd {
+      color: oklch(var(--bc) / 0.8) !important;
+    }
+
+    .layui-form-select dl dd:hover {
+      background-color: oklch(var(--p) / 0.15) !important;
+    }
+
+    .layui-form-select dl dd.layui-this {
+      background-color: oklch(var(--p)) !important;
+      color: oklch(var(--pc)) !important;
+    }
+
+    /* 导航 */
+    .layui-nav {
+      background-color: transparent !important;
+    }
+
+    .layui-nav .layui-nav-item a {
+      color: oklch(var(--bc) / 0.7) !important;
+    }
+
+    .layui-nav .layui-nav-item a:hover {
+      color: oklch(var(--bc)) !important;
+    }
+
+    .layui-nav-child {
+      background-color: oklch(var(--b2)) !important;
+    }
+
+    /* 图标颜色 */
+    .layui-icon {
+      color: oklch(var(--bc) / 0.7) !important;
+    }
+
+    /* 文字颜色辅助类 */
+    .text-base-content {
+      color: oklch(var(--bc)) !important;
+    }
+
+    .bg-base-100 {
+      background-color: oklch(var(--b1)) !important;
+    }
+
+    .bg-base-200 {
+      background-color: oklch(var(--b2)) !important;
+    }
+
+    .bg-base-300 {
+      background-color: oklch(var(--b3)) !important;
+    }
+  </style>
+
+  <!-- Layui -->
+  <link rel="stylesheet" href="{% static "layuiadmin/layui/css/layui.css" %}" media="all">
+  <link rel="stylesheet" href="{% static "layuiadmin/style/admin.css" %}" media="all">
+  <link rel="stylesheet" href="{% static "layuiadmin/style/template.css" %}" media="all">
+</head>
+{% block content %}
+{% endblock content %}
+
+<!-- ========================================
+     daisyUI 全局弹窗组件
+     ======================================== -->
+
+<!-- 确认对话框 Modal -->
+<dialog id="confirm_modal" class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box">
+    <form method="dialog">
+      <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+    </form>
+    <h3 class="font-bold text-lg" id="confirm_modal_title">确认操作</h3>
+    <p class="py-4" id="confirm_modal_content">确定要执行此操作吗？</p>
+    <div class="modal-action">
+      <form method="dialog">
+        <button class="btn btn-ghost" id="confirm_modal_cancel">取消</button>
+      </form>
+      <button class="btn btn-primary" id="confirm_modal_ok">确定</button>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
+
+<!-- Toast 消息提示容器 -->
+<div id="toast_container" class="toast toast-top toast-center" style="z-index: 99999;"></div>
+
+<script src="{% static "layuiadmin/layui/layui.js" %}"></script>
+<script src="{% static "layuiadmin/config.js" %}"></script>
+
+<!-- 主题持久化和同步脚本 -->
+<script>
+  // 页面加载时恢复保存的主题
+  (function () {
+    const savedTheme = localStorage.getItem('daisyui-theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+
+    // 选中对应的主题单选按钮
+    const themeRadio = document.querySelector('input[name="theme-dropdown"][value="' + savedTheme + '"]');
+    if (themeRadio) themeRadio.checked = true;
+  })();
+
+  // 同步主题到所有 iframe
+  function syncThemeToIframes(theme) {
+    var iframes = document.querySelectorAll('iframe');
+    iframes.forEach(function (iframe) {
+      try {
+        if (iframe.contentDocument) {
+          iframe.contentDocument.documentElement.setAttribute('data-theme', theme);
+        }
+      } catch (e) { }
+    });
+  }
+
+  // 监听主题切换
+  document.addEventListener('change', function (e) {
+    if (e.target.classList.contains('theme-controller')) {
+      var theme = e.target.value;
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('daisyui-theme', theme);
+      syncThemeToIframes(theme);
+    }
+  });
+
+  // 监听 iframe 加载完成后同步主题
+  document.addEventListener('DOMContentLoaded', function () {
+    var savedTheme = localStorage.getItem('daisyui-theme') || 'dark';
+
+    // 使用 MutationObserver 监听新增的 iframe
+    var observer = new MutationObserver(function (mutations) {
+      mutations.forEach(function (mutation) {
+        mutation.addedNodes.forEach(function (node) {
+          if (node.tagName === 'IFRAME') {
+            node.addEventListener('load', function () {
+              try {
+                if (node.contentDocument) {
+                  node.contentDocument.documentElement.setAttribute('data-theme', savedTheme);
+                }
+              } catch (e) { }
+            });
+          }
+        });
+      });
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    // 为已存在的 iframe 添加主题
+    setTimeout(function () { syncThemeToIframes(savedTheme); }, 500);
+  });
+
+  // ========================================
+  // daisyUI 弹窗工具函数
+  // ========================================
+
+  /**
+   * 显示确认对话框
+   * @param {string} content - 提示内容
+   * @param {function} onConfirm - 确认回调
+   * @param {object} options - 可选配置 {title, confirmText, cancelText}
+   */
+  function showConfirm(content, onConfirm, options = {}) {
+    const modal = document.getElementById('confirm_modal');
+    const titleEl = document.getElementById('confirm_modal_title');
+    const contentEl = document.getElementById('confirm_modal_content');
+    const okBtn = document.getElementById('confirm_modal_ok');
+
+    titleEl.textContent = options.title || '确认操作';
+    contentEl.textContent = content;
+    okBtn.textContent = options.confirmText || '确定';
+    okBtn.className = 'btn ' + (options.btnClass || 'btn-primary');
+
+    // 移除旧的事件监听
+    const newOkBtn = okBtn.cloneNode(true);
+    okBtn.parentNode.replaceChild(newOkBtn, okBtn);
+
+    // 添加新的确认事件
+    newOkBtn.addEventListener('click', function () {
+      modal.close();
+      if (typeof onConfirm === 'function') {
+        onConfirm();
+      }
+    });
+
+    modal.showModal();
+  }
+
+  /**
+   * 显示 Toast 消息提示
+   * @param {string} message - 消息内容
+   * @param {string} type - 类型: success/error/warning/info
+   * @param {number} duration - 显示时长(ms)
+   */
+  function showToast(message, type = 'info', duration = 3000) {
+    const container = document.getElementById('toast_container');
+
+    const alertClass = {
+      'success': 'alert-success',
+      'error': 'alert-error',
+      'warning': 'alert-warning',
+      'info': 'alert-info'
+    }[type] || 'alert-info';
+
+    const iconSvg = {
+      'success': '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>',
+      'error': '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>',
+      'warning': '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>',
+      'info': '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>'
+    }[type] || '';
+
+    const toast = document.createElement('div');
+    toast.className = `alert ${alertClass} shadow-lg animate-fade-in`;
+    toast.innerHTML = `${iconSvg}<span>${message}</span>`;
+
+    container.appendChild(toast);
+
+    // 自动移除
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateY(-10px)';
+      toast.style.transition = 'all 0.3s ease';
+      setTimeout(() => toast.remove(), 300);
+    }, duration);
+  }
+
+  /**
+   * 显示加载中
+   * @param {boolean} show - 显示/隐藏
+   */
+  let loadingEl = null;
+  function showLoading(show = true) {
+    if (show) {
+      if (!loadingEl) {
+        loadingEl = document.createElement('div');
+        loadingEl.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50';
+        loadingEl.innerHTML = '<span class="loading loading-spinner loading-lg text-primary"></span>';
+        document.body.appendChild(loadingEl);
+      }
+    } else {
+      if (loadingEl) {
+        loadingEl.remove();
+        loadingEl = null;
+      }
+    }
+  }
+</script>
+
+{% block js %}{% endblock js %}
+
+</html>

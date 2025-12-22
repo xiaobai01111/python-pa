@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<body>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    
+    body { font-family: 'Inter', sans-serif; color: oklch(var(--bc)); }
+    
+    html, body { height: 100%; }
+    
+    .layui-fluid { 
+        padding: 30px; 
+        min-height: calc(100vh - 110px);
+        box-sizing: border-box;
+    }
+    
+    .layui-row { height: 100%; }
+    .layui-col-md12 { height: 100%; }
+    
+    /* 卡片容器 - 适配所有主题 */
+    .layui-card {
+        background-color: oklch(var(--b2) / 0.8);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        border: 1px solid oklch(var(--bc) / 0.1);
+        height: 100%;
+        color: oklch(var(--bc));
+    }
+    
+    .layui-card-header {
+        border-bottom: 1px solid oklch(var(--bc) / 0.1);
+        padding: 20px 30px;
+        font-size: 18px;
+        font-weight: 600;
+        color: oklch(var(--bc));
+        display: flex;
+        align-items: center;
+    }
+    
+    .layui-card-header::before {
+        content: '';
+        display: inline-block;
+        width: 4px;
+        height: 18px;
+        background: oklch(var(--er));
+        border-radius: 2px;
+        margin-right: 12px;
+        box-shadow: 0 0 10px oklch(var(--er) / 0.5);
+    }
+    
+    .layui-card-body { padding: 40px; }
+    
+    /* 禁用输入框样式 */
+    .input:disabled {
+        background-color: oklch(var(--b3));
+        opacity: 0.6;
+    }
+    
+    /* 验证提示默认隐藏 */
+    .validator-hint {
+        display: none;
+    }
+    
+    /* 只在输入无效且失去焦点后显示 */
+    .validator:user-invalid ~ .validator-hint,
+    .validator:invalid:not(:placeholder-shown):not(:focus) ~ .validator-hint {
+        display: block;
+    }
+  </style>
+
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-header">用户设置</div>
+          <div class="layui-card-body">
+            <div class="layui-form" lay-filter="">
+              <!-- 用户名（账号，不可修改） -->
+              <div class="form-control w-full max-w-lg mb-4">
+                <label class="label"><span class="label-text">用户名</span></label>
+                <input type="text" class="input input-bordered w-full" value="{{ user_obj.user_account|default:'未设置' }}" disabled>
+              </div>
+              
+              <!-- 昵称（不可修改） -->
+              <div class="form-control w-full max-w-lg mb-4">
+                <label class="label"><span class="label-text">昵称</span></label>
+                <input type="text" class="input input-bordered w-full" value="{{ user_obj.user_name|default:'未设置' }}" disabled>
+              </div>
+              
+              <!-- 原密码 -->
+              <div class="form-control w-full max-w-lg mb-4">
+                <label class="label"><span class="label-text">原密码</span></label>
+                <input type="password" name="old_pass" class="input input-bordered validator w-full" required placeholder="请输入原密码" minlength="6">
+                <p class="validator-hint text-error text-sm mt-1">请输入原密码</p>
+              </div>
+              
+              <!-- 新密码 -->
+              <div class="form-control w-full max-w-lg mb-4">
+                <label class="label"><span class="label-text">新密码</span></label>
+                <input type="password" name="pass_word" class="input input-bordered validator w-full" required placeholder="请输入新密码" minlength="6" maxlength="20" pattern=".{6,20}">
+                <p class="validator-hint text-error text-sm mt-1">密码长度需在6-20个字符之间</p>
+              </div>
+              
+              <!-- 确认密码 -->
+              <div class="form-control w-full max-w-lg mb-4">
+                <label class="label"><span class="label-text">确认密码</span></label>
+                <input type="password" name="pass_word_1" class="input input-bordered validator w-full" required placeholder="请再次输入新密码" minlength="6" maxlength="20">
+                <p class="validator-hint text-error text-sm mt-1">请再次输入新密码</p>
+              </div>
+              
+              <!-- 提交按钮 -->
+              <div class="form-control w-full max-w-lg mt-6">
+                <button class="btn btn-primary" lay-submit lay-filter="up_pass" id="up_pass">确认修改</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+{% endblock %}
+
+{% block js %}
+  <script>
+  layui.config({
+    base: '{% static "layuiadmin/" %}' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'form'], function() {
+      var $ = layui.$,
+          form = layui.form;
+
+      form.on('submit(up_pass)', function (data) {
+          var field = data.field;
+          
+          if(field.old_pass == ""){
+              showToast("原密码不能为空！", "warning");
+              return false;
+          }
+          if(field.pass_word == ""){
+              showToast("新密码不能为空！", "warning");
+              return false;
+          }
+          if(field.pass_word != field.pass_word_1){
+              showToast("两次密码输入不一致", "warning");
+              return false;
+          }
+
+          $.ajax({
+               type: 'POST',
+               url: '/up_info/',
+               data:{
+                   "old_password": field.old_pass, 
+                   "new_password": field.pass_word,
+                   "re_password": field.pass_word_1
+               },
+               success: function (res) {
+                   if(res.code === 0) {
+                       showToast(res.msg, "success");
+                   } else {
+                       showToast(res.msg, "error");
+                   }
+               },
+               error:function(response){
+                   showToast('请求失败，请重试', "error");
+               }
+           });
+        });
+  });
+  </script>
+{% endblock %}

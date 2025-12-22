@@ -1,0 +1,598 @@
+
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<body>
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    
+    body { font-family: 'Inter', sans-serif; color: oklch(var(--bc)); }
+    
+    .layui-fluid { padding: 24px; }
+    
+    /* 卡片容器 - 适配所有主题 */
+    .layui-card {
+        background-color: oklch(var(--b2) / 0.8);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        border: 1px solid oklch(var(--bc) / 0.1);
+        color: oklch(var(--bc));
+    }
+    
+    .layui-card-header {
+        border-bottom: 1px solid oklch(var(--bc) / 0.1);
+        padding: 20px 24px;
+        color: oklch(var(--bc));
+    }
+    
+    /* ========================================
+       daisyUI 风格表单元素
+       ======================================== */
+    
+    /* 表单项布局 - 防止换行 */
+    .layui-form-item {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 16px;
+    }
+    
+    .layui-inline {
+        display: inline-flex;
+        align-items: center;
+        white-space: nowrap;
+    }
+    
+    /* 标签样式 - daisyUI label */
+    .layui-form-label {
+        color: oklch(var(--bc) / 0.7);
+        font-weight: 500;
+        font-size: 14px;
+        white-space: nowrap;
+        padding: 0 12px 0 0;
+        width: auto;
+    }
+    
+    /* 输入框 - daisyUI input */
+    .layui-input, .layui-select {
+        background-color: oklch(var(--b1));
+        border: 1px solid oklch(var(--bc) / 0.2);
+        color: oklch(var(--bc));
+        border-radius: 8px;
+        transition: all 0.2s;
+        height: 40px;
+        padding: 0 12px;
+    }
+    
+    .layui-input:focus, .layui-select:focus {
+        border-color: oklch(var(--p));
+        box-shadow: 0 0 0 2px oklch(var(--p) / 0.25);
+        outline: none;
+    }
+    
+    .layui-input::-webkit-input-placeholder { color: oklch(var(--bc) / 0.4); }
+    
+    /* 下拉框容器 */
+    .layui-input-inline {
+        display: inline-block;
+    }
+    
+    /* 搜索按钮 - daisyUI btn-primary */
+    .layui-btn {
+        background-color: oklch(var(--p));
+        color: oklch(var(--pc));
+        border-radius: 8px;
+        border: none;
+        height: 40px;
+        min-height: 40px;
+        padding: 0 16px;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+    
+    .layui-btn:hover {
+        background-color: oklch(var(--p) / 0.8);
+    }
+    
+    .layui-btn:active {
+        transform: scale(0.98);
+    }
+    
+    /* ========================================
+       daisyUI Table 样式
+       ======================================== */
+    
+    .layui-table-view {
+        border: none !important;
+        background-color: transparent !important;
+    }
+    
+    /* 使用 daisyUI table 样式 */
+    .layui-table {
+        width: 100% !important;
+        border-collapse: collapse;
+        background-color: transparent !important;
+        color: oklch(var(--bc));
+        font-size: 14px;
+    }
+    
+    /* 表头 - daisyUI 风格 */
+    .layui-table-header {
+        background-color: oklch(var(--b2)) !important;
+    }
+    
+    .layui-table th {
+        background-color: oklch(var(--b2)) !important;
+        color: oklch(var(--bc) / 0.6) !important;
+        font-weight: 600;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 12px 16px !important;
+        border-bottom: 1px solid oklch(var(--bc) / 0.1) !important;
+        border-right: none !important;
+        border-left: none !important;
+        text-align: left;
+    }
+    
+    .layui-table th .layui-table-cell {
+        padding: 0 !important;
+        height: auto !important;
+        line-height: 1.5 !important;
+    }
+    
+    /* 表格行 - daisyUI hover:bg-base-300 */
+    .layui-table td {
+        padding: 12px 16px !important;
+        border-bottom: 1px solid oklch(var(--bc) / 0.05) !important;
+        border-right: none !important;
+        border-left: none !important;
+        background-color: transparent !important;
+    }
+    
+    .layui-table tbody tr {
+        transition: background-color 0.2s;
+    }
+    
+    .layui-table tbody tr:hover td {
+        background-color: oklch(var(--b3)) !important;
+    }
+    
+    /* 选中状态 */
+    .layui-table-click td {
+        background-color: oklch(var(--p) / 0.1) !important;
+    }
+    
+    /* 分页样式修复 */
+    .layui-laypage a, .layui-laypage span {
+        background-color: transparent !important;
+        color: oklch(var(--bc) / 0.7) !important;
+        border-color: oklch(var(--bc) / 0.1) !important;
+    }
+    
+    .layui-laypage .layui-laypage-curr .layui-laypage-em {
+        background-color: oklch(var(--p)) !important;
+    }
+    
+    .layui-laypage .layui-laypage-curr em {
+        color: oklch(var(--pc)) !important;
+    }
+
+    /* 分页输入框和下拉框深色适配 */
+    .layui-laypage input, .layui-laypage select {
+        background-color: oklch(var(--b1)) !important;
+        border: 1px solid oklch(var(--bc) / 0.1) !important;
+        color: oklch(var(--bc)) !important;
+    }
+    
+    .layui-laypage button {
+        background-color: oklch(var(--b1)) !important;
+        border: 1px solid oklch(var(--bc) / 0.1) !important;
+        color: oklch(var(--bc) / 0.7) !important;
+    }
+
+    /* 修复底部空白 */
+    html, body { height: 100%; }
+    .layui-fluid { 
+        padding: 24px; 
+        min-height: calc(100vh - 110px); 
+        box-sizing: border-box;
+    }
+    .layui-card { height: 100%; margin-bottom: 0; }
+    .layui-card-body { height: calc(100% - 100px); overflow: auto; }
+
+    /* 投递按钮特殊样式 - 修复裁剪问题 */
+    .layui-btn-sm {
+        height: auto;
+        min-height: 28px;
+        line-height: 1.4;
+        font-size: 12px;
+        background: oklch(var(--su) / 0.15);
+        color: oklch(var(--su));
+        border: 1px solid oklch(var(--su) / 0.3);
+        box-shadow: none;
+        padding: 4px 12px;
+        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+    }
+    
+    .layui-btn-sm:hover {
+        background: oklch(var(--su) / 0.25);
+        color: oklch(var(--bc));
+    }
+    
+    .layui-btn-normal {
+        background: oklch(var(--n) / 0.15) !important;
+        color: oklch(var(--bc) / 0.6) !important;
+        border: 1px solid oklch(var(--n) / 0.3) !important;
+    }
+    
+    /* 确保操作列不裁剪 */
+    .layui-table-cell {
+        overflow: visible;
+    }
+
+    /* ========================================
+       daisyUI 风格下拉菜单 (select)
+       ======================================== */
+    
+    /* 下拉框容器 */
+    .layui-form-select {
+        position: relative;
+    }
+    
+    /* 下拉框输入框 - daisyUI select 风格 */
+    .layui-form-select .layui-input {
+        background-color: oklch(var(--b1));
+        border: 1px solid oklch(var(--bc) / 0.15);
+        border-radius: 8px;
+        color: oklch(var(--bc));
+        padding-right: 32px;
+        cursor: pointer;
+    }
+    
+    .layui-form-select .layui-input:focus,
+    .layui-form-select.layui-form-selected .layui-input {
+        border-color: oklch(var(--p));
+        box-shadow: 0 0 0 2px oklch(var(--p) / 0.25);
+    }
+    
+    /* 下拉箭头 */
+    .layui-form-select .layui-edge {
+        border-top-color: oklch(var(--bc) / 0.5);
+        right: 12px;
+    }
+    
+    /* 下拉菜单 - daisyUI dropdown 风格 */
+    .layui-form-select dl {
+        background-color: oklch(var(--b2));
+        border: 1px solid oklch(var(--bc) / 0.15);
+        border-radius: 8px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        padding: 4px;
+        margin-top: 4px;
+        max-height: 240px;
+        overflow-y: auto;
+    }
+    
+    .layui-form-select dl dd {
+        color: oklch(var(--bc) / 0.8);
+        padding: 10px 14px;
+        border-radius: 6px;
+        margin: 2px 0;
+        transition: all 0.15s;
+    }
+    
+    .layui-form-select dl dd:hover {
+        background-color: oklch(var(--p) / 0.15);
+        color: oklch(var(--p));
+    }
+    
+    .layui-form-select dl dd.layui-this {
+        background-color: oklch(var(--p));
+        color: oklch(var(--pc));
+    }
+
+    /* 修复表格 Loading 和空数据样式 */
+    .layui-table-init, .layui-none {
+        background-color: transparent !important;
+        color: oklch(var(--bc) / 0.6) !important;
+    }
+    
+    .layui-table-body {
+        overflow-x: auto;
+    }
+    
+    /* 隐藏固定列表格 */
+    .layui-table-fixed {
+        display: none !important;
+    }
+    
+    /* 单元格样式 */
+    .layui-table-cell {
+        padding: 0 !important;
+        height: auto !important;
+        line-height: 1.5 !important;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        cursor: pointer;
+    }
+    
+    /* 点击展开 */
+    .layui-table-cell.expanded {
+        white-space: normal !important;
+        overflow: visible !important;
+        background: oklch(var(--b1));
+        position: relative;
+        z-index: 10;
+        padding: 8px !important;
+        border-radius: 6px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    
+    /* daisyUI 按钮在表格中的样式 */
+    .layui-table-cell .btn {
+        min-height: 24px;
+        height: 24px;
+        font-size: 12px;
+    }
+    
+  </style>
+
+  <div class="layui-fluid">
+    <div class="layui-card">
+      <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+          <input type="hidden" id="keyword" autocomplete="off" class="layui-input" value="">
+          <input type="hidden" id="price_min" autocomplete="off" class="layui-input" value="">
+          <input type="hidden" id="price_max" autocomplete="off" class="layui-input" value="">
+          <input type="hidden" id="edu" autocomplete="off" class="layui-input" value="">
+          <input type="hidden" id="city" autocomplete="off" class="layui-input" value="">
+        <div class="layui-form-item">
+          <!-- 岗位名称 -->
+          <div class="layui-inline">
+            <label class="layui-form-label">岗位名称</label>
+            <div class="layui-input-inline">
+              <div class="flex items-center gap-2 bg-base-100 border border-base-content/10 rounded-lg px-3 py-2 w-48 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20">
+                <svg class="h-4 w-4 opacity-50 shrink-0 text-base-content" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <circle cx="11" cy="11" r="8" stroke-width="2"></circle>
+                  <path d="m21 21-4.3-4.3" stroke-width="2" stroke-linecap="round"></path>
+                </svg>
+                <input type="text" name="keyword" id="keyword_1" class="bg-transparent border-none outline-none text-base-content flex-1 placeholder:text-base-content/30 w-full" placeholder="职位关键字" autocomplete="off">
+              </div>
+            </div>
+          </div>
+          <!-- 薪资区间 -->
+          <div class="layui-inline">
+            <label class="layui-form-label">薪资(K)</label>
+            <div class="flex items-center gap-2">
+              <div class="flex items-center bg-base-100 border border-base-content/10 rounded-lg px-3 py-2 w-24 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20">
+                <input type="text" name="price_min" id="price_min_1" class="bg-transparent border-none outline-none text-base-content w-full placeholder:text-base-content/30" placeholder="最低" autocomplete="off">
+              </div>
+              <span class="text-base-content/50">-</span>
+              <div class="flex items-center bg-base-100 border border-base-content/10 rounded-lg px-3 py-2 w-24 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20">
+                <input type="text" name="price_max" id="price_max_1" class="bg-transparent border-none outline-none text-base-content w-full placeholder:text-base-content/30" placeholder="最高" autocomplete="off">
+              </div>
+            </div>
+          </div>
+          <!-- 学历要求 -->
+          <div class="layui-inline">
+            <label class="layui-form-label">学历要求</label>
+            <div class="layui-input-inline">
+              <input type="hidden" name="edu" id="edu_1" value="">
+              <div class="dropdown dropdown-start">
+                <div tabindex="0" role="button" class="btn bg-base-100 border border-base-content/10 text-base-content hover:bg-base-200 w-36 justify-start font-normal h-10 min-h-10" id="edu-btn">
+                  <span id="edu-text">请选择学历</span>
+                  <svg class="ml-auto h-4 w-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+                <ul tabindex="0" class="dropdown-content menu bg-base-200 border border-base-content/10 rounded-box z-50 w-36 p-2 shadow-lg mt-1 text-base-content">
+                  <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectEdu('')">请选择学历</a></li>
+                  <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectEdu('博士')">博士</a></li>
+                  <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectEdu('硕士')">硕士</a></li>
+                  <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectEdu('本科')">本科</a></li>
+                  <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectEdu('大专')">大专</a></li>
+                  <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectEdu('不限')">经验不限</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <!-- 工作地点 -->
+          <div class="layui-inline">
+            <label class="layui-form-label">工作地点</label>
+            <div class="layui-input-inline">
+              <input type="hidden" name="city" id="city_1" value="">
+              <div class="dropdown dropdown-start">
+                <div tabindex="0" role="button" class="btn bg-base-100 border border-base-content/10 text-base-content hover:bg-base-200 w-36 justify-start font-normal h-10 min-h-10" id="city-btn">
+                  <span id="city-text">请选择城市</span>
+                  <svg class="ml-auto h-4 w-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+                <ul tabindex="0" class="dropdown-content menu bg-base-200 border border-base-content/10 rounded-box z-50 w-36 p-2 shadow-lg mt-1 text-base-content max-h-60 overflow-y-auto">
+                  <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('')">请选择城市</a></li>
+                  <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('全国')">全国</a></li>
+                  <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('北京')">北京</a></li>
+                  <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('上海')">上海</a></li>
+                  <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('天津')">天津</a></li>
+                  <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('重庆')">重庆</a></li>
+                  <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('广州')">广州</a></li>
+                  <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('深圳')">深圳</a></li>
+                  <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('苏州')">苏州</a></li>
+                  <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('南京')">南京</a></li>
+                  <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('杭州')">杭州</a></li>
+                  <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('大连')">大连</a></li>
+                  <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('成都')">成都</a></li>
+                  <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('武汉')">武汉</a></li>
+                  <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('西安')">西安</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <!-- 搜索按钮 -->
+          <div class="layui-inline">
+            <button class="btn btn-primary h-10 min-h-10 px-4" lay-submit lay-filter="LAY-app-forumlist-search">
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="8" stroke-width="2"></circle>
+                <path d="m21 21-4.3-4.3" stroke-width="2" stroke-linecap="round"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="layui-card-body">
+          <table id="LAY-app-forum-list" lay-filter="LAY-app-forum-list"></table>
+          {% verbatim %}
+            <script type="text/html" id="table-forum-list">
+               {{#  if(d.send_key == 0){ }}
+              <a class="btn btn-primary btn-xs" lay-event="send">投递</a>
+               {{#  } else { }}
+              <a class="btn btn-ghost btn-xs" lay-event="send_1">已投递</a>
+               {{#  } }}
+            </script>
+          {% endverbatim %}
+      </div>
+    </div>
+  </div>
+  </body>
+{% endblock %}
+
+{% block js %}
+  <script>
+  // daisyUI dropdown 选择函数
+  function selectEdu(value) {
+      document.getElementById('edu_1').value = value;
+      document.getElementById('edu-text').textContent = value || '请选择学历';
+      document.activeElement.blur();
+  }
+  
+  function selectCity(value) {
+      document.getElementById('city_1').value = value;
+      document.getElementById('city-text').textContent = value || '请选择城市';
+      document.activeElement.blur();
+  }
+  
+  layui.config({
+    base: '{% static "layuiadmin/" %}' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'table', 'form'], function() {
+      var $ = layui.$
+          , form = layui.form
+          , table = layui.table;
+      
+      // 表格配置 - 合理分配列宽
+      table.render({
+          elem: '#LAY-app-forum-list',
+          url: '/get_job_list/',
+          cols: [[
+              {field: 'job_id', title: '#', width: 50, align: 'center'},
+              {field: 'name', title: '职位名称', width: 120},
+              {field: 'salary', title: '薪资', width: 60},
+              {field: 'education', title: '学历', width: 60},
+              {field: 'experience', title: '经验', width: 60},
+              {field: 'place', title: '地点', width: 80},
+              {field: 'company', title: '公司名称', width: 100},
+              {field: 'label', title: '行业', width: 100},
+              {field: 'scale', title: '规模', width: 80},
+              {title: '操作', width: 70, align: 'center', toolbar: '#table-forum-list'}
+          ]],
+          page: true,
+          limit: 15,
+          limits: [15, 20, 30, 50],
+          size: 'sm'
+      });
+      
+      // 监听操作按钮
+      table.on('tool(LAY-app-forum-list)', function(obj) {
+          var data = obj.data;
+          if (obj.event === 'send') {
+              showConfirm('确定投递职位「' + data.name + '」吗？', function() {
+                  $.ajax({
+                      type: 'POST',
+                      url: '/send_job/',
+                      data: {job_id: data.job_id, send_key: data.send_key},
+                      success: function(res) {
+                          showToast(res.msg, 'success');
+                          setTimeout(function() { location.reload(); }, 1000);
+                      },
+                      error: function() {
+                          showToast('操作失败', 'error');
+                      }
+                  });
+              }, {title: '投递确认', btnClass: 'btn-success'});
+          } else if (obj.event === 'send_1') {
+              showConfirm('确定取消投递「' + data.name + '」吗？', function() {
+                  $.ajax({
+                      type: 'POST',
+                      url: '/send_job/',
+                      data: {job_id: data.job_id, send_key: data.send_key},
+                      success: function(res) {
+                          showToast(res.msg, 'success');
+                          setTimeout(function() { location.reload(); }, 1000);
+                      },
+                      error: function() {
+                          showToast('操作失败', 'error');
+                      }
+                  });
+              }, {title: '取消投递', btnClass: 'btn-error'});
+          }
+      });
+
+      //监听搜索
+      form.on('submit(LAY-app-forumlist-search)', function (data) {
+          var field = data.field;
+          if(field.price_min != ""){
+              if(notNumber(field.price_min)){
+                  showToast("薪资区间应为数字！", "warning");
+                  return false;
+              }
+          }
+          if(field.price_max != ""){
+              if(notNumber(field.price_max)){
+                  showToast("薪资区间应为数字！", "warning");
+                  return false;
+              }
+          }
+
+
+          //执行重载
+          table.reload('LAY-app-forum-list', {
+              page:{curr:1},
+              where: field
+          });
+      });
+      
+      // 点击单元格展开/收起（排除按钮）
+      $(document).on('click', '.layui-table-body .layui-table-cell', function(e) {
+          // 排除按钮点击
+          if ($(e.target).hasClass('layui-btn') || $(e.target).closest('.layui-btn').length || $(e.target).hasClass('layui-icon')) {
+              return;
+          }
+          // 收起其他展开的单元格
+          $('.layui-table-cell.expanded').not(this).removeClass('expanded');
+          $(this).toggleClass('expanded');
+      });
+      
+      // 点击其他地方收起
+      $(document).on('click', function(e) {
+          if (!$(e.target).closest('.layui-table-cell').length) {
+              $('.layui-table-cell.expanded').removeClass('expanded');
+          }
+      });
+  });
+
+  function notNumber(val) {
+    var regPos = /^\d+(\.\d+)?$/; //非负浮点数
+    var regNeg = /^(-(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*)))$/; //负浮点数
+    if(regPos.test(val) || regNeg.test(val)) {
+        return false;
+        } else {
+        return true;
+        }
+    }
+  </script>
+{% endblock %}

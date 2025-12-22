@@ -1,0 +1,3 @@
+# This file ensures that the certs directory is tracked by Git
+# The actual certificate files (*.pem, *.key, *.crt) are excluded by .gitignore
+# This folder structure is maintained for the application to store SSL certificates

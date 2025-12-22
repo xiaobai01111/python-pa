@@ -1,0 +1,671 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+    <body> 
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            min-height: 100vh;
+            background-color: oklch(var(--b1));
+            color: oklch(var(--bc));
+        }
+        
+        .layui-fluid { padding: 30px; } 
+        
+        .layui-card {
+            background-color: oklch(var(--b2) / 0.8) !important;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid oklch(var(--bc) / 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 10px; 
+            color: oklch(var(--bc));
+        }
+        
+        .layui-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+            border-color: oklch(var(--bc) / 0.2);
+        }
+
+        .layui-card-header {
+            border-bottom: 1px solid oklch(var(--bc) / 0.1);
+            padding: 20px 30px;
+            height: auto;
+            line-height: 1.5;
+            font-weight: 600;
+            font-size: 16px;
+            color: oklch(var(--bc));
+            display: flex;
+            align-items: center;
+            background: transparent;
+        }
+        
+        .layui-card-header::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 18px;
+            background: oklch(var(--p)); 
+            border-radius: 2px;
+            margin-right: 12px;
+            box-shadow: 0 0 10px oklch(var(--p) / 0.5);
+        }
+
+        .layui-card-body {
+            padding: 30px;
+            color: oklch(var(--bc));
+        }
+
+        .stat-card .layui-card-body {
+            padding: 25px 30px;
+        }
+        
+        .stat-card .layui-card-header { 
+            border: none; 
+            padding-bottom: 0; 
+            font-size: 14px; 
+            color: oklch(var(--bc) / 0.6); 
+        }
+        .stat-card .layui-card-header::before { display: none; }
+        
+        .stat-number {
+            font-size: 42px;
+            font-weight: 700;
+            color: oklch(var(--bc));
+            margin-top: 12px;
+            margin-bottom: 8px;
+            letter-spacing: -1px;
+        }
+        
+        .stat-desc {
+            font-size: 13px;
+            color: oklch(var(--bc) / 0.6);
+            display: flex;
+            align-items: center;
+        }
+        
+        .bg-icon {
+            position: absolute;
+            right: 15px;
+            bottom: 15px;
+            font-size: 80px;
+            opacity: 0.05;
+            color: oklch(var(--bc));
+            transform: rotate(-15deg);
+        }
+
+        /* 使用 theme 变量重构卡片颜色 */
+        .card-blue { background: oklch(var(--b2)); border-top: 2px solid oklch(var(--in)); }
+        .card-blue .stat-number { color: oklch(var(--in)); }
+        
+        .card-purple { background: oklch(var(--b2)); border-top: 2px solid oklch(var(--p)); }
+        .card-purple .stat-number { color: oklch(var(--p)); }
+        
+        .card-green { background: oklch(var(--b2)); border-top: 2px solid oklch(var(--su)); }
+        .card-green .stat-number { color: oklch(var(--su)); }
+        
+        .card-pink { background: oklch(var(--b2)); border-top: 2px solid oklch(var(--er)); }
+        .card-pink .stat-number { color: oklch(var(--er)); }
+
+        /* daisyUI 风格表格 */
+        .layui-table {
+            width: 100%;
+            background-color: transparent;
+            color: oklch(var(--bc));
+            border-collapse: collapse;
+        }
+        
+        .layui-table thead tr {
+            background-color: transparent;
+            border-bottom: 1px solid oklch(var(--bc) / 0.1);
+        }
+        
+        .layui-table th {
+            font-weight: 600;
+            color: oklch(var(--bc) / 0.6);
+            border: none;
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .layui-table tbody tr {
+            background-color: transparent;
+            transition: background-color 0.15s ease;
+            border-bottom: 1px solid oklch(var(--bc) / 0.05);
+        }
+        
+        /* daisyUI 风格悬停高亮 */
+        .layui-table tbody tr:hover {
+            background-color: oklch(var(--b3) / 0.5) !important;
+        }
+        
+        .layui-table td {
+            border: none;
+            padding: 14px 16px;
+            font-size: 13px;
+            white-space: nowrap;
+            overflow: visible;
+            color: oklch(var(--bc));
+        }
+
+        /* daisyUI 轮廓样式徽章 */
+        .badge {
+            padding: 2px 10px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: 1.5px solid;
+            white-space: nowrap;
+            line-height: 1.5;
+            height: auto;
+            min-height: 22px;
+        }
+        .badge-salary { border-color: oklch(var(--er)); color: oklch(var(--er)); }
+        .badge-edu { border-color: oklch(var(--in)); color: oklch(var(--in)); }
+        .badge-exp { border-color: oklch(var(--su)); color: oklch(var(--su)); }
+        .badge-scale { border-color: oklch(var(--n)); color: oklch(var(--n)); }
+
+        .layadmin-dataview { 
+            height: 380px !important; 
+            background: transparent !important;
+        }
+        
+        .layui-col-space24 > * { padding: 12px; }
+        .layui-row { margin: -12px; }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-thumb { background: oklch(var(--bc) / 0.2); border-radius: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+    </style>
+
+    <div class="layui-fluid">
+        <!-- 3D悬停效果统计卡片 -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- 职位信息总量 -->
+            <div class="card bg-base-200 border border-info/30 shadow-xl transition-all duration-300 hover:shadow-info/25 hover:shadow-2xl hover:-translate-y-2 hover:rotate-1" style="transform-style: preserve-3d;">
+                <div class="card-body">
+                    <div class="flex justify-between items-start">
+                        <h2 class="card-title text-base-content/70 text-sm font-medium">职位信息总量</h2>
+                        <div class="p-2 bg-info/20 rounded-lg">
+                            <svg class="w-6 h-6 text-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-4xl font-bold text-info mt-2">{{ all_job }}</p>
+                    <p class="text-base-content/50 text-sm mt-1">当前数据库收录总数</p>
+                </div>
+            </div>
+            
+            <!-- 全网最高薪资 -->
+            <div class="card bg-base-200 border border-primary/30 shadow-xl transition-all duration-300 hover:shadow-primary/25 hover:shadow-2xl hover:-translate-y-2 hover:-rotate-1" style="transform-style: preserve-3d;">
+                <div class="card-body">
+                    <div class="flex justify-between items-start">
+                        <h2 class="card-title text-base-content/70 text-sm font-medium">全网最高薪资</h2>
+                        <div class="p-2 bg-primary/20 rounded-lg">
+                            <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-4xl font-bold text-primary mt-2">{{ job_data_1.salary_1 }}k</p>
+                    <p class="text-base-content/50 text-sm mt-1">{{ job_data_1.name | truncatechars:15 }}</p>
+                </div>
+            </div>
+            
+            <!-- 行业平均薪资 -->
+            <div class="card bg-base-200 border border-success/30 shadow-xl transition-all duration-300 hover:shadow-success/25 hover:shadow-2xl hover:-translate-y-2 hover:rotate-1" style="transform-style: preserve-3d;">
+                <div class="card-body">
+                    <div class="flex justify-between items-start">
+                        <h2 class="card-title text-base-content/70 text-sm font-medium">行业平均薪资</h2>
+                        <div class="p-2 bg-success/20 rounded-lg">
+                            <svg class="w-6 h-6 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-4xl font-bold text-success mt-2">{{ mean_salary }}k</p>
+                    <p class="text-base-content/50 text-sm mt-1">综合统计分析结果</p>
+                </div>
+            </div>
+            
+            <!-- 数据爬取监控 -->
+            <div class="card bg-base-200 border border-error/30 shadow-xl transition-all duration-300 hover:shadow-error/25 hover:shadow-2xl hover:-translate-y-2 hover:-rotate-1" style="transform-style: preserve-3d;">
+                <div class="card-body">
+                    <div class="flex justify-between items-start">
+                        <h2 class="card-title text-base-content/70 text-sm font-medium">数据爬取监控</h2>
+                        <div class="p-2 bg-error/20 rounded-lg">
+                            <svg class="w-6 h-6 text-error" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-4xl font-bold text-error mt-2">{{ spider_info.count }}</p>
+                    <p class="text-base-content/50 text-sm mt-1">共采集 {{ spider_info.page }} 页数据</p>
+                </div>
+            </div>
+        </div>
+
+        <div style="height: 30px;"></div> 
+
+        <div class="layui-row layui-col-space30" style="display: flex; flex-wrap: wrap;">
+            <div class="layui-col-md8" style="display: flex;">
+                <div class="card bg-base-200 border border-base-content/10 shadow-xl" style="flex: 1;">
+                    <div class="card-body p-0">
+                        <div class="flex items-center justify-between px-6 py-4 border-b border-base-content/10">
+                            <div class="flex items-center gap-3">
+                                <div class="w-1 h-5 bg-primary rounded-full"></div>
+                                <h3 class="font-semibold text-base-content">数据概览与分析</h3>
+                            </div>
+                            <div class="badge badge-primary badge-sm gap-1">
+                                <span class="loading loading-ring loading-xs"></span>
+                                Live
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <!-- 学历分布 - CSS饼图 -->
+                                <div>
+                                    <h4 class="text-sm font-semibold text-base-content/70 mb-4 flex items-center justify-center gap-2">
+                                        <svg class="w-4 h-4 text-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
+                                        </svg>
+                                        学历分布
+                                    </h4>
+                                    <div class="flex gap-6 items-center">
+                                        <!-- 饼图 -->
+                                        <div class="relative group" style="width: 160px; height: 160px;">
+                                            <div id="edu-pie" class="w-full h-full rounded-full shadow-lg cursor-pointer transition-transform hover:scale-105" style="background: conic-gradient(oklch(var(--su)) 0% 20%, oklch(var(--wa)) 20% 40%, oklch(var(--er)) 40% 60%, oklch(var(--s)) 60% 80%, oklch(var(--p)) 80% 100%);"></div>
+                                            <div class="absolute inset-[25%] rounded-full bg-base-200 flex items-center justify-center pointer-events-none">
+                                                <div class="text-center" id="edu-tooltip">
+                                                    <span class="text-lg font-bold text-base-content" id="edu-tooltip-val">--</span>
+                                                    <span class="text-xs text-base-content/60 block" id="edu-tooltip-name">学历</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- 图例 -->
+                                        <div class="flex flex-col gap-2 text-xs">
+                                            <div class="flex items-center gap-2">
+                                                <span class="w-3 h-3 rounded-sm" style="background: oklch(var(--su));"></span>
+                                                <span class="text-base-content/70 w-8">本科</span>
+                                                <span class="font-bold text-success" id="edu-bachelor-val">0</span>
+                                                <span class="text-base-content/50" id="edu-bachelor-percent">(0%)</span>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <span class="w-3 h-3 rounded-sm" style="background: oklch(var(--wa));"></span>
+                                                <span class="text-base-content/70 w-8">大专</span>
+                                                <span class="font-bold text-warning" id="edu-college-val">0</span>
+                                                <span class="text-base-content/50" id="edu-college-percent">(0%)</span>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <span class="w-3 h-3 rounded-sm" style="background: oklch(var(--er));"></span>
+                                                <span class="text-base-content/70 w-8">不限</span>
+                                                <span class="font-bold text-error" id="edu-any-val">0</span>
+                                                <span class="text-base-content/50" id="edu-any-percent">(0%)</span>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <span class="w-3 h-3 rounded-sm" style="background: oklch(var(--s));"></span>
+                                                <span class="text-base-content/70 w-8">硕士</span>
+                                                <span class="font-bold text-secondary" id="edu-master-val">0</span>
+                                                <span class="text-base-content/50" id="edu-master-percent">(0%)</span>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <span class="w-3 h-3 rounded-sm" style="background: oklch(var(--p));"></span>
+                                                <span class="text-base-content/70 w-8">博士</span>
+                                                <span class="font-bold text-primary" id="edu-doctor-val">0</span>
+                                                <span class="text-base-content/50" id="edu-doctor-percent">(0%)</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 薪资分布 - CSS饼图 -->
+                                <div>
+                                    <h4 class="text-sm font-semibold text-base-content/70 mb-4 flex items-center justify-center gap-2">
+                                        <svg class="w-4 h-4 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        薪资分布
+                                    </h4>
+                                    <div class="flex gap-6 items-center">
+                                        <!-- 饼图 -->
+                                        <div class="relative group" style="width: 160px; height: 160px;">
+                                            <div id="salary-pie" class="w-full h-full rounded-full shadow-lg cursor-pointer transition-transform hover:scale-105" style="background: conic-gradient(oklch(var(--su)) 0% 16%, oklch(var(--wa)) 16% 32%, oklch(var(--a)) 32% 48%, oklch(var(--s)) 48% 64%, oklch(var(--p)) 64% 80%, oklch(var(--in)) 80% 100%);"></div>
+                                            <div class="absolute inset-[25%] rounded-full bg-base-200 flex items-center justify-center pointer-events-none">
+                                                <div class="text-center" id="salary-tooltip">
+                                                    <span class="text-lg font-bold text-base-content" id="salary-tooltip-val">--</span>
+                                                    <span class="text-xs text-base-content/60 block" id="salary-tooltip-name">薪资</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- 图例 -->
+                                        <div class="flex flex-col gap-1 text-xs" id="salary-legend">
+                                            <div class="flex items-center gap-2 cursor-pointer hover:bg-base-300/50 p-1 rounded" data-name="20K-30K">
+                                                <span class="w-3 h-3 rounded-sm" style="background: oklch(var(--su));"></span>
+                                                <span class="text-base-content/70 w-14">20-30K</span>
+                                                <span class="font-bold text-success" id="salary-30k-val">0</span>
+                                            </div>
+                                            <div class="flex items-center gap-2 cursor-pointer hover:bg-base-300/50 p-1 rounded" data-name="30-50K">
+                                                <span class="w-3 h-3 rounded-sm" style="background: oklch(var(--wa));"></span>
+                                                <span class="text-base-content/70 w-14">30-50K</span>
+                                                <span class="font-bold text-warning" id="salary-50k-val">0</span>
+                                            </div>
+                                            <div class="flex items-center gap-2 cursor-pointer hover:bg-base-300/50 p-1 rounded" data-name="15K-20K">
+                                                <span class="w-3 h-3 rounded-sm" style="background: oklch(var(--a));"></span>
+                                                <span class="text-base-content/70 w-14">15-20K</span>
+                                                <span class="font-bold text-accent" id="salary-20k-val">0</span>
+                                            </div>
+                                            <div class="flex items-center gap-2 cursor-pointer hover:bg-base-300/50 p-1 rounded" data-name="10K-15K">
+                                                <span class="w-3 h-3 rounded-sm" style="background: oklch(var(--s));"></span>
+                                                <span class="text-base-content/70 w-14">10-15K</span>
+                                                <span class="font-bold text-secondary" id="salary-15k-val">0</span>
+                                            </div>
+                                            <div class="flex items-center gap-2 cursor-pointer hover:bg-base-300/50 p-1 rounded" data-name="5-10K">
+                                                <span class="w-3 h-3 rounded-sm" style="background: oklch(var(--p));"></span>
+                                                <span class="text-base-content/70 w-14">5-10K</span>
+                                                <span class="font-bold text-primary" id="salary-10k-val">0</span>
+                                            </div>
+                                            <div class="flex items-center gap-2 cursor-pointer hover:bg-base-300/50 p-1 rounded" data-name="5K及以下">
+                                                <span class="w-3 h-3 rounded-sm" style="background: oklch(var(--in));"></span>
+                                                <span class="text-base-content/70 w-14">5K以下</span>
+                                                <span class="font-bold text-info" id="salary-5k-val">0</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-col-md4" style="display: flex;">
+                <div class="card bg-base-200 border border-base-content/10 shadow-xl" style="flex: 1;">
+                    <div class="card-body p-0">
+                        <div class="flex items-center justify-between px-6 py-4 border-b border-base-content/10">
+                            <div class="flex items-center gap-3">
+                                <div class="w-1 h-5 bg-success rounded-full"></div>
+                                <h3 class="font-semibold text-base-content">实时系统监控</h3>
+                            </div>
+                        </div>
+                        <div class="p-6 flex flex-col justify-between flex-1">
+                            <!-- CPU 使用率 -->
+                            <div class="mb-6">
+                                <div class="flex justify-between items-center mb-2">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-8 h-8 rounded-lg bg-info/20 flex items-center justify-center">
+                                            <svg class="w-4 h-4 text-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/>
+                                            </svg>
+                                        </div>
+                                        <span class="font-medium text-base-content">CPU 使用率</span>
+                                    </div>
+                                    <span id="cpu-value" class="text-lg font-bold text-info">0%</span>
+                                </div>
+                                <progress id="cpu-progress" class="progress progress-info w-full h-3" value="0" max="100"></progress>
+                            </div>
+                            
+                            <!-- 内存使用率 -->
+                            <div class="mb-6">
+                                <div class="flex justify-between items-center mb-2">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-8 h-8 rounded-lg bg-success/20 flex items-center justify-center">
+                                            <svg class="w-4 h-4 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                                            </svg>
+                                        </div>
+                                        <span class="font-medium text-base-content">内存使用率</span>
+                                    </div>
+                                    <span id="memory-value" class="text-lg font-bold text-success">0%</span>
+                                </div>
+                                <progress id="memory-progress" class="progress progress-success w-full h-3" value="0" max="100"></progress>
+                            </div>
+                            
+                            <!-- 网络状态 -->
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
+                                            <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.14 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"/>
+                                            </svg>
+                                        </div>
+                                        <span class="font-medium text-base-content">网络状态</span>
+                                    </div>
+                                    <span id="network-status" class="badge badge-primary badge-sm">在线</span>
+                                </div>
+                            </div>
+                            
+                            <div class="divider my-4"></div>
+                            
+                            <div class="flex justify-between text-xs text-base-content/50">
+                                <span>上次更新: <span id="last-update">--:--:--</span></span>
+                                <span class="flex items-center gap-1">
+                                    <span class="loading loading-ring loading-xs"></span>
+                                    每5秒刷新
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="height: 30px;"></div>
+
+        <div class="layui-row layui-col-space30">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <span>薪资排行 TOP 10</span>
+                    </div>
+                    <div class="layui-card-body">
+                        <table class="layui-table">
+                            <thead>
+                            <tr>
+                                <th>职位编号</th>
+                                <th>职位名称</th>
+                                <th>薪资待遇</th>
+                                <th>学历要求</th>
+                                <th>经验要求</th>
+                                <th>工作地点</th>
+                                <th>公司名称</th>
+                                <th>所属行业</th>
+                                <th>公司规模</th>
+                            </thead>
+                            <tbody>
+                            {% for job in job_data_10 %}
+                                <tr>
+                                    <td style="font-family: monospace; color: oklch(var(--bc) / 0.7);">#{{ job.job_id }}</td>
+                                    <td style="font-weight: 600; color: oklch(var(--bc));">{{ job.name | truncatechars:16 }}</td>
+                                    <td><span class="badge badge-salary">{{ job.salary }}</span></td>
+                                    <td><span class="badge badge-edu">{{ job.education }}</span></td>
+                                    <td><span class="badge badge-exp">{{ job.experience }}</span></td>
+                                    <td>{{ job.place }}</td>
+                                    <td>{{ job.company | truncatechars:16 }}</td>
+                                    <td>{{ job.label }}</td>
+                                    <td><span class="badge badge-scale">{{ job.scale }}</span></td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <div style="text-align: center; margin-top: 20px;">
+                            <div id="test-laypage-demo0"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </body>
+{% endblock %}
+{% block js %}
+    <script>
+        layui.config({
+            base: '{% static "layuiadmin/" %}' 
+        }).extend({
+            index: 'lib/index' 
+        }).use(['index', 'console']);
+        
+        // 系统监控进度条更新
+        function updateSystemMonitor() {
+            fetch('/get_psutil/')
+                .then(response => response.json())
+                .then(data => {
+                    // 更新 CPU
+                    const cpuValue = parseFloat(data.cpu_data).toFixed(1);
+                    document.getElementById('cpu-value').textContent = cpuValue + '%';
+                    document.getElementById('cpu-progress').value = cpuValue;
+                    
+                    // 更新内存
+                    const memoryValue = parseFloat(data.memory_data).toFixed(1);
+                    document.getElementById('memory-value').textContent = memoryValue + '%';
+                    document.getElementById('memory-progress').value = memoryValue;
+                    
+                    // 更新时间
+                    const now = new Date();
+                    document.getElementById('last-update').textContent = 
+                        now.toLocaleTimeString('zh-CN', { hour12: false });
+                })
+                .catch(error => console.log('系统监控更新失败:', error));
+        }
+        
+        // 页面加载后立即执行一次
+        document.addEventListener('DOMContentLoaded', function() {
+            updateSystemMonitor();
+            setInterval(updateSystemMonitor, 5000);
+            
+            // 加载学历和薪资分布数据
+            loadDistributionData();
+        });
+        
+        // 加载分布数据
+        function loadDistributionData() {
+            fetch('/get_pie/')
+                .then(response => response.json())
+                .then(data => {
+                    // 学历数据处理
+                    const eduData = data.edu_data;
+                    const eduTotal = eduData.reduce((sum, item) => sum + item.value, 0);
+                    
+                    const eduMap = {
+                        '本科': { val: 'edu-bachelor-val', percent: 'edu-bachelor-percent', color: 'oklch(var(--su))' },
+                        '大专': { val: 'edu-college-val', percent: 'edu-college-percent', color: 'oklch(var(--wa))' },
+                        '不限': { val: 'edu-any-val', percent: 'edu-any-percent', color: 'oklch(var(--er))' },
+                        '硕士': { val: 'edu-master-val', percent: 'edu-master-percent', color: 'oklch(var(--s))' },
+                        '博士': { val: 'edu-doctor-val', percent: 'edu-doctor-percent', color: 'oklch(var(--p))' }
+                    };
+                    
+                    // 生成学历饼图
+                    let eduGradient = [];
+                    let eduStart = 0;
+                    const eduOrder = ['本科', '大专', '不限', '硕士', '博士'];
+                    eduOrder.forEach(name => {
+                        const item = eduData.find(d => d.name === name);
+                        if (item && eduMap[name]) {
+                            const percent = (item.value / eduTotal * 100);
+                            const end = eduStart + percent;
+                            eduGradient.push(`${eduMap[name].color} ${eduStart}% ${end}%`);
+                            document.getElementById(eduMap[name].val).textContent = item.value.toLocaleString();
+                            document.getElementById(eduMap[name].percent).textContent = `(${percent.toFixed(0)}%)`;
+                            eduStart = end;
+                        }
+                    });
+                    document.getElementById('edu-pie').style.background = `conic-gradient(${eduGradient.join(', ')})`;
+                    
+                    // 薪资数据处理
+                    const salaryData = data.salary_data;
+                    const salaryTotal = salaryData.reduce((sum, item) => sum + item.value, 0);
+                    
+                    const salaryMap = {
+                        '20K-30K': { val: 'salary-30k-val', color: 'oklch(var(--su))' },
+                        '30-50K': { val: 'salary-50k-val', color: 'oklch(var(--wa))' },
+                        '15K-20K': { val: 'salary-20k-val', color: 'oklch(var(--a))' },
+                        '10K-15K': { val: 'salary-15k-val', color: 'oklch(var(--s))' },
+                        '5-10K': { val: 'salary-10k-val', color: 'oklch(var(--p))' },
+                        '5K及以下': { val: 'salary-5k-val', color: 'oklch(var(--in))' }
+                    };
+                    
+                    // 生成薪资饼图
+                    let salaryGradient = [];
+                    let salaryStart = 0;
+                    const salaryOrder = ['20K-30K', '30-50K', '15K-20K', '10K-15K', '5-10K', '5K及以下'];
+                    salaryOrder.forEach(name => {
+                        const item = salaryData.find(d => d.name === name);
+                        if (item && salaryMap[name]) {
+                            const percent = (item.value / salaryTotal * 100);
+                            const end = salaryStart + percent;
+                            salaryGradient.push(`${salaryMap[name].color} ${salaryStart}% ${end}%`);
+                            document.getElementById(salaryMap[name].val).textContent = item.value.toLocaleString();
+                            salaryStart = end;
+                        }
+                    });
+                    document.getElementById('salary-pie').style.background = `conic-gradient(${salaryGradient.join(', ')})`;
+                    
+                    // 存储数据用于悬停显示
+                    window.eduDataCache = eduData;
+                    window.salaryDataCache = salaryData;
+                    
+                    // 绑定学历图例悬停事件
+                    setupLegendHover();
+                })
+                .catch(error => console.log('分布数据加载失败:', error));
+        }
+        
+        // 设置图例悬停交互
+        function setupLegendHover() {
+            // 学历图例
+            const eduLegendItems = document.querySelectorAll('#edu-bachelor-val, #edu-college-val, #edu-any-val, #edu-master-val, #edu-doctor-val');
+            eduLegendItems.forEach(item => {
+                const parent = item.parentElement;
+                parent.style.cursor = 'pointer';
+                parent.classList.add('hover:bg-base-300/50', 'p-1', 'rounded', 'transition-colors');
+                
+                parent.addEventListener('mouseenter', function() {
+                    const name = this.querySelector('.text-base-content\\/70').textContent;
+                    const val = item.textContent;
+                    document.getElementById('edu-tooltip-val').textContent = val;
+                    document.getElementById('edu-tooltip-name').textContent = name;
+                });
+                
+                parent.addEventListener('mouseleave', function() {
+                    document.getElementById('edu-tooltip-val').textContent = '--';
+                    document.getElementById('edu-tooltip-name').textContent = '学历';
+                });
+            });
+            
+            // 薪资图例
+            const salaryLegend = document.getElementById('salary-legend');
+            if (salaryLegend) {
+                salaryLegend.querySelectorAll('[data-name]').forEach(item => {
+                    item.addEventListener('mouseenter', function() {
+                        const name = this.dataset.name;
+                        const val = this.querySelector('.font-bold').textContent;
+                        document.getElementById('salary-tooltip-val').textContent = val;
+                        document.getElementById('salary-tooltip-name').textContent = name;
+                    });
+                    
+                    item.addEventListener('mouseleave', function() {
+                        document.getElementById('salary-tooltip-val').textContent = '--';
+                        document.getElementById('salary-tooltip-name').textContent = '薪资';
+                    });
+                });
+            }
+        }
+    </script>
+{% endblock %}

@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<body>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    
+    body { font-family: 'Inter', sans-serif; color: oklch(var(--bc)); }
+    
+    .layui-fluid { padding: 30px; }
+    
+    /* 提示语样式 */
+    .layui-elem-quote {
+        background-color: oklch(var(--b2)) !important;
+        border-left: 5px solid oklch(var(--p));
+        color: oklch(var(--bc));
+        margin-bottom: 15px;
+    }
+    
+    /* 强制覆盖 Layer 弹窗样式为主题色 */
+    .layui-layer-dialog .layui-layer-content {
+        background-color: oklch(var(--b2)) !important;
+        color: oklch(var(--bc)) !important;
+    }
+    .layui-layer-title {
+        background-color: oklch(var(--b1)) !important;
+        color: oklch(var(--bc)) !important;
+        border-bottom: 1px solid oklch(var(--bc) / 0.1) !important;
+    }
+    .layui-layer {
+        background-color: oklch(var(--b2)) !important;
+        border: 1px solid oklch(var(--bc) / 0.1) !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+    }
+    .layui-layer-btn {
+        background-color: oklch(var(--b2)) !important;
+        border-top: 1px solid oklch(var(--bc) / 0.05) !important;
+    }
+    .layui-layer-btn a {
+        background: transparent !important;
+        border: 1px solid oklch(var(--bc) / 0.2) !important;
+        color: oklch(var(--bc)) !important;
+    }
+    .layui-layer-btn .layui-layer-btn0 {
+        background: oklch(var(--p)) !important;
+        border-color: oklch(var(--p)) !important;
+        color: oklch(var(--pc)) !important;
+    }
+  </style>
+
+<div class="layui-fluid layadmin-maillist-fluid">
+  <div class="layui-row layui-col-space30">
+      <div class="layui-col-md12">
+            <blockquote class="layui-elem-quote">
+                <i class="layui-icon layui-icon-speaker" style="margin-right: 8px;"></i>
+                用户越多，投递的简历越多, 推荐的越准确
+            </blockquote>
+      </div>
+      {% for job in recommend_list %}
+        <div class="layui-col-md4 layui-col-sm6">
+          <div class="card bg-base-100 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <div class="card-body">
+              <h2 class="card-title text-base-content">{{ job.name | truncatechars:20 }}</h2>
+              <p class="text-error font-bold text-lg">{{ job.salary }}</p>
+              <div class="flex gap-2 my-2">
+                <span class="badge badge-info badge-outline">{{ job.education }}</span>
+                <span class="badge badge-success badge-outline">{{ job.experience }}</span>
+              </div>
+              <p class="text-base-content/60 text-sm flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                {{ job.place }}
+              </p>
+              <p class="text-base-content/50 text-sm">{{ job.company | truncatechars:20 }}</p>
+              <div class="card-actions justify-end mt-4">
+                <button class="btn btn-success btn-sm" onclick="send({{ job.job_id }}, '{{ job.name|escapejs }}')">立即投递</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+  </div>
+</div>
+
+
+</body>
+{% endblock %}
+{% block js %}
+  <script>
+  layui.config({
+    base: '{% static "layuiadmin/" %}' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'jquery','element']);
+
+  function send(job_id, job_name) {
+      var $ = layui.$;
+      
+      showConfirm('确定投递职位「' + job_name + '」吗？', function() {
+          $.ajax({
+              type: 'POST',
+              data: {"job_id": job_id, "send_key": 0},
+              url: '/send_job/',
+              success: function(res) {
+                  showToast(res.msg, 'success');
+                  setTimeout(function() { location.reload(); }, 1000);
+              },
+              error: function() {
+                  showToast('投递失败，请重试', 'error');
+              }
+          });
+      }, {title: '投递确认', btnClass: 'btn-success'});
+  }
+  </script>
+{% endblock js %}

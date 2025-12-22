@@ -1,0 +1,472 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <title>注册 - 职位推荐系统</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="{% static 'layuiadmin/layui/css/layui.css' %}" media="all">
+    <!-- daisyUI -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+
+        body {
+            margin: 0;
+            height: 100vh;
+            font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            /* 背景加深 20% */
+            background: radial-gradient(circle at 10% 20%, rgb(40, 50, 180) 0%, rgb(20, 10, 60) 90%);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* 漂浮气泡容器 */
+        .bubbles-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        /* 单个气泡样式 - 增强可见度 */
+        .bubble {
+            position: absolute;
+            bottom: -150px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.05) 70%);
+            box-shadow: 0 0 30px rgba(255,255,255,0.15);
+            backdrop-filter: blur(4px);
+            animation: floatUp linear infinite;
+        }
+
+        /* 气泡大小与动画参数 */
+        .b1 { width: 100px; height: 100px; left: 15%; animation-duration: 13s; animation-delay: 0s; opacity: 0.5; }
+        .b2 { width: 140px; height: 140px; left: 35%; animation-duration: 19s; animation-delay: 2s; opacity: 0.3; }
+        .b3 { width: 80px; height: 80px; left: 55%; animation-duration: 11s; animation-delay: 5s; opacity: 0.6; }
+        .b4 { width: 120px; height: 120px; left: 75%; animation-duration: 16s; animation-delay: 1s; opacity: 0.4; }
+        .b5 { width: 180px; height: 180px; left: 95%; animation-duration: 23s; animation-delay: 3s; opacity: 0.25; }
+        .b8 { width: 60px; height: 60px; left: 5%; animation-duration: 15s; animation-delay: 6s; opacity: 0.4; }
+        .b9 { width: 90px; height: 90px; left: 85%; animation-duration: 17s; animation-delay: 4s; opacity: 0.35; }
+
+        /* 模糊光斑 */
+        .b6 { width: 400px; height: 400px; left: 10%; animation-duration: 28s; filter: blur(50px); background: rgba(0,255,136,0.1); animation-delay: -5s; }
+        .b7 { width: 300px; height: 300px; right: 15%; animation-duration: 32s; filter: blur(40px); background: rgba(255,0,128,0.1); animation-delay: -10s; }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: var(--opacity, 0.5); }
+            80% { opacity: var(--opacity, 0.5); }
+            100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
+        }
+
+        .main-container {
+            display: flex;
+            width: 1500px; /* 增加宽度 */
+            max-width: 95%;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+            padding: 0 40px;
+        }
+
+        .left-section {
+            flex: 1;
+            padding-right: 150px; /* 增加间距 */
+            animation: slideInLeft 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-80px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        h1.big-title {
+            font-size: 72px;
+            font-weight: 900;
+            line-height: 1.05;
+            margin: 0 0 24px 0;
+            color: #00ff88;
+            text-shadow: 0 0 30px rgba(0,255,136,0.25);
+            letter-spacing: -2px;
+            position: relative;
+        }
+        
+        h1.big-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 6px;
+            background: #00ff88;
+            margin-top: 20px;
+            border-radius: 3px;
+            box-shadow: 0 0 10px rgba(0,255,136,0.5);
+        }
+
+        .sub-text-box {
+            margin-top: 35px;
+            position: relative;
+            padding-left: 0;
+        }
+
+        p.description {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 18px;
+            line-height: 1.8;
+            margin: 0;
+            font-weight: 300;
+            max-width: 500px;
+        }
+
+        .right-section {
+            width: 440px;
+            animation: slideInRight 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(80px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .register-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 28px;
+            padding: 48px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .register-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        }
+
+        .card-title {
+            text-align: center;
+            color: #fff;
+            font-size: 30px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .layui-form-item {
+            margin-bottom: 20px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 20px;
+            z-index: 2;
+            transition: color 0.3s;
+        }
+        
+        .input-wrapper:hover .input-icon {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .layui-input {
+            height: 54px;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding-left: 54px;
+            color: #fff;
+            font-size: 16px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .layui-input:focus {
+            background: rgba(0, 0, 0, 0.4);
+            border-color: #00d2ff;
+            box-shadow: 0 0 0 4px rgba(0, 210, 255, 0.1);
+            padding-left: 58px;
+        }
+        
+        .layui-input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .reg-btn {
+            width: 100%;
+            height: 54px;
+            background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
+            border: none;
+            border-radius: 14px;
+            color: #fff;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 12px;
+            box-shadow: 0 10px 25px rgba(0, 114, 255, 0.25);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .reg-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(0, 114, 255, 0.35);
+        }
+        
+        .reg-btn::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .reg-btn:hover::after {
+            left: 100%;
+        }
+
+        .links {
+            margin-top: 24px;
+            text-align: center;
+        }
+
+        .link-text {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 14px;
+            text-decoration: none;
+            transition: all 0.3s;
+            border-bottom: 1px solid transparent;
+        }
+
+        .link-text:hover {
+            color: #fff;
+            border-bottom-color: #fff;
+        }
+        
+        .layadmin-user-login-icon { display: none; }
+
+        /* Toast 样式 */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .toast-item {
+            padding: 12px 24px;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            animation: toastIn 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .toast-success { background: linear-gradient(135deg, rgba(0,200,100,0.9), rgba(0,150,80,0.9)); }
+        .toast-error { background: linear-gradient(135deg, rgba(255,80,80,0.9), rgba(200,50,50,0.9)); }
+        .toast-warning { background: linear-gradient(135deg, rgba(255,180,0,0.9), rgba(220,150,0,0.9)); }
+        @keyframes toastIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes toastOut { from { opacity: 1; } to { opacity: 0; transform: translateY(-10px); } }
+
+        /* Loading 样式 */
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255,255,255,0.2);
+            border-top-color: #00d2ff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <!-- 气泡背景容器 -->
+    <div class="bubbles-container">
+        <div class="bubble b1"></div>
+        <div class="bubble b2"></div>
+        <div class="bubble b3"></div>
+        <div class="bubble b4"></div>
+        <div class="bubble b5"></div>
+        <div class="bubble b6"></div>
+        <div class="bubble b7"></div>
+        <div class="bubble b8"></div>
+        <div class="bubble b9"></div>
+    </div>
+
+    <div class="main-container">
+        <!-- 左侧文字 -->
+        <div class="left-section">
+            <h1 class="big-title">JOIN US<br>TODAY</h1>
+            <div class="sub-text-box">
+                <p class="description">
+                    创建一个账号，开启您的职业新篇章。<br>
+                    海量精准职位，大数据智能推荐。
+                </p>
+            </div>
+        </div>
+
+        <!-- 右侧注册卡片 -->
+        <div class="right-section">
+            <div class="register-card layui-form">
+                <div class="card-title">立即注册</div>
+                
+                <div class="layui-form-item">
+                    <div class="input-wrapper">
+                        <i class="layui-icon layui-icon-username input-icon"></i>
+                        <input type="text" name="user" placeholder="账号" class="layui-input" autocomplete="off">
+                    </div>
+                </div>
+                
+                <div class="layui-form-item">
+                    <div class="input-wrapper">
+                        <i class="layui-icon layui-icon-password input-icon"></i>
+                        <input type="password" name="password" placeholder="密码" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <div class="input-wrapper">
+                        <i class="layui-icon layui-icon-password input-icon"></i>
+                        <input type="password" name="repass" placeholder="确认密码" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <div class="input-wrapper">
+                        <i class="layui-icon layui-icon-user input-icon"></i>
+                        <input type="text" name="user_name" placeholder="昵称" class="layui-input">
+                    </div>
+                </div>
+                
+                <div class="layui-form-item">
+                    <button class="reg-btn" lay-submit lay-filter="LAY-user-reg-submit">注 册</button>
+                </div>
+
+                <div class="links">
+                    <a href="{% url 'login' %}" class="link-text">已有账号？返回登录</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast 容器 -->
+    <div id="toast_container" class="toast-container"></div>
+
+    <script src="{% static 'layuiadmin/layui/layui.js' %}"></script>
+    <script>
+        // Toast 函数
+        function showToast(message, type, duration) {
+            type = type || 'info';
+            duration = duration || 3000;
+            var container = document.getElementById('toast_container');
+            var toast = document.createElement('div');
+            toast.className = 'toast-item toast-' + type;
+            var icon = type === 'success' ? '✓' : type === 'error' ? '✕' : '!';
+            toast.innerHTML = '<span>' + icon + '</span><span>' + message + '</span>';
+            container.appendChild(toast);
+            setTimeout(function() {
+                toast.style.animation = 'toastOut 0.3s ease forwards';
+                setTimeout(function() { toast.remove(); }, 300);
+            }, duration);
+        }
+        
+        // Loading 函数
+        var loadingEl = null;
+        function showLoading(show) {
+            if (show) {
+                if (!loadingEl) {
+                    loadingEl = document.createElement('div');
+                    loadingEl.className = 'loading-overlay';
+                    loadingEl.innerHTML = '<div class="loading-spinner"></div>';
+                    document.body.appendChild(loadingEl);
+                }
+            } else {
+                if (loadingEl) { loadingEl.remove(); loadingEl = null; }
+            }
+        }
+
+        layui.config({
+            base: '{% static "layuiadmin/" %}' 
+        }).extend({
+            index: 'lib/index' 
+        }).use(['form', 'jquery'], function () {
+            var $ = layui.jquery,
+                form = layui.form;
+
+            form.on('submit(LAY-user-reg-submit)', function (obj) {
+                obj = obj.field;
+
+                if (obj.user == '') { showToast('账号不能为空', 'warning'); return false; }
+                if (obj.password == '') { showToast('密码不能为空', 'warning'); return false; }
+                if (obj.repass == '') { showToast('确认密码不能为空', 'warning'); return false; }
+                if (obj.user_name == '') { showToast('昵称不能为空', 'warning'); return false; }
+                if (obj.password != obj.repass) { showToast('两次输入的密码不一致', 'warning'); return false; }
+
+                showLoading(true);
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/register/',
+                    data: obj,
+                    success: function (res) {
+                        showLoading(false);
+                        if (res.code == 0) {
+                            showToast(res.msg, 'success');
+                            setTimeout(function () {
+                                location.href = "/index/";
+                            }, 1000);
+                        } else {
+                            showToast(res.msg, 'error');
+                            return false;
+                        }
+                    },
+                    error: function (response) {
+                        showLoading(false);
+                        showToast('服务器错误', 'error');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

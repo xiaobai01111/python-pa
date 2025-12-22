@@ -1,0 +1,581 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+    <body>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        body { font-family: 'Inter', sans-serif; color: oklch(var(--bc)); }
+        
+        .layui-fluid { padding: 30px; }
+        
+        /* 卡片容器 - 适配所有主题 */
+        .layui-card {
+            background-color: oklch(var(--b2) / 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid oklch(var(--bc) / 0.1);
+            color: oklch(var(--bc));
+        }
+        
+        .layui-card-header {
+            border-bottom: 1px solid oklch(var(--bc) / 0.1);
+            padding: 20px 30px;
+            font-size: 18px;
+            font-weight: 600;
+            color: oklch(var(--bc));
+            display: flex;
+            align-items: center;
+        }
+        
+        .layui-card-header::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 18px;
+            background: oklch(var(--su));
+            border-radius: 2px;
+            margin-right: 12px;
+            box-shadow: 0 0 10px oklch(var(--su) / 0.5);
+        }
+        
+        .layui-card-body { padding: 30px; overflow: visible; }
+        
+        /* 修复下拉菜单被裁剪问题 */
+        .layui-card { overflow: visible; }
+        .layui-form { overflow: visible; }
+        .layui-form-item { overflow: visible; }
+        .layui-input-block { overflow: visible; }
+        
+        /* 爬虫设置卡片层级高于日志卡片 */
+        .spider-settings-card {
+            position: relative;
+            z-index: 100;
+        }
+        .spider-log-card {
+            position: relative;
+            z-index: 10;
+        }
+        
+        /* 下拉菜单层级 */
+        .dropdown-content {
+            z-index: 9999 !important;
+            position: absolute !important;
+        }
+        
+        /* 表单元素重构 */
+        .layui-form-label {
+            color: oklch(var(--bc) / 0.7);
+            width: 100px;
+            padding: 12px 15px;
+            font-size: 14px;
+        }
+        
+        .layui-input-block { margin-left: 130px; }
+        
+        .layui-input, .layui-select {
+            background-color: oklch(var(--b1));
+            border: 1px solid oklch(var(--bc) / 0.2);
+            color: oklch(var(--bc));
+            border-radius: 8px;
+            height: 44px;
+            line-height: 44px;
+            transition: all 0.3s;
+        }
+        
+        .layui-input:focus, .layui-select:focus {
+            border-color: oklch(var(--p));
+            box-shadow: 0 0 0 3px oklch(var(--p) / 0.2);
+        }
+        
+        .layui-input::-webkit-input-placeholder { color: oklch(var(--bc) / 0.4); }
+        
+        /* Layui 下拉选择框三角颜色 */
+        .layui-form-select .layui-edge {
+            border-top-color: oklch(var(--bc) / 0.5);
+        }
+        
+        /* 单选框样式适配 */
+        .layui-form-radio > i {
+            color: oklch(var(--p));
+        }
+        .layui-form-radio * {
+            color: oklch(var(--bc));
+            font-size: 14px;
+        }
+        
+        /* 按钮样式 */
+        .layui-btn {
+            background-color: oklch(var(--su));
+            color: oklch(var(--suc));
+            border-radius: 8px;
+            box-shadow: 0 4px 15px oklch(var(--su) / 0.3);
+            border: none;
+            height: 44px;
+            line-height: 44px;
+            padding: 0 30px;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .layui-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px oklch(var(--su) / 0.4);
+            opacity: 0.95;
+            background-color: oklch(var(--su));
+        }
+        
+        /* 正在爬取状态 */
+        span.layui-btn {
+            background: oklch(var(--n) / 0.2) !important;
+            color: oklch(var(--bc) / 0.5) !important;
+            border: 1px solid oklch(var(--n) / 0.2);
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+        
+        /* 间距微调 */
+        .layui-form-item { margin-bottom: 24px; }
+
+        /* 修复底部空白和背景色 */
+        html, body { 
+            min-height: 100vh; 
+            background-color: oklch(var(--b1)) !important; 
+        }
+        .layui-fluid {
+            min-height: 100vh;
+            background-color: oklch(var(--b1));
+        }
+
+        /* 下拉菜单深色适配 */
+        .layui-form-select dl {
+            background-color: oklch(var(--b2));
+            border: 1px solid oklch(var(--bc) / 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            padding: 5px 0;
+        }
+        
+        .layui-form-select dl dd {
+            color: oklch(var(--bc) / 0.8);
+        }
+        
+        .layui-form-select dl dd:hover {
+            background-color: oklch(var(--b3));
+        }
+        
+        .layui-form-select dl dd.layui-this {
+            background-color: oklch(var(--p));
+            color: oklch(var(--pc));
+        }
+        
+        /* 下拉框输入区域样式 */
+        .layui-form-select .layui-input {
+            color: oklch(var(--bc));
+        }
+    </style>
+
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12 spider-settings-card">
+                <div class="layui-card">
+                    <div class="layui-card-header">爬虫设置</div>
+                    <div class="layui-card-body">
+                        <div class="layui-form" lay-filter="">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">关键字</label>
+                                <div class="layui-input-block">
+                                    <div class="flex items-center gap-2 bg-base-100 border border-base-content/10 rounded-lg px-3 py-2 w-full max-w-xl focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20">
+                                        <svg class="h-5 w-5 opacity-50 shrink-0 text-base-content" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                            <circle cx="11" cy="11" r="8" stroke-width="2.5"></circle>
+                                            <path d="m21 21-4.3-4.3" stroke-width="2.5" stroke-linecap="round"></path>
+                                        </svg>
+                                        <input type="text" name="key_word" class="bg-transparent border-none outline-none text-base-content flex-1 placeholder:text-base-content/30" placeholder="输入需要爬取的职位信息如：java工程师">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">城市选择</label>
+                                <div class="layui-input-block">
+                                    <input type="hidden" name="city" id="city-input" value="">
+                                    <div class="dropdown dropdown-start">
+                                        <div tabindex="0" role="button" class="btn bg-base-100 border border-base-content/10 text-base-content hover:bg-base-200 w-64 justify-start font-normal" id="city-btn">
+                                            <span id="city-text">请选择一个城市</span>
+                                            <svg class="ml-auto h-4 w-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                        </div>
+                                        <ul tabindex="0" class="dropdown-content menu bg-base-200 border border-base-content/10 rounded-box z-50 w-52 p-2 shadow-lg mt-1 text-base-content">
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('')">请选择一个城市</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('北京')">北京</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('上海')">上海</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('天津')">天津</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('重庆')">重庆</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('广州')">广州</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('深圳')">深圳</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('苏州')">苏州</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('南京')">南京</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('杭州')">杭州</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('大连')">大连</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('成都')">成都</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('武汉')">武汉</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('西安')">西安</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">网站选择</label>
+                                <div class="layui-input-block">
+                                    <input type="radio" name="role" value="猎聘网" title="猎聘网" checked>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">页数选择</label>
+                                <div class="layui-input-block">
+                                    <input type="hidden" name="page" id="page-input" value="">
+                                    <div class="dropdown dropdown-start">
+                                        <div tabindex="0" role="button" class="btn bg-base-100 border border-base-content/10 text-base-content hover:bg-base-200 w-64 justify-start font-normal" id="page-btn">
+                                            <span id="page-text">请选择需要爬取页数数量</span>
+                                            <svg class="ml-auto h-4 w-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                        </div>
+                                        <ul tabindex="0" class="dropdown-content menu bg-base-200 border border-base-content/10 rounded-box z-50 w-52 p-2 shadow-lg mt-1 text-base-content">
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectPage('')">请选择需要爬取页数数量</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectPage('1')">1页</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectPage('2')">2页</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectPage('3')">3页</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectPage('4')">4页</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectPage('5')">5页</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectPage('6')">6页</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectPage('7')">7页</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectPage('8')">8页</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectPage('9')">9页</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectPage('10')">10页</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    {% if spider_code_1 == 0 %}
+                                        <button class="btn btn-success btn-wide sm:btn-md md:btn-lg" lay-submit lay-filter="start_spider"
+                                                id="start_spider">
+                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                            开始爬取
+                                        </button>
+                                    {% else %}
+                                        <button class="btn btn-disabled btn-wide sm:btn-md md:btn-lg" disabled>
+                                            <span class="loading loading-spinner"></span>
+                                            正在爬取,请稍后...
+                                        </button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 爬虫日志卡片 -->
+            <div class="layui-col-md12 spider-log-card" style="margin-top: 20px;">
+                <div class="layui-card">
+                    <div class="layui-card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>爬虫日志</span>
+                        <div class="flex items-center gap-3">
+                            <div id="log_status" class="badge badge-ghost gap-1">
+                                <span class="w-2 h-2 rounded-full bg-base-content/30"></span>
+                                空闲
+                            </div>
+                            <button class="btn btn-ghost btn-xs" onclick="clearLogs()">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                                清空
+                            </button>
+                        </div>
+                    </div>
+                    <div class="layui-card-body" style="padding: 0;">
+                        <div id="log_container" class="mockup-code bg-base-300 rounded-none" style="max-height: 400px; overflow-y: auto; font-size: 13px;">
+                            <pre data-prefix=">" class="text-base-content/50"><code>等待爬虫任务启动...</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </body>
+{% endblock %}
+
+{% block js %}
+    <script>
+        // daisyUI dropdown 选择函数
+        function selectCity(value) {
+            document.getElementById('city-input').value = value;
+            document.getElementById('city-text').textContent = value || '请选择一个城市';
+            document.activeElement.blur();
+        }
+        
+        function selectPage(value) {
+            document.getElementById('page-input').value = value;
+            document.getElementById('page-text').textContent = value ? value + '页' : '请选择需要爬取页数数量';
+            document.activeElement.blur();
+        }
+        
+        layui.config({
+            base: '{% static "layuiadmin/" %}' //静态资源所在路径
+        }).extend({
+            index: 'lib/index' //主入口模块
+        }).use(['index', 'form'], function () {
+            var $ = layui.$,
+                form = layui.form;
+
+            form.on('submit(start_spider)', function (data) {
+                var field = data.field;
+                
+                if (field.key_word == "") {
+                    showToast("关键字不能为空！", "warning");
+                    return false;
+                }
+                if (field.page == "") {
+                    showToast("页数不能为空！", "warning");
+                    return false;
+                }
+                if (field.city == "") {
+                    showToast("城市不能为空！", "warning");
+                    return false;
+                }
+
+                var btn = document.getElementById("start_spider");
+                btn.innerHTML = '<span class="loading loading-spinner"></span>正在爬取,请稍后...';
+                btn.classList.remove('btn-success');
+                btn.classList.add('btn-disabled');
+                btn.removeAttribute('lay-filter');
+                
+                // 清空日志
+                clearLogs();
+                
+                // 延迟 200ms 开始轮询，确保 POST 请求已经先到达后端生成新的 session_id
+                setTimeout(function() {
+                    startLogPolling();
+                }, 200);
+
+                // 发送 POST 请求，后端会立即生成新的 session_id
+                $.ajax({
+                    type: 'POST',
+                    url: '/start_spider/',
+                    data: field,
+                    success: function (res) {
+                        if (res.code === 0) {
+                            showToast(res.msg, "success");
+                        } else {
+                            showToast(res.msg, "warning");
+                            // 如果启动失败，恢复按钮状态
+                            btn.innerHTML = '<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>开始爬取';
+                            btn.classList.remove('btn-disabled');
+                            btn.classList.add('btn-success');
+                            btn.setAttribute("lay-filter", "start_spider");
+                            stopLogPolling();
+                        }
+                        // 按钮状态由轮询检测爬虫完成后恢复
+                    },
+                    error: function (response) {
+                        showToast("服务器错误", "error");
+                        btn.innerHTML = '<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>开始爬取';
+                        btn.classList.remove('btn-disabled');
+                        btn.classList.add('btn-success');
+                        btn.setAttribute("lay-filter", "start_spider");
+                    }
+                });
+
+            });
+        });
+        
+        // ========================================
+        // 日志轮询系统
+        // ========================================
+        var logIndex = 0;
+        var logInterval = null;
+        var isFirstLoad = true;
+        var stopCheckCount = 0;  // 停止检查计数器
+        var currentSessionId = null;  // 当前爬取任务的会话ID
+        var isFetchingLogs = false;   // 避免并发请求导致日志重复
+        
+        // 获取日志级别对应的样式
+        function getLogStyle(level) {
+            switch(level) {
+                case 'SUCCESS': return 'text-success';
+                case 'ERROR': return 'text-error';
+                case 'WARNING': return 'text-warning';
+                default: return 'text-info';
+            }
+        }
+        
+        // 获取日志级别对应的前缀符号
+        function getLogPrefix(level) {
+            switch(level) {
+                case 'SUCCESS': return '✓';
+                case 'ERROR': return '✕';
+                case 'WARNING': return '!';
+                default: return '›';
+            }
+        }
+        
+        // 添加日志到容器
+        function appendLogs(logs) {
+            var container = document.getElementById('log_container');
+            
+            // 如果是首次加载且有日志，清空默认提示
+            if (isFirstLoad && logs.length > 0) {
+                container.innerHTML = '';
+                isFirstLoad = false;
+            }
+            
+            logs.forEach(function(log) {
+                var pre = document.createElement('pre');
+                pre.setAttribute('data-prefix', getLogPrefix(log.level));
+                pre.className = getLogStyle(log.level);
+                
+                var code = document.createElement('code');
+                code.textContent = '[' + log.time + '] ' + log.message;
+                pre.appendChild(code);
+                
+                container.appendChild(pre);
+            });
+            
+            // 自动滚动到底部
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        // 更新状态徽章
+        function updateStatus(isRunning) {
+            var status = document.getElementById('log_status');
+            if (isRunning) {
+                status.className = 'badge badge-success gap-1';
+                status.innerHTML = '<span class="loading loading-spinner loading-xs"></span>运行中';
+            } else {
+                status.className = 'badge badge-ghost gap-1';
+                status.innerHTML = '<span class="w-2 h-2 rounded-full bg-base-content/30"></span>空闲';
+            }
+        }
+        
+        // 获取日志
+        function fetchLogs() {
+            if (isFetchingLogs) {
+                return;  // 上一次请求还没回来，直接跳过本次，防止并发导致重复追加
+            }
+            isFetchingLogs = true;
+            var $ = layui.$;
+            var params = { since: logIndex };
+            // 如果有当前会话ID，只获取该会话的日志
+            if (currentSessionId) {
+                params.session_id = currentSessionId;
+            }
+            $.ajax({
+                type: 'GET',
+                url: '/get_spider_logs/',
+                data: params,
+                success: function(res) {
+                    if (res.code === 0) {
+                        // 只有爬虫正在运行时才更新会话ID
+                        if (res.session_id && !currentSessionId && res.is_running) {
+                            currentSessionId = res.session_id;
+                        }
+                        if (res.logs.length > 0) {
+                            appendLogs(res.logs);
+                            logIndex = res.total;
+                        }
+                        updateStatus(res.is_running);
+                        
+                        // 如果爬虫停止运行，继续获取几次确保日志完整
+                        if (!res.is_running && logInterval) {
+                            stopCheckCount++;
+                            // 连续3次检测到停止后才停止轮询
+                            if (stopCheckCount >= 3) {
+                                stopLogPolling();
+                                stopCheckCount = 0;
+                            }
+                        } else {
+                            stopCheckCount = 0;
+                        }
+                    }
+                },
+                complete: function() {
+                    // 请求结束后无论成功失败都允许下一次获取
+                    isFetchingLogs = false;
+                }
+            });
+        }
+        
+        // 开始轮询
+        function startLogPolling() {
+            if (logInterval) return;
+            logIndex = 0;
+            isFirstLoad = true;
+            logInterval = setInterval(fetchLogs, 1000);
+            fetchLogs(); // 立即获取一次
+        }
+        
+        // 停止轮询
+        function stopLogPolling() {
+            if (logInterval) {
+                clearInterval(logInterval);
+                logInterval = null;
+                // 恢复按钮状态
+                var btn = document.getElementById("start_spider");
+                if (btn) {
+                    btn.innerHTML = '<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>开始爬取';
+                    btn.classList.remove('btn-disabled');
+                    btn.classList.add('btn-success');
+                    btn.setAttribute("lay-filter", "start_spider");
+                }
+            }
+        }
+        
+        // 清空日志
+        function clearLogs() {
+            var container = document.getElementById('log_container');
+            container.innerHTML = '<pre data-prefix=">" class="text-base-content/50"><code>等待爬虫任务启动...</code></pre>';
+            logIndex = 0;
+            isFirstLoad = true;
+            currentSessionId = null;  // 重置会话ID，获取新任务的日志
+        }
+        
+        // 页面加载时检查是否有正在运行的爬虫
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                var $ = layui.$;
+                $.ajax({
+                    type: 'GET',
+                    url: '/get_spider_logs/',
+                    data: { since: 0 },
+                    success: function(res) {
+                        if (res.code === 0) {
+                            updateStatus(res.is_running);
+                            // 只有爬虫正在运行时才显示日志
+                            if (res.is_running && res.session_id) {
+                                currentSessionId = res.session_id;
+                                // 用 session_id 重新获取当前任务的日志
+                                $.ajax({
+                                    type: 'GET',
+                                    url: '/get_spider_logs/',
+                                    data: { since: 0, session_id: currentSessionId },
+                                    success: function(res2) {
+                                        if (res2.code === 0 && res2.logs.length > 0) {
+                                            appendLogs(res2.logs);
+                                            logIndex = res2.total;
+                                        }
+                                        startLogPolling();
+                                    }
+                                });
+                            }
+                            // 不运行时不显示历史日志
+                        }
+                    }
+                });
+            }, 500);
+        });
+    </script>
+{% endblock %}

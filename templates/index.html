@@ -1,0 +1,666 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+    <body class="layui-layout-body">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        
+        body { font-family: 'Inter', sans-serif; }
+
+        /* ========================================
+           侧边栏样式深度修复 (Deep Fix)
+           ======================================== */
+        
+        /* 1. 强制覆盖 Logo 区域背景和文字颜色 - 提升权重 */
+        html body .layui-layout-admin .layui-logo {
+            background-color: oklch(var(--b2)) !important;
+            color: oklch(var(--bc)) !important;
+            box-shadow: none !important;
+            border-bottom: 1px solid oklch(var(--bc) / 0.05) !important;
+            border-right: 1px solid oklch(var(--bc) / 0.05) !important;
+        }
+        
+        html body .layui-layout-admin .layui-logo span {
+            color: oklch(var(--bc)) !important;
+            font-weight: 800 !important;
+        }
+        
+        /* 2. 侧边栏整体容器背景 */
+        #LAY-system-side-menu,
+        .layui-side-menu, 
+        .layui-side,
+        .layui-side-scroll {
+            background-color: oklch(var(--b2)) !important;
+        }
+        
+        .layui-side {
+            box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+            z-index: 1001;
+            border-right: 1px solid oklch(var(--bc) / 0.05);
+        }
+        
+        /* 3. 侧边栏导航链接文字颜色 */
+        #LAY-system-side-menu .layui-nav-item a,
+        #LAY-system-side-menu .layui-nav-item a cite,
+        #LAY-system-side-menu .layui-nav-item a i,
+        #LAY-system-side-menu .layui-nav-item .layui-nav-more {
+            color: oklch(var(--bc)) !important;
+            transition: all 0.3s ease;
+        }
+
+        /* 悬停状态 */
+        #LAY-system-side-menu .layui-nav-item a:hover,
+        #LAY-system-side-menu .layui-nav-tree .layui-nav-child a:hover {
+            color: oklch(var(--bc)) !important;
+            background-color: oklch(var(--bc) / 0.1) !important;
+        }
+        
+        /* 选中状态 (Active) */
+        #LAY-system-side-menu .layui-nav-tree .layui-this, 
+        #LAY-system-side-menu .layui-nav-tree .layui-this > a, 
+        #LAY-system-side-menu .layui-nav-tree .layui-nav-child dd.layui-this, 
+        #LAY-system-side-menu .layui-nav-tree .layui-nav-child dd.layui-this a {
+            background-color: oklch(var(--p)) !important;
+            background: linear-gradient(90deg, oklch(var(--p)) 0%, oklch(var(--p) / 0.8) 100%) !important;
+            box-shadow: 0 4px 15px oklch(var(--p) / 0.4);
+            border-radius: 0 20px 20px 0;
+            color: oklch(var(--pc)) !important;
+        }
+        
+        /* 选中状态下的内部元素颜色 */
+        #LAY-system-side-menu .layui-nav-tree .layui-this a cite,
+        #LAY-system-side-menu .layui-nav-tree .layui-this a i,
+        #LAY-system-side-menu .layui-nav-tree .layui-nav-child dd.layui-this a cite,
+        #LAY-system-side-menu .layui-nav-tree .layui-nav-child dd.layui-this a i {
+             color: oklch(var(--pc)) !important;
+        }
+        
+        /* 侧边栏小箭头修复 */
+        .layui-nav .layui-nav-more {
+            border-top-color: oklch(var(--bc) / 0.7) !important;
+        }
+        .layui-nav .layui-nav-mored, 
+        .layui-nav-itemed > a .layui-nav-more {
+            border-top-color: transparent !important;
+            border-bottom-color: oklch(var(--bc) / 0.7) !important;
+        }
+
+        /* 下拉菜单文字颜色强制修复 */
+        .dropdown-content {
+            background-color: oklch(var(--b2)) !important;
+            color: oklch(var(--bc)) !important;
+        }
+        
+        .dropdown-content label,
+        .dropdown-content span {
+            color: oklch(var(--bc)) !important;
+        }
+        
+        .dropdown-content li a:hover,
+        .dropdown-content li label:hover {
+            background-color: oklch(var(--bc) / 0.1) !important;
+        }
+        
+        .dropdown-content input[type="radio"] {
+            border-color: oklch(var(--bc) / 0.5);
+        }
+
+        /* ========================================
+           daisyUI 风格 Navbar - 仅包含标题
+           ======================================== */
+        .layui-layout-admin .layui-logo {
+            height: 64px;
+            line-height: 64px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1002;
+            width: 220px;
+            background-color: oklch(var(--b2)) !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid oklch(var(--bc) / 0.05);
+            color: oklch(var(--bc)) !important;
+        }
+        
+        /* daisyUI btn-ghost 风格标题 */
+        .layui-layout-admin .layui-logo span {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 16px;
+            font-size: 18px;
+            font-weight: 700;
+            color: oklch(var(--bc)) !important;
+            letter-spacing: 0.5px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .layui-layout-admin .layui-logo span:hover {
+            background-color: oklch(var(--bc) / 0.1);
+        }
+        
+        .layui-side-menu .layui-nav {
+            background-color: transparent !important;
+            margin-top: 10px;
+        }
+        
+        .layui-side-menu .layui-nav-item > a {
+            color: oklch(var(--bc)) !important;
+            transition: all 0.3s ease;
+            padding-left: 25px;
+            border-left: 3px solid transparent;
+        }
+        
+        .layui-side-menu .layui-nav-item > a:hover {
+            color: oklch(var(--bc)) !important;
+            background-color: oklch(var(--bc) / 0.1);
+            border-left-color: oklch(var(--p));
+        }
+        
+        /* 侧边栏滚动区域修复 */
+        .layui-side-menu .layui-side-scroll {
+            height: calc(100% - 64px) !important;
+            margin-top: 64px;
+            width: 240px; /* 稍微加宽一点 */
+        }
+        
+        /* 侧边栏二级菜单背景 */
+        .layui-nav-tree .layui-nav-child {
+            background-color: oklch(var(--b2) / 0.5) !important;
+        }
+
+        /* 用户下拉菜单对齐微调 */
+        .layui-layout-right .layui-nav-child {
+            top: 55px !important; /* 微调高度 */
+            right: 10px !important; /* 增加右侧间距 */
+            min-width: 120px;
+            padding: 5px 0;
+        }
+        
+        /* 顶部栏样式重构 - 使用 daisyUI 主题变量 */
+        .layui-header {
+            background-color: oklch(var(--b1)) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1); 
+            border-bottom: 1px solid oklch(var(--bc) / 0.1) !important;
+            z-index: 1000;
+        }
+        
+        .layui-header .layui-nav .layui-nav-item {
+            line-height: 50px; 
+        }
+
+        .layui-header .layui-nav .layui-nav-item a {
+            color: oklch(var(--bc) / 0.7) !important; /* 文字颜色适配主题 */
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .layui-header .layui-nav .layui-nav-item a:hover {
+            color: oklch(var(--p)) !important; /* 悬停亮蓝 */
+        }
+
+        /* 图标颜色 */
+        .layui-nav-item a i {
+            color: inherit !important;
+        }
+        .layui-nav-item a:hover i {
+            color: oklch(var(--p)) !important;
+        }
+
+        /* 修复用户下拉菜单 - 深色模式 */
+        .layui-layout-right {
+            padding-right: 20px;
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+
+        .layui-layout-right .layui-nav-item {
+            display: flex;
+            align-items: center;
+            position: relative; 
+        }
+
+        .layui-layout-right .layui-nav-child {
+            top: 100% !important; 
+            left: 50% !important; 
+            right: auto !important;
+            transform: translateX(-50%); 
+            margin-top: 10px; 
+            min-width: 120px;
+            border: 1px solid oklch(var(--bc) / 0.1); /* 微边框 */
+            background-color: oklch(var(--b2)); /* 深色菜单背景 */
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            border-radius: 8px;
+            padding: 8px 0;
+            animation: slideDown 0.2s ease;
+            text-align: center; 
+        }
+        
+        /* 下拉菜单箭头 - 深色 */
+        .layui-layout-right .layui-nav-child:before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            margin-left: -6px;
+            border-width: 0 6px 6px;
+            border-style: solid;
+            border-color: transparent transparent oklch(var(--b2)); /* 适配背景色 */
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translate(-50%, -10px); }
+            to { opacity: 1; transform: translate(-50%, 0); }
+        }
+
+        .layui-layout-right .layui-nav-child dd a {
+            line-height: 36px;
+            padding: 0 20px;
+            color: oklch(var(--bc) / 0.8) !important; /* 菜单项文字适配 */
+        }
+        
+        .layui-layout-right .layui-nav-child dd a:hover {
+            background-color: oklch(var(--bc) / 0.1);
+            color: oklch(var(--p)) !important;
+        }
+        
+        /* ========================================
+           标签页样式 - 适配 daisyUI 主题
+           ======================================== */
+        
+        /* 标签页容器背景色 */
+        .layadmin-pagetabs {
+            background-color: oklch(var(--b1)) !important;
+            border-bottom: 1px solid oklch(var(--bc) / 0.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        
+        /* 左右控制按钮颜色 */
+        .layadmin-tabs-control {
+            background-color: oklch(var(--b1)) !important;
+            color: oklch(var(--bc) / 0.6) !important;
+            border-right: 1px solid oklch(var(--bc) / 0.05);
+            border-left: 1px solid oklch(var(--bc) / 0.05);
+        }
+        
+        .layadmin-tabs-control:hover {
+            background-color: oklch(var(--bc) / 0.1) !important;
+            color: oklch(var(--bc)) !important;
+        }
+        
+        /* 标签容器背景 */
+        .layadmin-pagetabs .layui-tab-title {
+            background-color: transparent !important;
+            border: none !important;
+        }
+        
+        /* 标签项样式 */
+        .layadmin-pagetabs .layui-tab-title li {
+            background-color: oklch(var(--b2)) !important;
+            border: 1px solid oklch(var(--bc) / 0.1) !important;
+            border-bottom: none !important;
+            border-radius: 6px 6px 0 0;
+            color: oklch(var(--bc) / 0.6) !important;
+            margin-right: 4px;
+            padding-right: 28px; /* 为关闭按钮留出空间 */
+            transition: all 0.2s;
+        }
+        
+        .layadmin-pagetabs .layui-tab-title li:hover {
+            color: oklch(var(--bc)) !important;
+            background-color: oklch(var(--b2) / 0.8) !important;
+        }
+        
+        /* 选中的标签 */
+        .layadmin-pagetabs .layui-tab-title li.layui-this {
+            color: oklch(var(--p)) !important;
+            font-weight: 600;
+            background-color: oklch(var(--b1)) !important;
+            border-color: oklch(var(--bc) / 0.1) !important;
+            border-bottom: 1px solid oklch(var(--b1)) !important; /* 遮盖底部边框 */
+        }
+        
+        /* 选中标签顶部高亮条 */
+        .layadmin-pagetabs .layui-tab-title li.layui-this:before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            right: -1px;
+            height: 3px;
+            background: oklch(var(--p));
+            border-radius: 6px 6px 0 0;
+        }
+        
+        /* 关闭按钮样式 */
+        .layadmin-pagetabs .layui-tab-title li .layui-tab-close {
+            color: oklch(var(--bc) / 0.4) !important;
+            right: 6px !important;
+            font-size: 12px;
+        }
+        
+        .layadmin-pagetabs .layui-tab-title li .layui-tab-close:hover {
+            background-color: oklch(var(--er)) !important;
+            color: oklch(var(--erc)) !important;
+            border-radius: 50%;
+        }
+        
+        /* ========================================
+           下拉菜单样式 - 保留 Layui 原有定位逻辑
+           ======================================== */
+        
+        /* 下拉菜单容器 */
+        .layadmin-tabs-select {
+            background: transparent !important;
+        }
+        
+        .layadmin-tabs-select .layui-nav-item > a {
+            background: transparent !important;
+        }
+        
+        /* 下拉菜单内容 */
+        .layadmin-tabs-select .layui-nav-child {
+            background-color: oklch(var(--b2)) !important;
+            border: 1px solid oklch(var(--bc) / 0.15) !important;
+            border-radius: 8px !important;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2) !important;
+            padding: 6px !important;
+            min-width: 150px !important;
+        }
+        
+        .layadmin-tabs-select .layui-nav-child dd {
+            margin: 2px 0;
+        }
+        
+        .layadmin-tabs-select .layui-nav-child dd a {
+            color: oklch(var(--bc) / 0.8) !important;
+            padding: 10px 14px !important;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+        
+        .layadmin-tabs-select .layui-nav-child dd a:hover {
+            background-color: oklch(var(--p) / 0.2) !important;
+            color: oklch(var(--p)) !important;
+        }
+
+        /* 图标微调 */
+        .layui-icon { font-size: 16px; }
+        
+        /* 顶部按钮样式 - 使用主题变量 */
+        .header-btn {
+            display: inline-flex !important;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            color: oklch(var(--bc)) !important;
+            transition: all 0.2s;
+        }
+        .header-btn:hover {
+            background-color: oklch(var(--bc) / 0.1) !important;
+        }
+        .header-btn .layui-icon {
+            color: oklch(var(--bc)) !important;
+            font-size: 18px !important;
+        }
+        
+        /* daisyUI 主题按钮样式 */
+        .layui-header .btn {
+            color: oklch(var(--bc)) !important;
+            background-color: transparent;
+        }
+        .layui-header .btn:hover {
+            color: oklch(var(--bc)) !important;
+            background-color: oklch(var(--bc) / 0.1) !important;
+        }
+        .layui-header .dropdown-content {
+            background-color: oklch(var(--b2)) !important;
+            border: 1px solid oklch(var(--bc) / 0.15) !important;
+        }
+        .layui-header .dropdown-content .btn-ghost {
+            color: oklch(var(--bc)) !important;
+        }
+        .layui-header .dropdown-content .btn-ghost:hover {
+            background-color: oklch(var(--p) / 0.2) !important;
+            color: oklch(var(--p)) !important;
+        }
+        
+        /* 全局滚动条美化 - 深色 */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-thumb { background: oklch(var(--bc) / 0.2); border-radius: 3px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        
+        /* 主体背景色 - 使用 daisyUI 主题变量 */
+        #LAY_app_body { background-color: oklch(var(--b1)); }
+    </style>
+
+    <div id="LAY_app">
+        <div class="layui-layout layui-layout-admin">
+            <div class="layui-header">
+                <!-- 头部区域 -->
+                <ul class="layui-nav layui-layout-left">
+                    <!-- 侧边栏缩放按钮 - 保留原 Layui 事件 -->
+                    <li class="layui-nav-item layadmin-flexible" lay-unselect>
+                        <a href="javascript:;" layadmin-event="flexible" title="侧边伸缩" class="header-btn">
+                            <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
+                        </a>
+                    </li>
+                    <!-- 刷新按钮 -->
+                    <li class="layui-nav-item" lay-unselect>
+                        <a href="javascript:;" layadmin-event="refresh" title="刷新" class="header-btn">
+                            <i class="layui-icon layui-icon-refresh-3"></i>
+                        </a>
+                    </li>
+                </ul>
+                <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right">
+                    <!-- daisyUI 主题切换下拉菜单 -->
+                    <li class="layui-nav-item" lay-unselect>
+                        <div class="dropdown dropdown-end">
+                            <div tabindex="0" role="button" class="btn btn-ghost btn-sm gap-1" title="切换主题">
+                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg>
+                                <span class="hidden md:inline text-xs">主题</span>
+                                <svg class="h-3 w-3 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                            </div>
+                            <div tabindex="0" class="dropdown-content bg-base-200 rounded-box z-[9999] p-3 shadow-2xl mt-4 border border-base-content/10" style="width: 360px;">
+                                <div class="grid grid-cols-2 gap-2">
+                                    <label class="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-base-300"><input type="radio" name="theme-dropdown" class="theme-controller radio radio-xs" value="light"/> <span class="text-xs">明亮 (Light)</span></label>
+                                    <label class="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-base-300"><input type="radio" name="theme-dropdown" class="theme-controller radio radio-xs" value="dark"/> <span class="text-xs">暗黑 (Dark)</span></label>
+                                    <label class="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-base-300"><input type="radio" name="theme-dropdown" class="theme-controller radio radio-xs" value="cupcake"/> <span class="text-xs">纸杯蛋糕</span></label>
+                                    <label class="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-base-300"><input type="radio" name="theme-dropdown" class="theme-controller radio radio-xs" value="bumblebee"/> <span class="text-xs">大黄蜂</span></label>
+                                    <label class="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-base-300"><input type="radio" name="theme-dropdown" class="theme-controller radio radio-xs" value="emerald"/> <span class="text-xs">翡翠 (Emerald)</span></label>
+                                    <label class="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-base-300"><input type="radio" name="theme-dropdown" class="theme-controller radio radio-xs" value="corporate"/> <span class="text-xs">企业 (Corporate)</span></label>
+                                    <label class="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-base-300"><input type="radio" name="theme-dropdown" class="theme-controller radio radio-xs" value="synthwave"/> <span class="text-xs">合成波</span></label>
+                                    <label class="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-base-300"><input type="radio" name="theme-dropdown" class="theme-controller radio radio-xs" value="retro"/> <span class="text-xs">复古 (Retro)</span></label>
+                                    <label class="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-base-300"><input type="radio" name="theme-dropdown" class="theme-controller radio radio-xs" value="cyberpunk"/> <span class="text-xs">赛博朋克</span></label>
+                                    <label class="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-base-300"><input type="radio" name="theme-dropdown" class="theme-controller radio radio-xs" value="valentine"/> <span class="text-xs">情人节</span></label>
+                                    <label class="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-base-300"><input type="radio" name="theme-dropdown" class="theme-controller radio radio-xs" value="halloween"/> <span class="text-xs">万圣节</span></label>
+                                    <label class="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-base-300"><input type="radio" name="theme-dropdown" class="theme-controller radio radio-xs" value="garden"/> <span class="text-xs">花园 (Garden)</span></label>
+                                    <label class="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-base-300"><input type="radio" name="theme-dropdown" class="theme-controller radio radio-xs" value="forest"/> <span class="text-xs">森林 (Forest)</span></label>
+                                    <label class="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-base-300"><input type="radio" name="theme-dropdown" class="theme-controller radio radio-xs" value="aqua"/> <span class="text-xs">水蓝 (Aqua)</span></label>
+                                    <label class="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-base-300"><input type="radio" name="theme-dropdown" class="theme-controller radio radio-xs" value="lofi"/> <span class="text-xs">低保真 (Lofi)</span></label>
+                                    <label class="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-base-300"><input type="radio" name="theme-dropdown" class="theme-controller radio radio-xs" value="pastel"/> <span class="text-xs">粉彩 (Pastel)</span></label>
+                                    <label class="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-base-300"><input type="radio" name="theme-dropdown" class="theme-controller radio radio-xs" value="fantasy"/> <span class="text-xs">幻想 (Fantasy)</span></label>
+                                    <label class="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-base-300"><input type="radio" name="theme-dropdown" class="theme-controller radio radio-xs" value="wireframe"/> <span class="text-xs">线框 (Wireframe)</span></label>
+                                    <label class="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-base-300"><input type="radio" name="theme-dropdown" class="theme-controller radio radio-xs" value="black"/> <span class="text-xs">黑色 (Black)</span></label>
+                                    <label class="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-base-300"><input type="radio" name="theme-dropdown" class="theme-controller radio radio-xs" value="luxury"/> <span class="text-xs">奢华 (Luxury)</span></label>
+                                    <label class="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-base-300"><input type="radio" name="theme-dropdown" class="theme-controller radio radio-xs" value="dracula"/> <span class="text-xs">德古拉</span></label>
+                                    <label class="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-base-300"><input type="radio" name="theme-dropdown" class="theme-controller radio radio-xs" value="cmyk"/> <span class="text-xs">印刷色 (Cmyk)</span></label>
+                                    <label class="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-base-300"><input type="radio" name="theme-dropdown" class="theme-controller radio radio-xs" value="autumn"/> <span class="text-xs">秋天 (Autumn)</span></label>
+                                    <label class="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-base-300"><input type="radio" name="theme-dropdown" class="theme-controller radio radio-xs" value="business"/> <span class="text-xs">商务 (Business)</span></label>
+                                    <label class="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-base-300"><input type="radio" name="theme-dropdown" class="theme-controller radio radio-xs" value="acid"/> <span class="text-xs">酸性 (Acid)</span></label>
+                                    <label class="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-base-300"><input type="radio" name="theme-dropdown" class="theme-controller radio radio-xs" value="lemonade"/> <span class="text-xs">柠檬水</span></label>
+                                    <label class="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-base-300"><input type="radio" name="theme-dropdown" class="theme-controller radio radio-xs" value="night"/> <span class="text-xs">夜晚 (Night)</span></label>
+                                    <label class="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-base-300"><input type="radio" name="theme-dropdown" class="theme-controller radio radio-xs" value="coffee"/> <span class="text-xs">咖啡 (Coffee)</span></label>
+                                    <label class="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-base-300"><input type="radio" name="theme-dropdown" class="theme-controller radio radio-xs" value="winter"/> <span class="text-xs">冬天 (Winter)</span></label>
+                                    <label class="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-base-300"><input type="radio" name="theme-dropdown" class="theme-controller radio radio-xs" value="dim"/> <span class="text-xs">昏暗 (Dim)</span></label>
+                                    <label class="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-base-300"><input type="radio" name="theme-dropdown" class="theme-controller radio radio-xs" value="nord"/> <span class="text-xs">北欧 (Nord)</span></label>
+                                    <label class="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-base-300"><input type="radio" name="theme-dropdown" class="theme-controller radio radio-xs" value="sunset"/> <span class="text-xs">日落 (Sunset)</span></label>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="layui-nav-item" lay-unselect>
+                        <a href="javascript:;">
+                            <cite>{{ request.session.user_name }}</cite>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd><a lay-href="{% url "pass_page" %}">修改密码</a></dd>
+                            <hr>
+                            <dd style="text-align: center;"><a href="{% url "logout" %}">退出系统</a></dd>
+                        </dl>
+                    </li>
+                    <li class="layui-nav-item layui-hide-xs" lay-unselect>
+                        <a href="javascript:;" layadmin-event="fullscreen">
+                            <i class="layui-icon layui-icon-screen-full"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- 侧边菜单 -->
+            <div class="layui-side layui-side-menu">
+                <div class="layui-side-scroll">
+                    <div class="layui-logo" style="background-color: oklch(var(--b2)) !important; color: oklch(var(--bc)) !important;">
+                        <span>职位推荐系统</span>
+                    </div>
+                    <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu"
+                        lay-filter="layadmin-system-side-menu">
+                        <li data-name="home" class="layui-nav-item layui-nav-itemed">
+                            <a href="javascript:;" lay-tips="主页">
+                                <i class="layui-icon layui-icon-home"></i>
+                                <cite>主页</cite>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd data-name="console" class="layui-this">
+                                    <a lay-href="{% url "welcome" %}">控制台</a>
+                                </dd>
+                            </dl>
+                        </li>
+                        <li data-name="template" class="layui-nav-item">
+                            <a href="javascript:;" lay-tips="数据管理">
+                                <i class="layui-icon layui-icon-release"></i>
+                                <cite>爬虫调度</cite>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd><a lay-href="{% url "spiders" %}">数据爬取</a></dd>
+                            </dl>
+                        </li>
+                        <li data-name="template" class="layui-nav-item">
+                            <a href="javascript:;" lay-tips="数据管理">
+                                <i class="layui-icon layui-icon-search"></i>
+                                <cite>数据管理</cite>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd><a lay-href="{% url "job_list" %}">数据检索</a></dd>
+                                <dd>
+                                    <a href="javascript:;">数据可视化</a>
+                                    <dl class="layui-nav-child">
+                                        <dd data-name="list"><a lay-href="{% url 'salary' %}">薪资待遇分布</a></dd>
+                                        <dd data-name="tags"><a lay-href="{% url "edu" %}">学历要求分布</a></dd>
+                                        <dd data-name="tags"><a lay-href="{% url "bar_page" %}">职位关键字</a></dd>
+                                    </dl>
+                                </dd>
+                            </dl>
+                        </li>
+                        <li data-name="senior" class="layui-nav-item">
+                            <a href="javascript:;" lay-tips="职位推荐">
+                                <i class="layui-icon layui-icon-senior"></i>
+                                <cite>职位推荐</cite>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd>
+                                    <a lay-href="{% url "job_expect" %}">求职意向</a>
+                                </dd>
+                                <dd>
+                                    <a lay-href="{% url "get_recommend" %}">职位推荐</a>
+                                </dd>
+                                <dd>
+                                    <a lay-href="{% url "send_page" %}">求职列表</a>
+                                </dd>
+                            </dl>
+                        </li>
+                        <li data-name="set" class="layui-nav-item">
+                            <a href="javascript:;" lay-tips="用户设置">
+                                <i class="layui-icon layui-icon-set"></i>
+                                <cite>用户设置</cite>
+                            </a>
+                            <dl class="layui-nav-child">
+                                <dd>
+                                    <a lay-href="{% url "pass_page" %}">修改密码</a>
+                                </dd>
+                            </dl>
+                        </li>
+
+                        <li data-name="get" class="layui-nav-item">
+                            <a href="/admin" onclick="window.open(this.href); return false;" lay-tips="后台管理">
+                                <i class="layui-icon layui-icon-headset"></i>
+                                <cite>后台管理</cite>
+                            </a>
+                        </li>
+
+                        <li data-name="get" class="layui-nav-item">
+                            <a href="{% url "logout" %}" lay-tips="退出系统">
+                                <i class="layui-icon layui-icon-auz"></i>
+                                <cite>退出系统</cite>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 页面标签 -->
+            <div class="layadmin-pagetabs" id="LAY_app_tabs">
+                <div class="layui-icon layadmin-tabs-control layui-icon-prev" layadmin-event="leftPage"></div>
+                <div class="layui-icon layadmin-tabs-control layui-icon-next" layadmin-event="rightPage"></div>
+                <div class="layui-icon layadmin-tabs-control layui-icon-down">
+                    <ul class="layui-nav layadmin-tabs-select" lay-filter="layadmin-pagetabs-nav">
+                        <li class="layui-nav-item" lay-unselect>
+                            <a href="javascript:;"></a>
+                            <dl class="layui-nav-child layui-anim-fadein">
+                                <dd layadmin-event="closeThisTabs"><a href="javascript:;">关闭当前标签页</a></dd>
+                                <dd layadmin-event="closeOtherTabs"><a href="javascript:;">关闭其它标签页</a></dd>
+                                <dd layadmin-event="closeAllTabs"><a href="javascript:;">关闭全部标签页</a></dd>
+                            </dl>
+                        </li>
+                    </ul>
+                </div>
+                <div class="layui-tab" lay-unauto lay-allowClose="true" lay-filter="layadmin-layout-tabs">
+                    <ul class="layui-tab-title" id="LAY_app_tabsheader">
+                        <li lay-id="home/console.html" lay-attr="{% url "welcome" %}" class="layui-this"><i
+                                class="layui-icon layui-icon-home"></i></li>
+                    </ul>
+                </div>
+            </div>
+
+
+            <!-- 主体内容 -->
+            <div class="layui-body" id="LAY_app_body">
+                <div class="layadmin-tabsbody-item layui-show">
+                    <iframe src="{% url "welcome" %}" frameborder="0" class="layadmin-iframe"></iframe>
+                </div>
+            </div>
+
+            <!-- 辅助元素，一般用于移动设备下遮罩 -->
+            <div class="layadmin-body-shade" layadmin-event="shade"></div>
+        </div>
+    </div>
+    </body>
+{% endblock content %}
+{% block js %}
+    <script>
+        layui.config({
+            base: '{% static "layuiadmin/" %}' //静态资源所在路径
+        }).extend({
+            index: 'lib/index' //主入口模块
+        }).use('index');
+    </script>
+{% endblock js %}

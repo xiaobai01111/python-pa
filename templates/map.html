@@ -1,0 +1,62 @@
+
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<body>
+  <style>
+    /* 卡片容器 - 适配所有主题 */
+    .layui-card {
+        background-color: oklch(var(--b2) / 0.8);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        border: 1px solid oklch(var(--bc) / 0.1);
+        color: oklch(var(--bc));
+    }
+    
+    .layui-card-header {
+        border-bottom: 1px solid oklch(var(--bc) / 0.1);
+        padding: 20px 30px;
+        font-size: 18px;
+        font-weight: 600;
+        color: oklch(var(--bc));
+        display: flex;
+        align-items: center;
+    }
+    
+    .layui-card-body { padding: 20px; }
+    
+    .layui-fluid { padding: 15px; }
+  </style>
+
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-sm12">
+        <div class="layui-card">
+          <div class="layui-card-header">地图</div>
+          <div class="layui-card-body">
+            
+            <div class="layui-carousel layadmin-carousel layadmin-dataview" data-anim="fade" lay-filter="LAY-index-plat">
+              <div carousel-item id="LAY-index-plat">
+                <div><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+{% endblock %}
+
+{% block js %}
+  <script>
+  layui.config({
+    base: '{% static "layuiadmin/" %}' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'senior']);
+  </script>
+{% endblock %}

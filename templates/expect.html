@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+    <body>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        body { font-family: 'Inter', sans-serif; color: oklch(var(--bc)); }
+        
+        html, body { height: 100%; }
+        
+        .layui-fluid { 
+            padding: 30px; 
+            min-height: calc(100vh - 110px);
+            box-sizing: border-box;
+        }
+        
+        .layui-row { height: 100%; }
+        .layui-col-md12 { height: 100%; }
+        
+        /* 卡片容器 - 适配所有主题 */
+        .layui-card {
+            background-color: oklch(var(--b2) / 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid oklch(var(--bc) / 0.1);
+            height: 100%;
+            color: oklch(var(--bc));
+        }
+        
+        .layui-card-header {
+            border-bottom: 1px solid oklch(var(--bc) / 0.1);
+            padding: 20px 30px;
+            font-size: 18px;
+            font-weight: 600;
+            color: oklch(var(--bc));
+            display: flex;
+            align-items: center;
+        }
+        
+        .layui-card-header::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 18px;
+            background: oklch(var(--a));
+            border-radius: 2px;
+            margin-right: 12px;
+            box-shadow: 0 0 10px oklch(var(--a) / 0.5);
+        }
+        
+        .layui-card-body { padding: 40px; }
+        
+        /* 表单元素重构 */
+        .layui-form-label {
+            color: oklch(var(--bc) / 0.7);
+            width: 100px;
+            padding: 12px 15px;
+            font-size: 14px;
+        }
+        
+        .layui-input-block { margin-left: 130px; max-width: 600px; }
+        
+        .layui-input, .layui-select {
+            background-color: oklch(var(--b1));
+            border: 1px solid oklch(var(--bc) / 0.2);
+            color: oklch(var(--bc));
+            border-radius: 8px;
+            height: 44px;
+            line-height: 44px;
+            transition: all 0.3s;
+        }
+        
+        .layui-input:focus, .layui-select:focus {
+            border-color: oklch(var(--p));
+            box-shadow: 0 0 0 3px oklch(var(--p) / 0.2);
+        }
+        
+        /* 下拉菜单适配 */
+        .layui-form-select dl {
+            background-color: oklch(var(--b2));
+            border: 1px solid oklch(var(--bc) / 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            padding: 5px 0;
+        }
+        
+        .layui-form-select dl dd {
+            color: oklch(var(--bc) / 0.8);
+        }
+        
+        .layui-form-select dl dd:hover {
+            background-color: oklch(var(--b3));
+            color: oklch(var(--bc));
+        }
+        
+        .layui-form-select dl dd.layui-this {
+            background-color: oklch(var(--p));
+            color: oklch(var(--pc));
+        }
+        
+        .layui-form-select .layui-edge {
+            border-top-color: oklch(var(--bc) / 0.5);
+        }
+        
+        /* 按钮样式 */
+        .layui-btn {
+            background-color: oklch(var(--p));
+            color: oklch(var(--pc));
+            border-radius: 8px;
+            box-shadow: 0 4px 15px oklch(var(--p) / 0.3);
+            border: none;
+            height: 44px;
+            line-height: 44px;
+            padding: 0 40px;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .layui-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px oklch(var(--p) / 0.4);
+            opacity: 0.95;
+            background-color: oklch(var(--p));
+        }
+        
+        .layui-form-item { margin-bottom: 28px; }
+    </style>
+
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">求职意向设置</div>
+                    <div class="layui-card-body">
+                        <div class="layui-form" lay-filter="">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">期望职位</label>
+                                <div class="layui-input-block">
+                                    <div class="flex items-center gap-2 bg-base-100 border border-base-content/10 rounded-lg px-3 py-2 w-full max-w-xl focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20">
+                                        <svg class="h-5 w-5 opacity-50 shrink-0 text-base-content" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                        </svg>
+                                        <input type="text" name="key_word" class="bg-transparent border-none outline-none text-base-content flex-1 placeholder:text-base-content/30" placeholder="输入意向职位如：java" value="{{ keyword }}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">城市选择</label>
+                                <div class="layui-input-block">
+                                    <input type="hidden" name="city" id="city-input" value="{{ place }}">
+                                    <div class="dropdown dropdown-start">
+                                        <div tabindex="0" role="button" class="btn bg-base-100 border border-base-content/10 text-base-content hover:bg-base-200 w-64 justify-start font-normal" id="city-btn">
+                                            <span id="city-text">{% if place %}{{ place }}{% else %}请选择期望城市{% endif %}</span>
+                                            <svg class="ml-auto h-4 w-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                        </div>
+                                        <ul tabindex="0" class="dropdown-content menu bg-base-200 border border-base-content/10 rounded-box z-50 w-52 p-2 shadow-lg mt-1 text-base-content">
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('')">请选择期望城市</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('北京')">北京</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('上海')">上海</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('天津')">天津</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('重庆')">重庆</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('广州')">广州</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('深圳')">深圳</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('苏州')">苏州</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('南京')">南京</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('杭州')">杭州</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('大连')">大连</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('成都')">成都</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('武汉')">武汉</a></li>
+                                            <li><a class="hover:bg-primary hover:text-primary-content" onclick="selectCity('西安')">西安</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <button class="layui-btn" lay-submit lay-filter="expect" id="expect">
+                                        <i class="layui-icon layui-icon-ok-circle"></i> 确认保存
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </body>
+{% endblock %}
+
+{% block js %}
+    <script>
+        // daisyUI dropdown 选择函数
+        function selectCity(value) {
+            document.getElementById('city-input').value = value;
+            document.getElementById('city-text').textContent = value || '请选择期望城市';
+            document.activeElement.blur();
+        }
+        
+        layui.config({
+            base: '{% static "layuiadmin/" %}' //静态资源所在路径
+        }).extend({
+            index: 'lib/index' //主入口模块
+        }).use(['index', 'form'], function () {
+            var $ = layui.$,
+                form = layui.form;
+
+            form.on('submit(expect)', function (data) {
+                var post_data = data.field;
+                
+                if (post_data.key_word == "") {
+                    showToast("期望职位不能为空！", "warning");
+                    return false;
+                }
+                if (post_data.city == "") {
+                    showToast("城市不能为空！", "warning");
+                    return false;
+                }
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/job_expect/',
+                    data: post_data,
+                    success: function (res) {
+                        showToast(res.msg, "success");
+                    },
+                    error: function (response) {
+                        showToast("保存失败，请重试", "error");
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}

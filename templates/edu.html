@@ -1,0 +1,92 @@
+
+
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<body>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    
+    body { font-family: 'Inter', sans-serif; color: oklch(var(--bc)); }
+    
+    html, body { height: 100%; }
+    
+    .layui-fluid { 
+        padding: 30px; 
+        min-height: 100%;
+        box-sizing: border-box;
+    }
+    
+    .layui-row, .layui-col-sm12 { height: 100%; }
+
+    /* 卡片容器 - 适配所有主题 */
+    .layui-card {
+        background-color: oklch(var(--b2) / 0.8);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        border: 1px solid oklch(var(--bc) / 0.1);
+        height: calc(100vh - 60px); /* 自适应高度 */
+        color: oklch(var(--bc));
+    }
+    
+    .layui-card-header {
+        border-bottom: 1px solid oklch(var(--bc) / 0.1);
+        padding: 20px 30px;
+        font-size: 18px;
+        font-weight: 600;
+        color: oklch(var(--bc));
+        display: flex;
+        align-items: center;
+    }
+    
+    .layui-card-header::before {
+        content: '';
+        display: inline-block;
+        width: 4px;
+        height: 18px;
+        background: oklch(var(--su));
+        border-radius: 2px;
+        margin-right: 12px;
+        box-shadow: 0 0 10px oklch(var(--su) / 0.5);
+    }
+    
+    .layui-card-body {
+        padding: 30px;
+        height: calc(100% - 80px);
+        box-sizing: border-box;
+    }
+    
+    .layui-carousel {
+        background-color: transparent !important;
+    }
+  </style>
+
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-sm12">
+        <div class="layui-card">
+          <div class="layui-card-header">学历要求分布</div>
+          <div class="layui-card-body">
+            <div class="layui-carousel layadmin-carousel layadmin-dataview" data-anim="fade" lay-filter="LAY-index-dataview" style="width: 100%; height: 100%;">
+              <div carousel-item id="LAY-index-dataview">
+                <div><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </body>
+{% endblock content %}
+{% block js %}
+  <script>
+  layui.config({
+    base: '{% static "layuiadmin/" %}' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'edu']);
+  </script>
+{% endblock js %}
